@@ -5,6 +5,7 @@ import cv2
 import subprocess
 from pathlib import Path
 import ffmpeg
+from sms.file_system_utils import file_system_utils as fsu
 
 def get_vid_dims(vid_file_path):
 #     vid = cv2.VideoCapture(vid_file_path)
@@ -39,11 +40,14 @@ def scale_vid(new_vid_dim_tup, in_vid_path, out_vid_path):
     """ 
         new_vid_dims = w x h
         Example - ffmpeg -i video.mov -vf "scale=250:150" newmovie.mp4
+        Will reduce H by 1 if not even
     """
     # Create out_vid_path if not exist
     out_vid_parent_dir_path_obj = Path(out_vid_path).parent
     out_vid_parent_dir_path_obj.mkdir(parents=True,exist_ok=True)
 
+    # Delete out_vid_path if exists
+    fsu.delete_if_exists(out_vid_path)
 
     w = new_vid_dim_tup[0]
     h = new_vid_dim_tup[1]
