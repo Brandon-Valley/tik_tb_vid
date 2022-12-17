@@ -22,9 +22,15 @@ def get_w_matched_new_vid_dims(vid_dim_tup, vid_path):
     # print(f"{og_top_vid_dim_tup}")
     return (new_w, new_h)
 
-def make_tb_vid(vid_dim_tup, top_vid_path, bottom_vid_path, use_audio_from_str = "top"):
+def make_tb_vid(vid_dim_tup, top_vid_path, bottom_vid_path, use_audio_from_str = "top", trim_bottom_vid_method_str = "from_start"):
     """ - Zoom top vid in or out to fit vid_dim_tup,
         - Do same for bottom vid with remaining dims?
+        - Assume top_vid is already the length you want
+          - Use trim_bottom_vid_method_str to choose how bottom vid time is trimmed to match top
+            - from_start - Just cut off extra from end
+            - from_rand_start - Start from random point in bottom vid and cut off extra
+              - Good for 10-hour vids
+            - MORE???
     """
 
     new_top_vid_dim_tup = get_w_matched_new_vid_dims(vid_dim_tup, top_vid_path)
@@ -32,8 +38,24 @@ def make_tb_vid(vid_dim_tup, top_vid_path, bottom_vid_path, use_audio_from_str =
 
     scaled_top_vid_path = os.path.join(BIG_DATA_WORKING_DIR_PATH, "scaled_top_vid.mp4")
     print(f"{scaled_top_vid_path=}")
-    veu.scale_vid(new_top_vid_dim_tup, top_vid_path, scaled_top_vid_path)
-    # veu.vid_resize(top_vid_path, scaled_top_vid_path, vid_dim_tup[0], overwrite = True)
+    # veu.scale_vid(new_top_vid_dim_tup, top_vid_path, scaled_top_vid_path) # PUT BACK!!!!!!!!!!!
+
+    # scale_vid() can change h by 1 pixel, get fresh dims to be safe
+    scaled_top_vid_dims_tup = veu.get_vid_dims(scaled_top_vid_path)
+    print(f"{scaled_top_vid_dims_tup=}")
+
+    # Just in case
+    if scaled_top_vid_dims_tup[0] != vid_dim_tup[0]:
+        raise Exception(f"ERROR: width should not have changed, {scaled_top_vid_dims_tup=}, {vid_dim_tup=}")
+
+    # get remaining dims to be filled by bottom_vid
+    new_bottom_vid_dim_tup = (scaled_top_vid_dims_tup[0], vid_dim_tup[1] - scaled_top_vid_dims_tup[1])
+    print(f"{new_bottom_vid_dim_tup=}")
+
+    scaled_bottom_vid_path = os.path.join(BIG_DATA_WORKING_DIR_PATH, "scaled_bottom_vid.mp4")
+    print(f"{scaled_bottom_vid_path=}")
+
+    veu.scale_vid(new_bottom_vid_dim_tup, bottom_vid_path, scaled_bottom_vid_path) # PUT BACK!!!!!!!!!!!
 
 
 print("init")
