@@ -61,35 +61,6 @@ def scale_vid(new_vid_dim_tup, in_vid_path, out_vid_path):
     subprocess.call(cmd, shell = True)
 
 
-def stack_vids(top_vid_path, bottom_vid_path, out_vid_path):
-    top_vid_dim_tup = get_vid_dims(top_vid_path)
-    top_vid_w = top_vid_dim_tup[0]
-    top_vid_h = top_vid_dim_tup[1]
-    bottom_vid_dim_tup = get_vid_dims(bottom_vid_path)
-    bottom_vid_w = bottom_vid_dim_tup[0]
-    bottom_vid_h = bottom_vid_dim_tup[1]
-
-    if top_vid_w != bottom_vid_w:
-        raise Exception(f"Widths of vids not the same, behavior for this not implemented - {top_vid_dim_tup=} , {bottom_vid_dim_tup=}")
-
-    w = top_vid_w
-    h = top_vid_h + bottom_vid_h
-
-    # -filter_complex '[0:v]pad=iw*2:ih[int];[int][1:v]overlay=W/2:0[vid]' \
-    cmd = f"ffmpeg \
-            -i {top_vid_path} \
-            -i {bottom_vid_path} \
-            -filter_complex '[0:v]pad={w}*2:{h}[int];[int][1:v]overlay=W/2:0[vid]' \
-            -map '[vid]' \
-            -c:v libx264 \
-            -crf 23 \
-            -preset veryfast \
-            output.mp4"
-
-    print(f"Running: {cmd}...")
-    subprocess.call(cmd, shell = True)
-
-
 def get_vid_length(filename):
     result = subprocess.run(["ffprobe", "-v", "error", "-show_entries",
                              "format=duration", "-of",
@@ -97,3 +68,46 @@ def get_vid_length(filename):
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT)
     return float(result.stdout)
+
+
+
+def stack_vids(top_vid_path, bottom_vid_path, out_vid_path):
+    top_vid_dim_tup = get_vid_dims(top_vid_path)
+    top_vid_w = top_vid_dim_tup[0]
+    # top_vid_h = top_vid_dim_tup[1]
+    bottom_vid_dim_tup = get_vid_dims(bottom_vid_path)
+    bottom_vid_w = bottom_vid_dim_tup[0]
+    # bottom_vid_h = bottom_vid_dim_tup[1]
+
+    if top_vid_w != bottom_vid_w:
+        raise Exception(f"Widths of vids not the same, behavior for this not implemented - {top_vid_dim_tup=} , {bottom_vid_dim_tup=}")
+
+    # This command does the following:
+    #     ffmpeg is the command to run ffmpeg.
+    #     -i top_video.mp4 specifies the input file for the top video.
+    #     -i bottom_video.mp4 specifies the input file for the bottom video.
+    #     -filter_complex "[0:v][1:v]vstack=inputs=2[v]" specifies a filter complex that takes the video streams from 
+    #                                                    both input files ([0:v] and [1:v]) and stacks them vertically 
+    #                                                    to create a new video stream ([v]).
+    #     -map "[v]" tells ffmpeg to use the stacked video stream as the output video.
+    #     -map 0:a tells ffmpeg to use the audio stream from the top video (0:a) as the output audio.
+    #     -c:v libx264 specifies the codec to use for the output video.
+    #     -crf 18 specifies the quality level for the output video. A lower value results in a higher quality video, but a larger file size.
+    #     -preset veryfast specifies the speed/quality tradeoff for the output video. A faster preset will result in a faster encoding time, but potentially lower quality.
+    #     output.mp4 specifies the output file for the combined video.
+
+    # Note that this command assumes that both input videos have the same length. If the videos have different lengths, you may need to specify an additional filter to pad one of the videos to match the length of the other. You can also adjust the parameters (e.g. codec, quality, etc.) to suit your needs.
+    cmd = f'ffmpeg \
+        -i {top_vid_path} \
+        -i {bottom_vid_path} \
+        -filter_complex "[0:v][1:v]vstack=inputs=2[v]" \
+        -map "[v]" \
+        -map 0:a \
+        -c:v libx264 \
+        -crf 18 \
+        -preset veryfast \
+        {out_vid_path}'
+
+    print(f"Running: {cmd}...")
+    subprocess.call(cmd, shell = True)
+

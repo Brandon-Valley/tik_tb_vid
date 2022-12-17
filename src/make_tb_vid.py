@@ -77,23 +77,18 @@ def make_tb_vid(vid_dim_tup, top_vid_path, bottom_vid_path, use_audio_from_str =
         raise Exception(f"ERROR: width should not have changed, {scaled_top_vid_dims_tup=}, {vid_dim_tup=}")
 
     # Trim bottom vid time to match top
-    time_trim_bottom_vid_to_match_top(SCALED_TOP_VID_PATH, bottom_vid_path, TIME_TRIMMED_BOTTOM_VID_PATH, time_trim_bottom_vid_method_str)
+    # time_trim_bottom_vid_to_match_top(SCALED_TOP_VID_PATH, bottom_vid_path, TIME_TRIMMED_BOTTOM_VID_PATH, time_trim_bottom_vid_method_str) # TMP PUT BACK !!!!!!!!!
 
+    # get remaining dims to be filled by bottom_vid
+    new_bottom_vid_dim_tup = (scaled_top_vid_dims_tup[0], vid_dim_tup[1] - scaled_top_vid_dims_tup[1])
+    print(f"{new_bottom_vid_dim_tup=}")
 
+    # print(f"{SCALED_BOTTOM_VID_PATH=}")
 
+    # veu.scale_vid(new_bottom_vid_dim_tup, TIME_TRIMMED_BOTTOM_VID_PATH, SCALED_BOTTOM_VID_PATH) # PUT BACK!!!!!!!!!!!
 
-
-    # # get remaining dims to be filled by bottom_vid
-    # new_bottom_vid_dim_tup = (scaled_top_vid_dims_tup[0], vid_dim_tup[1] - scaled_top_vid_dims_tup[1])
-    # print(f"{new_bottom_vid_dim_tup=}")
-
-    # # print(f"{SCALED_BOTTOM_VID_PATH=}")
-
-    # # veu.scale_vid(new_bottom_vid_dim_tup, bottom_vid_path, SCALED_BOTTOM_VID_PATH) # PUT BACK!!!!!!!!!!!
-
-    # # Make stacked vid
-
-    # veu.stack_vids(SCALED_TOP_VID_PATH, SCALED_BOTTOM_VID_PATH, STACKED_VID_PATH)
+    # Make stacked vid
+    veu.stack_vids(SCALED_TOP_VID_PATH, SCALED_BOTTOM_VID_PATH, STACKED_VID_PATH)
 
 
 print("init")
