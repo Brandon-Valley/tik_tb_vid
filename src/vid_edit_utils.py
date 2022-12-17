@@ -76,6 +76,7 @@ def stack_vids(top_vid_path, bottom_vid_path, out_vid_path):
     top_vid_w = top_vid_dim_tup[0]
     # top_vid_h = top_vid_dim_tup[1]
     bottom_vid_dim_tup = get_vid_dims(bottom_vid_path)
+    print(f"{bottom_vid_dim_tup=}")
     bottom_vid_w = bottom_vid_dim_tup[0]
     # bottom_vid_h = bottom_vid_dim_tup[1]
 
@@ -129,6 +130,9 @@ def crop_vid(w,h,x,y,in_vid_path, out_vid_path):
         https://www.bogotobogo.com/FFMpeg/ffmpeg_cropping_video_image.php
     """
 
-    cmd = f'ffmpeg -i {in_vid_path} -vf "crop={w}:{h}:{x}:{y}" {out_vid_path}.mp4'
+    fsu.delete_if_exists(out_vid_path)
+
+
+    cmd = f'ffmpeg -i {in_vid_path} -vf "crop={w}:{h}:{x}:{y}" {out_vid_path}'
     print(f"Running: {cmd}...")
     subprocess.call(cmd, shell = True)
