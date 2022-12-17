@@ -82,6 +82,8 @@ def stack_vids(top_vid_path, bottom_vid_path, out_vid_path):
     if top_vid_w != bottom_vid_w:
         raise Exception(f"Widths of vids not the same, behavior for this not implemented - {top_vid_dim_tup=} , {bottom_vid_dim_tup=}")
 
+    fsu.delete_if_exists(out_vid_path)
+
     # This command does the following:
     #     ffmpeg is the command to run ffmpeg.
     #     -i top_video.mp4 specifies the input file for the top video.
@@ -92,11 +94,15 @@ def stack_vids(top_vid_path, bottom_vid_path, out_vid_path):
     #     -map "[v]" tells ffmpeg to use the stacked video stream as the output video.
     #     -map 0:a tells ffmpeg to use the audio stream from the top video (0:a) as the output audio.
     #     -c:v libx264 specifies the codec to use for the output video.
-    #     -crf 18 specifies the quality level for the output video. A lower value results in a higher quality video, but a larger file size.
-    #     -preset veryfast specifies the speed/quality tradeoff for the output video. A faster preset will result in a faster encoding time, but potentially lower quality.
+    #     -crf 18 specifies the quality level for the output video. A lower value results in a higher quality video, 
+    #             but a larger file size.
+    #     -preset veryfast specifies the speed/quality tradeoff for the output video. A faster preset will result in a 
+    #                      faster encoding time, but potentially lower quality.
     #     output.mp4 specifies the output file for the combined video.
 
-    # Note that this command assumes that both input videos have the same length. If the videos have different lengths, you may need to specify an additional filter to pad one of the videos to match the length of the other. You can also adjust the parameters (e.g. codec, quality, etc.) to suit your needs.
+    # Note that this command assumes that both input videos have the same length. If the videos have different lengths, 
+    # you may need to specify an additional filter to pad one of the videos to match the length of the other. You can 
+    # also adjust the parameters (e.g. codec, quality, etc.) to suit your needs.
     cmd = f'ffmpeg \
         -i {top_vid_path} \
         -i {bottom_vid_path} \
@@ -111,3 +117,18 @@ def stack_vids(top_vid_path, bottom_vid_path, out_vid_path):
     print(f"Running: {cmd}...")
     subprocess.call(cmd, shell = True)
 
+
+
+def crop_vid(w,h,x,y,in_vid_path, out_vid_path):
+    """
+        w: Width of the output video (out_w). It defaults to iw. This expression is evaluated only once during the filter configuration.
+        h: Height of the output video (out_h). It defaults to ih. This expression is evaluated only once during the filter configuration.
+        x: Horizontal position, in the input video, of the left edge of the output video. It defaults to (in_w-out_w)/2. This expression is evaluated per-frame.
+        y: Vertical position, in the input video, of the top edge of the output video. It defaults to (in_h-out_h)/2. This expression is evaluated per-frame.
+
+        https://www.bogotobogo.com/FFMpeg/ffmpeg_cropping_video_image.php
+    """
+
+    cmd = f'ffmpeg -i {in_vid_path} -vf "crop={w}:{h}:{x}:{y}" {out_vid_path}.mp4'
+    print(f"Running: {cmd}...")
+    subprocess.call(cmd, shell = True)

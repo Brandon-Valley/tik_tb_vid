@@ -13,6 +13,7 @@ TEST_OUT_MP4_PATH = os.path.join(BIG_DATA_DIR_PATH, "test_out_vids", "test_out.m
 # print(Path(TEST_OUT_MP4_PATH).w)
 
 SCALED_TOP_VID_PATH = os.path.join(BIG_DATA_WORKING_DIR_PATH, "scaled_top_vid.mp4")
+CUSTOM_EDITED_BOTTOM_VID_PATH = os.path.join(BIG_DATA_WORKING_DIR_PATH, "custom_edited_bottom_vid.mp4")
 SCALED_BOTTOM_VID_PATH = os.path.join(BIG_DATA_WORKING_DIR_PATH, "scaled_bottom_vid.mp4")
 TIME_TRIMMED_BOTTOM_VID_PATH = os.path.join(BIG_DATA_WORKING_DIR_PATH, "time_trimmed_bottom_vid.mp4")
 STACKED_VID_PATH = os.path.join(BIG_DATA_WORKING_DIR_PATH, "stacked.mp4")
@@ -49,9 +50,42 @@ def time_trim_bottom_vid_to_match_top(top_vid_path, bottom_vid_path, out_vid_pat
     veu.trim_vid(bottom_vid_path, out_vid_path, time_tup)
 
 
+def _trim_sides_of_vid_to_match_aspect_ratio(vid_dim_tup_to_match_aspect_ratio, in_vid_path, out_vid_path):
+    """ Good for trimming sides of MC Parkour vids while keeping center """
+    in_vid_dim_tup = veu.get_vid_dims(in_vid_path)
+    in_vid_w = in_vid_dim_tup[0]
+    in_vid_h = in_vid_dim_tup[1]
+
+    # print(f"{vid_dim_tup_to_match_aspect_ratio}")
+
+    aspect_ratio = vid_dim_tup_to_match_aspect_ratio[0] / vid_dim_tup_to_match_aspect_ratio[1]
+    # print(f"{aspect_ratio=}")
+
+    # new_vid_h = in_vid_h
+    new_vid_w = in_vid_h * aspect_ratio
+    print(f"new vid diiiiiims {new_vid_w} x {in_vid_h}")
+    # print(f"new vid diiiiiims {new_vid_w} x {new_vid_h}")
+
+    # At this point, h should be the same, only w has changed (reduced)
+    w_diff = in_vid_w - new_vid_w
+    num_pixels_to_trim_from_both_sides = int(w_diff / 2)
+
+    veu.crop_vid(w = w_diff,
+                 h = in_vid_h,
+                 x = num_pixels_to_trim_from_both_sides,
+                 y = 0,
+                 in_vid_path = in_vid_path, out_vid_path = out_vid_path)
 
 
-def make_tb_vid(vid_dim_tup, top_vid_path, bottom_vid_path, use_audio_from_str = "top", time_trim_bottom_vid_method_str = "from_start"):
+def custom_edit_bottom_vid(vid_dim_tup_to_match_aspect_ratio, in_vid_path, out_vid_path, custom_edit_bottom_vid_method_str):
+    if custom_edit_bottom_vid_method_str == "trim_sides":
+        _trim_sides_of_vid_to_match_aspect_ratio(vid_dim_tup_to_match_aspect_ratio, in_vid_path, out_vid_path)
+    else:
+        raise Exception(f"ERROR: invalid {custom_edit_bottom_vid_method_str=}")
+
+
+
+def make_tb_vid(vid_dim_tup, top_vid_path, bottom_vid_path, use_audio_from_str = "top", time_trim_bottom_vid_method_str = "from_start", custom_edit_bottom_vid_method_str = "trim_sides"):
     """ - Zoom top vid in or out to fit vid_dim_tup,
         - Do same for bottom vid with remaining dims?
         - Assume top_vid is already the length you want
@@ -83,17 +117,25 @@ def make_tb_vid(vid_dim_tup, top_vid_path, bottom_vid_path, use_audio_from_str =
     new_bottom_vid_dim_tup = (scaled_top_vid_dims_tup[0], vid_dim_tup[1] - scaled_top_vid_dims_tup[1])
     print(f"{new_bottom_vid_dim_tup=}")
 
+    # Perform custom edit to bottom vid
+    # - This can be different depending on custom_edit_bottom_vid_method_str to best match the type of vid on bottom
+    # - This is done before final scaling (making bottom vid bigger or smaller) because this edit might not be
+    #   pixel-perfect and the final bottom scale will stretch the vid a tiny bit if needed to fit pixels
+    # custom_edit_bottom_vid(new_bottom_vid_dim_tup, TIME_TRIMMED_BOTTOM_VID_PATH, CUSTOM_EDITED_BOTTOM_VID_PATH, custom_edit_bottom_vid_method_str) # PUT BACK !!!!!!!
+
     # print(f"{SCALED_BOTTOM_VID_PATH=}")
 
-    # veu.scale_vid(new_bottom_vid_dim_tup, TIME_TRIMMED_BOTTOM_VID_PATH, SCALED_BOTTOM_VID_PATH) # PUT BACK!!!!!!!!!!!
+    veu.scale_vid(new_bottom_vid_dim_tup, TIME_TRIMMED_BOTTOM_VID_PATH, SCALED_BOTTOM_VID_PATH) # PUT BACK!!!!!!!!!!!
 
     # Make stacked vid
-    veu.stack_vids(SCALED_TOP_VID_PATH, SCALED_BOTTOM_VID_PATH, STACKED_VID_PATH)
+    veu.stack_vids(SCALED_TOP_VID_PATH, SCALED_BOTTOM_VID_PATH, STACKED_VID_PATH) # PUT BACK!!!!!!!!!
+
+
 
 
 print("init")
 vid_dim_tup = (1080,1920) # W x H
-top_vid_path = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\tik_tb_vid_big_data\\og_clips\\fg_test.mp4"
+top_vid_path = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\tik_tb_vid_big_data\\og_clips\\fg_test_short.mp4"
 bottom_vid_path = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\tik_tb_vid_big_data\\og_clips\\mc_test.mp4"
 
 make_tb_vid(vid_dim_tup, top_vid_path, bottom_vid_path, use_audio_from_str = "top")
