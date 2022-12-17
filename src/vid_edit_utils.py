@@ -61,29 +61,39 @@ def scale_vid(new_vid_dim_tup, in_vid_path, out_vid_path):
     subprocess.call(cmd, shell = True)
 
 
+def stack_vids(top_vid_path, bottom_vid_path, out_vid_path):
+    top_vid_dim_tup = get_vid_dims(top_vid_path)
+    top_vid_w = top_vid_dim_tup[0]
+    top_vid_h = top_vid_dim_tup[1]
+    bottom_vid_dim_tup = get_vid_dims(bottom_vid_path)
+    bottom_vid_w = bottom_vid_dim_tup[0]
+    bottom_vid_h = bottom_vid_dim_tup[1]
 
-# def vid_resize(vid_path, output_path, width, overwrite = True):
-#     '''
-#     use ffmpeg to resize the input video to the width given, keeping aspect ratio
-#     '''
-#     if not( os.path.isdir(os.path.dirname(output_path))):
-#         # raise ValueError(f'output_path directory does not exists: {os.path.dirname(output_path)}')
+    if top_vid_w != bottom_vid_w:
+        raise Exception(f"Widths of vids not the same, behavior for this not implemented - {top_vid_dim_tup=} , {bottom_vid_dim_tup=}")
 
-#         # Create out_vid_path if not exist
-#         out_vid_parent_dir_path_obj = Path(output_path).parent
-#         out_vid_parent_dir_path_obj.mkdir(parents=True,exist_ok=True)
+    w = top_vid_w
+    h = top_vid_h + bottom_vid_h
 
-#     if os.path.isfile(output_path) and not overwrite:
-#         # warnings.warn(f'{output_path} already exists but overwrite switch is False, nothing done.')
-#         # return None
-#         raise Exception("ERROR: NOT IMPLEMENTED")
+    # -filter_complex '[0:v]pad=iw*2:ih[int];[int][1:v]overlay=W/2:0[vid]' \
+    cmd = f"ffmpeg \
+            -i {top_vid_path} \
+            -i {bottom_vid_path} \
+            -filter_complex '[0:v]pad={w}*2:{h}[int];[int][1:v]overlay=W/2:0[vid]' \
+            -map '[vid]' \
+            -c:v libx264 \
+            -crf 23 \
+            -preset veryfast \
+            output.mp4"
 
-#     input_vid = ffmpeg.input(vid_path)
-#     vid = (
-#         input_vid
-#         .filter('scale', width, -1)
-#         .output(output_path)
-#         .overwrite_output()
-#         .run()
-#     )
-#     return output_path
+    print(f"Running: {cmd}...")
+    subprocess.call(cmd, shell = True)
+
+
+def get_vid_length(filename):
+    result = subprocess.run(["ffprobe", "-v", "error", "-show_entries",
+                             "format=duration", "-of",
+                             "default=noprint_wrappers=1:nokey=1", filename],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT)
+    return float(result.stdout)
