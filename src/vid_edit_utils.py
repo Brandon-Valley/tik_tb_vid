@@ -2,7 +2,9 @@ from moviepy.tools import subprocess_call
 from moviepy.config import get_setting
 import os
 import cv2
-
+import subprocess
+from pathlib import Path
+import ffmpeg
 
 def get_vid_dims(vid_file_path):
 #     vid = cv2.VideoCapture(vid_file_path)
@@ -32,3 +34,47 @@ def trim_vid(in_vid_path, out_vid_path, time_tup):
         
     ffmpeg_extract_subclip(in_vid_path, time_tup[0], time_tup[1], targetname=out_vid_path)
     
+
+# def scale_vid(new_vid_dim_tup, in_vid_path, out_vid_path):
+#     """ 
+#         new_vid_dims = w x h
+#         Example - ffmpeg -i video.mov -vf "scale=250:150" newmovie.mp4
+#     """
+#     # Create out_vid_path if not exist
+#     out_vid_parent_dir_path_obj = Path(out_vid_path).parent
+#     out_vid_parent_dir_path_obj.mkdir(parents=True,exist_ok=True)
+
+
+#     w = new_vid_dim_tup[0]
+#     h = new_vid_dim_tup[1]
+#     cmd = f'ffmpeg -i {in_vid_path} -vf "scale={w}:{h}" {out_vid_path}'
+#     print(f"Running: {cmd}...")
+#     subprocess.call(cmd, shell = True)
+
+
+
+def vid_resize(vid_path, output_path, width, overwrite = True):
+    '''
+    use ffmpeg to resize the input video to the width given, keeping aspect ratio
+    '''
+    if not( os.path.isdir(os.path.dirname(output_path))):
+        # raise ValueError(f'output_path directory does not exists: {os.path.dirname(output_path)}')
+
+        # Create out_vid_path if not exist
+        out_vid_parent_dir_path_obj = Path(output_path).parent
+        out_vid_parent_dir_path_obj.mkdir(parents=True,exist_ok=True)
+
+    if os.path.isfile(output_path) and not overwrite:
+        # warnings.warn(f'{output_path} already exists but overwrite switch is False, nothing done.')
+        # return None
+        raise Exception("ERROR: NOT IMPLEMENTED")
+
+    input_vid = ffmpeg.input(vid_path)
+    vid = (
+        input_vid
+        .filter('scale', width, -1)
+        .output(output_path)
+        .overwrite_output()
+        .run()
+    )
+    return output_path
