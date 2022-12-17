@@ -32,8 +32,8 @@ def make_tb_vid(vid_dim_tup, top_vid_path, bottom_vid_path, use_audio_from_str =
 
     scaled_top_vid_path = os.path.join(BIG_DATA_WORKING_DIR_PATH, "scaled_top_vid.mp4")
     print(f"{scaled_top_vid_path=}")
-    # veu.scale_vid(new_top_vid_dim_tup, top_vid_path, scaled_top_vid_path)
-    veu.vid_resize(top_vid_path, scaled_top_vid_path, vid_dim_tup[0], overwrite = True)
+    veu.scale_vid(new_top_vid_dim_tup, top_vid_path, scaled_top_vid_path)
+    # veu.vid_resize(top_vid_path, scaled_top_vid_path, vid_dim_tup[0], overwrite = True)
 
 
 print("init")
