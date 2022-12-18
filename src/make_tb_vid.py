@@ -148,47 +148,50 @@ def make_tb_vid(vid_dim_tup, out_vid_path, top_vid_path, bottom_vid_path, use_au
     """
     # veu.remove_watermark(top_vid_path, "C:\\Users\\Brandon\\Documents\\Personal_Projects\\tik_tb_vid_big_data\\working\\removed_watermark_test.mp4")
 
-    # Perform custom edit to top vid
-    # - This can be different depending on custom_edit_top_vid_method_str to best match the type of vid on top
-    # - This is done before final scaling (making top vid bigger or smaller) because this edit might not be
-    #   pixel-perfect and the final top scale will stretch the vid a tiny bit if needed to fit pixels
-    # custom_edit_top_vid(top_vid_path, CUSTOM_EDITED_TOP_VID_PATH, custom_edit_top_vid_method_str, trim_top_vid_sides_percent) # PUT BACK !!!!!!!!!
-    # print(f"{veu.get_vid_dims(CUSTOM_EDITED_TOP_VID_PATH)=}")
+    veu.remove_black_boarder_from_vid(top_vid_path, "C:\\Users\\Brandon\\Documents\\Personal_Projects\\tik_tb_vid_big_data\\working\\black_bars_test.mp4")
 
 
-    # new_top_vid_dim_tup = get_w_matched_new_vid_dims(vid_dim_tup, top_vid_path)
-    new_top_vid_dim_tup = get_w_matched_new_vid_dims(vid_dim_tup, CUSTOM_EDITED_TOP_VID_PATH)
-    print(f"..........{new_top_vid_dim_tup=}")
+    # # Perform custom edit to top vid
+    # # - This can be different depending on custom_edit_top_vid_method_str to best match the type of vid on top
+    # # - This is done before final scaling (making top vid bigger or smaller) because this edit might not be
+    # #   pixel-perfect and the final top scale will stretch the vid a tiny bit if needed to fit pixels
+    # # custom_edit_top_vid(top_vid_path, CUSTOM_EDITED_TOP_VID_PATH, custom_edit_top_vid_method_str, trim_top_vid_sides_percent) # PUT BACK !!!!!!!!!
+    # # print(f"{veu.get_vid_dims(CUSTOM_EDITED_TOP_VID_PATH)=}")
 
-    veu.scale_vid(new_top_vid_dim_tup, top_vid_path, SCALED_TOP_VID_PATH) # PUT BACK!!!!!!!!!!!
 
-    # scale_vid() can change h by 1 pixel, get fresh dims to be safe
-    scaled_top_vid_dims_tup = veu.get_vid_dims(SCALED_TOP_VID_PATH)
-    print(f"{scaled_top_vid_dims_tup=}")
+    # # new_top_vid_dim_tup = get_w_matched_new_vid_dims(vid_dim_tup, top_vid_path)
+    # new_top_vid_dim_tup = get_w_matched_new_vid_dims(vid_dim_tup, CUSTOM_EDITED_TOP_VID_PATH)
+    # print(f"..........{new_top_vid_dim_tup=}")
 
-    # Just in case
-    if scaled_top_vid_dims_tup[0] != vid_dim_tup[0]:
-        raise Exception(f"ERROR: width should not have changed, {scaled_top_vid_dims_tup=}, {vid_dim_tup=}")
+    # veu.scale_vid(new_top_vid_dim_tup, top_vid_path, SCALED_TOP_VID_PATH) # PUT BACK!!!!!!!!!!!
 
-    # Trim bottom vid time to match top
-    time_trim_bottom_vid_to_match_top(SCALED_TOP_VID_PATH, bottom_vid_path, TIME_TRIMMED_BOTTOM_VID_PATH, time_trim_bottom_vid_method_str) # PUT BACK !!!!!!!!!
+    # # scale_vid() can change h by 1 pixel, get fresh dims to be safe
+    # scaled_top_vid_dims_tup = veu.get_vid_dims(SCALED_TOP_VID_PATH)
+    # print(f"{scaled_top_vid_dims_tup=}")
 
-    # get remaining dims to be filled by bottom_vid
-    new_bottom_vid_dim_tup = (scaled_top_vid_dims_tup[0], vid_dim_tup[1] - scaled_top_vid_dims_tup[1])
-    print(f"{new_bottom_vid_dim_tup=}")
+    # # Just in case
+    # if scaled_top_vid_dims_tup[0] != vid_dim_tup[0]:
+    #     raise Exception(f"ERROR: width should not have changed, {scaled_top_vid_dims_tup=}, {vid_dim_tup=}")
 
-    # Perform custom edit to bottom vid
-    # - This can be different depending on custom_edit_bottom_vid_method_str to best match the type of vid on bottom
-    # - This is done before final scaling (making bottom vid bigger or smaller) because this edit might not be
-    #   pixel-perfect and the final bottom scale will stretch the vid a tiny bit if needed to fit pixels
-    custom_edit_bottom_vid(new_bottom_vid_dim_tup, TIME_TRIMMED_BOTTOM_VID_PATH, CUSTOM_EDITED_BOTTOM_VID_PATH, custom_edit_bottom_vid_method_str) # PUT BACK !!!!!!!
+    # # Trim bottom vid time to match top
+    # time_trim_bottom_vid_to_match_top(SCALED_TOP_VID_PATH, bottom_vid_path, TIME_TRIMMED_BOTTOM_VID_PATH, time_trim_bottom_vid_method_str) # PUT BACK !!!!!!!!!
 
-    # print(f"{SCALED_BOTTOM_VID_PATH=}")
+    # # get remaining dims to be filled by bottom_vid
+    # new_bottom_vid_dim_tup = (scaled_top_vid_dims_tup[0], vid_dim_tup[1] - scaled_top_vid_dims_tup[1])
+    # print(f"{new_bottom_vid_dim_tup=}")
 
-    veu.scale_vid(new_bottom_vid_dim_tup, CUSTOM_EDITED_BOTTOM_VID_PATH, SCALED_BOTTOM_VID_PATH) # PUT BACK!!!!!!!!!!!
+    # # Perform custom edit to bottom vid
+    # # - This can be different depending on custom_edit_bottom_vid_method_str to best match the type of vid on bottom
+    # # - This is done before final scaling (making bottom vid bigger or smaller) because this edit might not be
+    # #   pixel-perfect and the final bottom scale will stretch the vid a tiny bit if needed to fit pixels
+    # custom_edit_bottom_vid(new_bottom_vid_dim_tup, TIME_TRIMMED_BOTTOM_VID_PATH, CUSTOM_EDITED_BOTTOM_VID_PATH, custom_edit_bottom_vid_method_str) # PUT BACK !!!!!!!
 
-    # Make stacked vid
-    veu.stack_vids(SCALED_TOP_VID_PATH, SCALED_BOTTOM_VID_PATH, out_vid_path) # PUT BACK!!!!!!!!!
+    # # print(f"{SCALED_BOTTOM_VID_PATH=}")
+
+    # veu.scale_vid(new_bottom_vid_dim_tup, CUSTOM_EDITED_BOTTOM_VID_PATH, SCALED_BOTTOM_VID_PATH) # PUT BACK!!!!!!!!!!!
+
+    # # Make stacked vid
+    # veu.stack_vids(SCALED_TOP_VID_PATH, SCALED_BOTTOM_VID_PATH, out_vid_path) # PUT BACK!!!!!!!!!
 
 
 if __name__ == "__main__":

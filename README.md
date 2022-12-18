@@ -17,14 +17,22 @@ pip install bs4
 pip install PyQtWebEngine
 pip install pytube
 
+# subtitle
+
+pip install pvleopard
+
 # Probably answer for yt dl but needs api key
 - https://www.geeksforgeeks.org/download-youtube-videos-or-whole-playlist-with-python/
+- - https://www.4kdownload.com/-1uvr6/video-downloader
+- 
 
 
 
+pip install --upgrade google-api-python-client
 
+pip install --upgrade google-auth-oauthlib google-auth-httplib2
 
-
+api key in email/drive
 
 
 

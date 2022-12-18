@@ -5,6 +5,7 @@ import cv2
 import subprocess
 from pathlib import Path
 import ffmpeg
+import pvleopard
 from sms.file_system_utils import file_system_utils as fsu
 
 # pip install ffmpeg
@@ -142,6 +143,28 @@ def crop_vid(w,h,x,y,in_vid_path, out_vid_path):
     print(f"Running: {cmd}...")
     subprocess.call(cmd, shell = True)
 
+def remove_black_boarder_from_vid(in_vid_path, out_vid_path):
+    # # cmd = f"ffmpeg -ss 90 -i {in_vid_path} -vframes 10 -vf cropdetect -f null -"
+    # # cmd = f"ffmpeg -ss 90 -i {in_vid_path} -vframes 10 -vf cropdetect -f {out_vid_path} -"
+    # cmd = f"ffmpeg -ss 90 -i {in_vid_path} -vframes 10 -vf cropdetect -f C:\\Users\\Brandon\\Documents\\Personal_Projects\\tik_tb_vid_big_data\\working\\black_boarder_coords.txt"
+    # cmd_out = subprocess.Popen(cmd, stdout = subprocess.PIPE, bufsize = 1, shell = True)
+    # print(f"@@@@@@@@@@{cmd_out=}")
+
+    command = ['ffprobe', '-v', 'error', '-show_entries', 'stream=width,height', '-of', 'csv=p=0', in_vid_path]
+
+    # Run the ffprobe command and capture the output
+    output = subprocess.run(command, capture_output=True)
+
+    # Split the output into lines and parse the width and height values
+    lines = output.stdout.decode().strip().split('\n')
+    width, height = map(int, lines[-1].split(','))
+    print(f"{width=}")
+    print(f"{height=}")
+    print(f"{lines=}")
+
+
+def add_subtitles_to_vid__speech_to_text(in_vid_path, out_vid_path):
+
 
 
 # def remove_watermark(in_vid_path, out_vid_path):
@@ -185,5 +208,8 @@ def crop_vid(w,h,x,y,in_vid_path, out_vid_path):
 
 
 if __name__ == "__main__":
-    import make_tb_vid
-    make_tb_vid.make_tb_vid()
+    # import make_tb_vid
+    # make_tb_vid.make_tb_vid()
+
+    import batch_make_tb_vids
+    batch_make_tb_vids.main()
