@@ -15,7 +15,8 @@ CUSTOM_EDITED_TOP_VID_PATH = os.path.join(BIG_DATA_WORKING_DIR_PATH, "custom_edi
 CUSTOM_EDITED_BOTTOM_VID_PATH = os.path.join(BIG_DATA_WORKING_DIR_PATH, "custom_edited_bottom_vid.mp4")
 SCALED_BOTTOM_VID_PATH = os.path.join(BIG_DATA_WORKING_DIR_PATH, "scaled_bottom_vid_after_custom_edit.mp4")
 TIME_TRIMMED_BOTTOM_VID_PATH = os.path.join(BIG_DATA_WORKING_DIR_PATH, "time_trimmed_bottom_vid.mp4")
-STACKED_VID_PATH = os.path.join(BIG_DATA_WORKING_DIR_PATH, "stacked.mp4")
+
+TEST_FINAL_OUT_STACKED_VID_PATH = os.path.join(BIG_DATA_WORKING_DIR_PATH, "stacked.mp4")
 
 
 def get_w_matched_new_vid_dims(vid_dim_tup, vid_path):
@@ -123,7 +124,7 @@ def custom_edit_bottom_vid(vid_dim_tup_to_match_aspect_ratio, in_vid_path, out_v
 
 
 
-def make_tb_vid(vid_dim_tup, top_vid_path, bottom_vid_path, use_audio_from_str = "top", 
+def make_tb_vid(vid_dim_tup, out_file_path, top_vid_path, bottom_vid_path, use_audio_from_str = "top", 
                 time_trim_bottom_vid_method_str = "from_rand_start", 
                 custom_edit_bottom_vid_method_str = "trim_sides",
                 custom_edit_top_vid_method_str = "trim_sides_by_percent",
@@ -181,11 +182,11 @@ def make_tb_vid(vid_dim_tup, top_vid_path, bottom_vid_path, use_audio_from_str =
     veu.stack_vids(SCALED_TOP_VID_PATH, SCALED_BOTTOM_VID_PATH, STACKED_VID_PATH) # PUT BACK!!!!!!!!!
 
 
+if __name__ == "__main__":
+    print("init")
+    vid_dim_tup = (1080,1920) # W x H
+    out_vid_path = TEST_FINAL_OUT_STACKED_VID_PATH
+    top_vid_path = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\tik_tb_vid_big_data\\og_clips\\fg_test_short.mp4"
+    bottom_vid_path = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\tik_tb_vid_big_data\\og_clips\\mc_test.mp4"
 
-
-print("init")
-vid_dim_tup = (1080,1920) # W x H
-top_vid_path = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\tik_tb_vid_big_data\\og_clips\\fg_test_short.mp4"
-bottom_vid_path = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\tik_tb_vid_big_data\\og_clips\\mc_test.mp4"
-
-make_tb_vid(vid_dim_tup, top_vid_path, bottom_vid_path, use_audio_from_str = "top")
+    make_tb_vid(vid_dim_tup, out_vid_path, top_vid_path, bottom_vid_path, use_audio_from_str = "top")
