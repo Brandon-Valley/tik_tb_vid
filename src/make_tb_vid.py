@@ -124,7 +124,7 @@ def custom_edit_bottom_vid(vid_dim_tup_to_match_aspect_ratio, in_vid_path, out_v
 
 
 
-def make_tb_vid(vid_dim_tup, out_file_path, top_vid_path, bottom_vid_path, use_audio_from_str = "top", 
+def make_tb_vid(vid_dim_tup, out_vid_path, top_vid_path, bottom_vid_path, use_audio_from_str = "top", 
                 time_trim_bottom_vid_method_str = "from_rand_start", 
                 custom_edit_bottom_vid_method_str = "trim_sides",
                 custom_edit_top_vid_method_str = "trim_sides_by_percent",

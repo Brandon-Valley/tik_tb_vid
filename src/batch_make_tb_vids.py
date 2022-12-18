@@ -37,7 +37,7 @@ def make_fg_mcpark_trim_sides_by_percent_tb_vid(trim_sides_by_percent, og_vid_pa
     og_vid_file_name = fsu.get_basename_from_path(og_vid_path, include_ext = False)
 
     make_tb_vid(vid_dim_tup = TIK_BEST_VID_DIM_TUP,
-                out_file_path = os.path.join(vid_edits_dir_path, og_vid_file_name + f"_tsbp_{trim_sides_by_percent}.mp4"),
+                out_vid_path = os.path.join(vid_edits_dir_path, og_vid_file_name + f"_tsbp_{trim_sides_by_percent}.mp4"),
                 top_vid_path = og_vid_path,
                 bottom_vid_path = MC_PARK_VID_PATH,
                 use_audio_from_str = "top",
