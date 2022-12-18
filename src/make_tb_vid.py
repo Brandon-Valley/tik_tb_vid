@@ -184,9 +184,15 @@ def make_tb_vid(vid_dim_tup, out_vid_path, top_vid_path, bottom_vid_path, use_au
 
 if __name__ == "__main__":
     print("init")
-    vid_dim_tup = (1080,1920) # W x H
-    out_vid_path = TEST_FINAL_OUT_STACKED_VID_PATH
-    top_vid_path = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\tik_tb_vid_big_data\\og_clips\\fg_test_short.mp4"
-    bottom_vid_path = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\tik_tb_vid_big_data\\og_clips\\mc_test.mp4"
+    import batch_make_tb_vids
+    batch_make_tb_vids.main()
 
-    make_tb_vid(vid_dim_tup, out_vid_path, top_vid_path, bottom_vid_path, use_audio_from_str = "top")
+
+
+
+    # vid_dim_tup = (1080,1920) # W x H
+    # out_vid_path = TEST_FINAL_OUT_STACKED_VID_PATH
+    # top_vid_path = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\tik_tb_vid_big_data\\og_clips\\fg_test_short.mp4"
+    # bottom_vid_path = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\tik_tb_vid_big_data\\og_clips\\mc_test.mp4"
+
+    # make_tb_vid(vid_dim_tup, out_vid_path, top_vid_path, bottom_vid_path, use_audio_from_str = "top")

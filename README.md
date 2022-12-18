@@ -17,7 +17,8 @@ pip install bs4
 pip install PyQtWebEngine
 pip install pytube
 
-
+# Probably answer for yt dl but needs api key
+- https://www.geeksforgeeks.org/download-youtube-videos-or-whole-playlist-with-python/
 
 
 
