@@ -7,6 +7,11 @@ from pathlib import Path
 import ffmpeg
 from sms.file_system_utils import file_system_utils as fsu
 
+# pip install ffmpeg
+# pip install moviepy
+from moviepy.editor import VideoFileClip
+
+
 def get_vid_dims(vid_file_path):
 #     vid = cv2.VideoCapture(vid_file_path)
 #     return (vid.get(cv2.CAP_PROP_FRAME_WIDTH), vid.get(cv2.CAP_PROP_FRAME_HEIGHT))
@@ -136,3 +141,49 @@ def crop_vid(w,h,x,y,in_vid_path, out_vid_path):
     cmd = f'ffmpeg -i {in_vid_path} -vf "crop={w}:{h}:{x}:{y}" {out_vid_path}'
     print(f"Running: {cmd}...")
     subprocess.call(cmd, shell = True)
+
+
+
+# def remove_watermark(in_vid_path, out_vid_path):
+
+#     # Open the video file
+#     clip = VideoFileClip(in_vid_path)
+
+#     # Extract a series of frames from the video
+#     frames = [frame for frame in clip.iter_frames()]
+
+#     # Loop through the frames
+#     for frame in frames:
+#         # # Convert the frame to grayscale
+#         # gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+#         # Use image processing techniques to detect the watermark
+#         # and remove it from the frame
+#         # Loop through the frames
+#         for frame_num, frame in enumerate(frames):
+#             # Convert the frame to grayscale
+#             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+#             # Use image processing techniques to detect the watermark
+#             # and remove it from the frame
+#             thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)[1]
+#             contours = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+#             contours = contours[0] if len(contours) == 2 else contours[1]
+#             for c in contours:
+#                 x,y,w,h = cv2.boundingRect(c)
+#                 cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 255, 255), -1)
+
+#             # Save the modified frame
+#             cv2.imwrite(f'C:\\Users\\Brandon\\Documents\\Personal_Projects\\tik_tb_vid_big_data\\working\\remove_watermark_frames\\modified_frame_{frame_num}.jpg', frame)
+
+#         # # Save the modified frame
+#         # cv2.imwrite('modified_frame.jpg', frame)
+
+
+#         # Use ffmpeg to stitch the frames back together into a new video
+#         subprocess.run(['ffmpeg', '-framerate', '30', '-i', 'C:\\Users\\Brandon\\Documents\\Personal_Projects\\tik_tb_vid_big_data\\working\\modified_frame_%d.jpg', '-c:v', 'libx264', '-r', '30', 'output.mp4'])
+
+
+if __name__ == "__main__":
+    import make_tb_vid
+    make_tb_vid.make_tb_vid()

@@ -1,6 +1,7 @@
 import vid_edit_utils as veu
 from pathlib import Path
 import os
+import random
 SCRIPT_PARENT_DIR_PATH = os.path.abspath(os.path.dirname(__file__)) # src
 REPO_ROOT_DIR_PATH = os.path.dirname(SCRIPT_PARENT_DIR_PATH)
 BIG_DATA_DIR_PATH = os.path.join(os.path.dirname(REPO_ROOT_DIR_PATH), "tik_tb_vid_big_data")
@@ -31,14 +32,21 @@ def time_trim_bottom_vid_to_match_top(top_vid_path, bottom_vid_path, out_vid_pat
     top_vid_len = veu.get_vid_length(top_vid_path)
     bottom_vid_len = veu.get_vid_length(bottom_vid_path)
 
-    if top_vid_len > bottom_vid_len:
+    if top_vid_len > bottom_vid_len + 1: # added + 1 for max_start_time just to make sure no fraction breaks anything
         raise Exception("ERROR: Behavior not implemented for top vid being longer than bottom vid, maybe could loop?")
 
     # Get time_tup of (start_time, end_time) for trimming bottom vid based on time_trim_bottom_vid_method_str
     if time_trim_bottom_vid_method_str == "from_start":
         time_tup = (0, top_vid_len)
+
     elif time_trim_bottom_vid_method_str == "from_rand_start":
-        raise Exception("ERROR: Behavior not implemented - from_rand_start")
+        max_start_time = int(bottom_vid_len - top_vid_len) - 1
+
+        rand_start_time = random.randint(0,max_start_time)
+        end_time = rand_start_time + top_vid_len
+        time_tup = (rand_start_time, end_time)
+
+
     elif time_trim_bottom_vid_method_str == "loop":
         raise Exception("ERROR: Behavior not implemented - loop")
     else:
@@ -82,7 +90,7 @@ def custom_edit_bottom_vid(vid_dim_tup_to_match_aspect_ratio, in_vid_path, out_v
 
 
 
-def make_tb_vid(vid_dim_tup, top_vid_path, bottom_vid_path, use_audio_from_str = "top", time_trim_bottom_vid_method_str = "from_start", custom_edit_bottom_vid_method_str = "trim_sides"):
+def make_tb_vid(vid_dim_tup, top_vid_path, bottom_vid_path, use_audio_from_str = "top", time_trim_bottom_vid_method_str = "from_rand_start", custom_edit_bottom_vid_method_str = "trim_sides"):
     """ - Zoom top vid in or out to fit vid_dim_tup,
         - Do same for bottom vid with remaining dims?
         - Assume top_vid is already the length you want
@@ -94,10 +102,12 @@ def make_tb_vid(vid_dim_tup, top_vid_path, bottom_vid_path, use_audio_from_str =
             - MORE???
     """
 
+    # veu.remove_watermark(top_vid_path, "C:\\Users\\Brandon\\Documents\\Personal_Projects\\tik_tb_vid_big_data\\working\\removed_watermark_test.mp4")
+
     new_top_vid_dim_tup = get_w_matched_new_vid_dims(vid_dim_tup, top_vid_path)
     print(f"{new_top_vid_dim_tup=}")
 
-    veu.scale_vid(new_top_vid_dim_tup, top_vid_path, SCALED_TOP_VID_PATH) # PUT BACK!!!!!!!!!!!
+    # veu.scale_vid(new_top_vid_dim_tup, top_vid_path, SCALED_TOP_VID_PATH) # PUT BACK!!!!!!!!!!!
 
     # scale_vid() can change h by 1 pixel, get fresh dims to be safe
     scaled_top_vid_dims_tup = veu.get_vid_dims(SCALED_TOP_VID_PATH)
