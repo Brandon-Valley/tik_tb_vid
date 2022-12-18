@@ -94,15 +94,22 @@ def _trim_sides_of_vid_by_percent(trim_percent, in_vid_path, out_vid_path):
     in_vid_w = in_vid_dim_tup[0]
     in_vid_h = in_vid_dim_tup[1]
 
+    num_pixels_wide_to_remove_total = int(in_vid_w / trim_percent)
     # num_pixels_to_trim_total = int(in_vid_w / trim_percent)
-    num_pixels_to_keep_total = in_vid_w - int(in_vid_w / trim_percent)
-    # print(f"{num_pixels_to_trim_total=}")
-    print(f"{num_pixels_to_keep_total=}")
-    num_pixels_to_trim_from_both_sides = int(int(in_vid_w / trim_percent) / 2)
-    print(f"{num_pixels_to_trim_from_both_sides=}")
+    num_pixels_wide_to_keep_total = in_vid_w - num_pixels_wide_to_remove_total
+    # print(f"{num_pixels_wide_to_keep_total=}")
+    # print(f"{(in_vid_w - num_pixels_wide_to_remove_total)=}")
 
-    # veu.crop_vid(w = num_pixels_to_trim_total,
-    veu.crop_vid(w = num_pixels_to_keep_total,
+    # print(f"{num_pixels_to_trim_total=}")
+    # print(f"{num_pixels_wide_to_remove_total=}")
+    # print(f"{int(in_vid_w / trim_percent)=}")
+    # print(f"{in_vid_w=}")
+    # print(f"{trim_percent=}")
+    # num_pixels_to_trim_from_both_sides = int(int(in_vid_w / trim_percent) / 2)
+    num_pixels_to_trim_from_both_sides = int(num_pixels_wide_to_remove_total / 2)
+    # print(f"{num_pixels_to_trim_from_both_sides=}")
+
+    veu.crop_vid(w = num_pixels_wide_to_keep_total,
                  h = in_vid_h,
                  x = num_pixels_to_trim_from_both_sides,
                  y = 0,
@@ -145,7 +152,9 @@ def make_tb_vid(vid_dim_tup, out_vid_path, top_vid_path, bottom_vid_path, use_au
     # - This can be different depending on custom_edit_top_vid_method_str to best match the type of vid on top
     # - This is done before final scaling (making top vid bigger or smaller) because this edit might not be
     #   pixel-perfect and the final top scale will stretch the vid a tiny bit if needed to fit pixels
-    custom_edit_top_vid(top_vid_path, CUSTOM_EDITED_TOP_VID_PATH, custom_edit_top_vid_method_str, trim_top_vid_sides_percent)
+    # custom_edit_top_vid(top_vid_path, CUSTOM_EDITED_TOP_VID_PATH, custom_edit_top_vid_method_str, trim_top_vid_sides_percent) # PUT BACK !!!!!!!!!
+    # print(f"{veu.get_vid_dims(CUSTOM_EDITED_TOP_VID_PATH)=}")
+
 
     # new_top_vid_dim_tup = get_w_matched_new_vid_dims(vid_dim_tup, top_vid_path)
     new_top_vid_dim_tup = get_w_matched_new_vid_dims(vid_dim_tup, CUSTOM_EDITED_TOP_VID_PATH)
