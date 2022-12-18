@@ -16,3 +16,21 @@ pip install opencv-contrib-python
 pip install bs4
 pip install PyQtWebEngine
 pip install pytube
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
