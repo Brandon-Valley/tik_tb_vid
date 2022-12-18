@@ -25,7 +25,7 @@ def get_w_matched_new_vid_dims(vid_dim_tup, vid_path):
     og_vid_dim_aspect_ratio = og_vid_dim_tup[1] / og_vid_dim_tup[0]
     # print(f"{og_vid_dim_aspect_ratio=}")
     new_w = vid_dim_tup[0]
-    new_h = new_w * og_vid_dim_aspect_ratio
+    new_h = int(new_w * og_vid_dim_aspect_ratio)
     # print(f"{og_top_vid_dim_tup}")
     return (new_w, new_h)
 
@@ -149,7 +149,7 @@ def make_tb_vid(vid_dim_tup, out_vid_path, top_vid_path, bottom_vid_path, use_au
 
     # new_top_vid_dim_tup = get_w_matched_new_vid_dims(vid_dim_tup, top_vid_path)
     new_top_vid_dim_tup = get_w_matched_new_vid_dims(vid_dim_tup, CUSTOM_EDITED_TOP_VID_PATH)
-    print(f"{new_top_vid_dim_tup=}")
+    print(f"..........{new_top_vid_dim_tup=}")
 
     veu.scale_vid(new_top_vid_dim_tup, top_vid_path, SCALED_TOP_VID_PATH) # PUT BACK!!!!!!!!!!!
 
