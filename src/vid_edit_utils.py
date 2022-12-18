@@ -12,6 +12,17 @@ from sms.file_system_utils import file_system_utils as fsu
 # pip install moviepy
 from moviepy.editor import VideoFileClip
 
+from PIL import Image
+from PIL import ImageDraw
+
+import PIL.ImageFont
+import PIL.ImageOps 
+
+SCRIPT_PARENT_DIR_PATH = os.path.abspath(os.path.dirname(__file__)) # src
+TEMP_FRAME_IMGS_DIR_PATH = os.path.join(SCRIPT_PARENT_DIR_PATH, "ignore__temp_frame_imgs")
+START_FRAME_IMG_PATH = os.path.join(TEMP_FRAME_IMGS_DIR_PATH, "start_grey_frame_img.jpg")
+END_FRAME_IMG_PATH = os.path.join(TEMP_FRAME_IMGS_DIR_PATH, "end_grey_frame_img.jpg")
+
 
 def get_vid_dims(vid_file_path):
 #     vid = cv2.VideoCapture(vid_file_path)
@@ -143,28 +154,160 @@ def crop_vid(w,h,x,y,in_vid_path, out_vid_path):
     print(f"Running: {cmd}...")
     subprocess.call(cmd, shell = True)
 
-def remove_black_boarder_from_vid(in_vid_path, out_vid_path):
-    # # cmd = f"ffmpeg -ss 90 -i {in_vid_path} -vframes 10 -vf cropdetect -f null -"
-    # # cmd = f"ffmpeg -ss 90 -i {in_vid_path} -vframes 10 -vf cropdetect -f {out_vid_path} -"
-    # cmd = f"ffmpeg -ss 90 -i {in_vid_path} -vframes 10 -vf cropdetect -f C:\\Users\\Brandon\\Documents\\Personal_Projects\\tik_tb_vid_big_data\\working\\black_boarder_coords.txt"
-    # cmd_out = subprocess.Popen(cmd, stdout = subprocess.PIPE, bufsize = 1, shell = True)
-    # print(f"@@@@@@@@@@{cmd_out=}")
+def remove_black_boarder_from_vid_if_needed(in_vid_path, out_vid_path):
+    # # # cmd = f"ffmpeg -ss 90 -i {in_vid_path} -vframes 10 -vf cropdetect -f null -"
+    # # # cmd = f"ffmpeg -ss 90 -i {in_vid_path} -vframes 10 -vf cropdetect -f {out_vid_path} -"
+    # # cmd = f"ffmpeg -ss 90 -i {in_vid_path} -vframes 10 -vf cropdetect -f C:\\Users\\Brandon\\Documents\\Personal_Projects\\tik_tb_vid_big_data\\working\\black_boarder_coords.txt"
+    # # cmd_out = subprocess.Popen(cmd, stdout = subprocess.PIPE, bufsize = 1, shell = True)
+    # # print(f"@@@@@@@@@@{cmd_out=}")
 
-    command = ['ffprobe', '-v', 'error', '-show_entries', 'stream=width,height', '-of', 'csv=p=0', in_vid_path]
+    # command = ['ffprobe', '-v', 'error', '-show_entries', 'stream=width,height', '-of', 'csv=p=0', in_vid_path]
 
-    # Run the ffprobe command and capture the output
-    output = subprocess.run(command, capture_output=True)
+    # # Run the ffprobe command and capture the output
+    # output = subprocess.run(command, capture_output=True)
 
-    # Split the output into lines and parse the width and height values
-    lines = output.stdout.decode().strip().split('\n')
-    width, height = map(int, lines[-1].split(','))
-    print(f"{width=}")
-    print(f"{height=}")
-    print(f"{lines=}")
+    # # Split the output into lines and parse the width and height values
+    # lines = output.stdout.decode().strip().split('\n')
+    # width, height = map(int, lines[-1].split(','))
+    # print(f"{width=}")
+    # print(f"{height=}")
+    # print(f"{lines=}")
+
+    # get crop_coords to remove black boarder (top, bottom, sides) if exists
+
+    # # returns a list of lists showing the rgb value of every pixel in an image
+    # # not very efficient
+    # def _get_pixel_color_grid(input_img):
+    #     in_img_w, in_img_h = input_img.size
+        
+    #     pixel_color_grid = []
+    #     for y in range(in_img_h):
+    #         row_l = []
+    #         for x in range(in_img_w):
+    #             rgb = input_img.getpixel((x,y))
+    #             row_l.append(rgb)
+    #         pixel_color_grid.append(row_l)
+    #     return pixel_color_grid
+
+    def _get_crop_coords_if_needed():
+        ''' If no black border, return False'''
+
+        # Open the video file
+        clip = VideoFileClip(in_vid_path)
+
+        # Extract a series of frames from the video
+        frames = [frame for frame in clip.iter_frames()]
+
+        if (len(frames) < 22):
+            raise Exception("ERROR: No hard reason this cant work, but being lazy and if you hit this then why is vid so short?")
+
+        # Dont check very first or very last frame b/c more likely to be all black
+        grey_start_frame = cv2.cvtColor(frames[10], cv2.COLOR_BGR2GRAY)
+        grey_end_frame = cv2.cvtColor(frames[-10], cv2.COLOR_BGR2GRAY)
+        # cv2.imshow("Frame", grey_start_frame)
+        # cv2.waitKey(0)
+        # cv2.imshow("Frame2", grey_end_frame)
+        # cv2.waitKey(1)
+
+        # Create dirs if not exist
+        fsu.delete_if_exists(START_FRAME_IMG_PATH)
+        Path(START_FRAME_IMG_PATH).parent.mkdir(parents=True, exist_ok=True)
+
+        # Check start frame
+        print(f"Writing grey_start_frame to {START_FRAME_IMG_PATH}...")
+        cv2.imwrite(START_FRAME_IMG_PATH, grey_start_frame)
+        img = Image.open(START_FRAME_IMG_PATH)
+        img_w, img_h = img.size
+
+        # if any of the 4 corners is not black, must not have a black border
+        rgb = img.getpixel((0,0))
+        print(f"{rgb=}")
+
+        rgb = img.getpixel((80,80))
+        print(f"{rgb=}")
+
+        rgb = img.getpixel((40,40))
+        print(f"{rgb=}")
+
+        rgb = img.getpixel((500,300))
+        print(f"{rgb=}")
+
+
+
+    crop_coords = _get_crop_coords_if_needed()
+
+    # If no black border, just return in_vid_path since no other file will be generated
+    if crop_coords == False:
+        print(f'Video does not have a black border: {in_vid_path}')
+        return in_vid_path
+
+    print("Video has a black border of some kind, cropping...")
+
+
+    # # Loop through the frames
+    # for frame in frames:
+    #     # # Convert the frame to grayscale
+    #     # gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+    #     # Use image processing techniques to detect the watermark
+    #     # and remove it from the frame
+    #     # Loop through the frames
+    #     for frame_num, frame in enumerate(frames):
+    #         # Convert the frame to grayscale
+    #         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+
+
+
+
+    # import cv2
+    # import numpy as np
+
+    # # read image
+    # img = cv2.imread('gymnast.png')
+
+    # # convert to grayscale
+    # gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+
+    # # invert gray image
+    # gray = 255 - gray
+
+    # # gaussian blur
+    # blur = cv2.GaussianBlur(gray, (3,3), 0)
+
+    # # threshold
+    # thresh = cv2.threshold(blur,236,255,cv2.THRESH_BINARY)[1]
+
+    # # apply close and open morphology to fill tiny black and white holes
+    # kernel = np.ones((5,5), np.uint8)
+    # thresh = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, kernel)
+    # thresh = cv2.morphologyEx(thresh, cv2.MORPH_OPEN, kernel)
+
+    # # invert thresh
+    # thresh = 255 -thresh
+
+    # # get contours (presumably just one around the nonzero pixels) 
+    # # then crop it to bounding rectangle
+    # contours = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    # contours = contours[0] if len(contours) == 2 else contours[1]
+    # cntr = contours[0]
+    # x,y,w,h = cv2.boundingRect(cntr)
+    # crop = img[y:y+h, x:x+w]
+
+    # cv2.imshow("IMAGE", img)
+    # cv2.imshow("THRESH", thresh)
+    # cv2.imshow("CROP", crop)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
+
+    # # save cropped image
+    # cv2.imwrite('gymnast_crop.png',crop)
+    # cv2.imwrite('gymnast_crop.png',crop)
+
 
 
 def add_subtitles_to_vid__speech_to_text(in_vid_path, out_vid_path):
-
+    pass
 
 
 # def remove_watermark(in_vid_path, out_vid_path):

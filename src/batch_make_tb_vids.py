@@ -17,7 +17,8 @@ TEST_OUT_DIR_PATH = os.path.join(PERSONAL_PROJECTS_DIR_PATH, "DELETE_THIS__VIDS"
 
 BIG_DATA_DIR_PATH = os.path.join(os.path.dirname(REPO_ROOT_DIR_PATH), "tik_tb_vid_big_data")
 BIG_DATA_OG_CLIPS_DIR_PATH = os.path.join(BIG_DATA_DIR_PATH, "og_clips")
-MC_PARK_VID_PATH = os.path.join(BIG_DATA_OG_CLIPS_DIR_PATH, "mc_test.mp4")
+# MC_PARK_VID_PATH = os.path.join(BIG_DATA_OG_CLIPS_DIR_PATH, "mc_test.mp4")
+MC_PARK_VID_PATH = os.path.join(BIG_DATA_OG_CLIPS_DIR_PATH, "ignore", "mc_parkour_1hr_20min_Trim.mp4")
 
 # BIG_DATA_OG_CLIPS_DIR_PATH = os.path.join(BIG_DATA_DIR_PATH, "og_clips")
 BIG_DATA_WORKING_DIR_PATH = os.path.join(BIG_DATA_DIR_PATH, "working")
