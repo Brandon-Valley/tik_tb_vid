@@ -288,8 +288,23 @@ def remove_black_border_from_vid_if_needed(in_vid_path, out_vid_path):
     #         pixel_color_grid.append(row_l)
     #     return pixel_color_grid
 
-    def _get_crop_coords_if_needed():
-        ''' If no black border, return False'''
+    def _get_crop_coords_if_needed(color_rgb):
+        ''' If no border of color_rgb, return False'''
+        # TODO put in PIL utils
+        def _get_crop_coords_from_border_size_d(img, border_size_d):
+            """
+                Gets coords for cropping out border with output of _get_color_border_size_d_fast__if_exists()
+                - w: Width of the output video (out_w). It defaults to iw. This expression is evaluated only once during the filter configuration.
+                - h: Height of the output video (out_h). It defaults to ih. This expression is evaluated only once during the filter configuration.
+                - x: Horizontal position, in the input video, of the left edge of the output video. It defaults to (in_w-out_w)/2. This expression is evaluated per-frame.
+                - y: Vertical position, in the input video, of the top edge of the output video. It defaults to (in_h-out_h)/2. This expression is evaluated per-frame.
+            """
+            print(f"in _get_crop_coords_from_border_size_d() - {img.size=}")
+            w = img.width - border_size_d["left"] - border_size_d["right"]
+            h = img.height - border_size_d["top"] - border_size_d["bottom"]
+            x = border_size_d["left"]
+            y = border_size_d["top"]
+            return w,h,x,y
 
         # TODO put in PIL utils
         def _get_color_border_size_d_fast__if_exists(img, color_rgb, ret_false_if_no_border = True):
@@ -362,22 +377,19 @@ def remove_black_border_from_vid_if_needed(in_vid_path, out_vid_path):
                 img.getpixel((img_w - 1, img_h - 1)) != 0:
                 return ret_on_no_border
 
-            # print(f"{_get_horz_num_pixels_until_not_color_multiple_lines(img, y_pos_l = _get_const_y_pos_l(img.height), color_rgb = 0)=}")
-            # exit()
-            # print(img.size)
-            # print(img.width)
-            # img = img.rotate(90)
-            # print(img.size)
-            # print(img.width)
-            # exit()
-
+            # img.show()
             border_size_d["left"]   = _get_horz_num_pixels_until_not_color_multiple_lines(img                         , _get_const_y_pos_l(img.height), color_rgb)
             border_size_d["top"]    = _get_horz_num_pixels_until_not_color_multiple_lines(img.rotate(90,  expand=True), _get_const_y_pos_l(img.width ), color_rgb)
             border_size_d["right"]  = _get_horz_num_pixels_until_not_color_multiple_lines(img.rotate(180, expand=True), _get_const_y_pos_l(img.height), color_rgb)
             border_size_d["bottom"] = _get_horz_num_pixels_until_not_color_multiple_lines(img.rotate(270, expand=True), _get_const_y_pos_l(img.width ), color_rgb)
+            # img.show()
 
-            # pprint("border_size_d:")
-            # pprint(border_size_d)
+
+            # border_size_d["top"]    = _get_horz_num_pixels_until_not_color_multiple_lines(img.rotate(90,  expand=True), _get_const_y_pos_l(img.width ), color_rgb)
+            # border_size_d["right"]  = _get_horz_num_pixels_until_not_color_multiple_lines(img.rotate(90, expand=True), _get_const_y_pos_l(img.height), color_rgb)
+            # border_size_d["bottom"] = _get_horz_num_pixels_until_not_color_multiple_lines(img.rotate(90, expand=True), _get_const_y_pos_l(img.width ), color_rgb)
+            # border_size_d["left"]   = _get_horz_num_pixels_until_not_color_multiple_lines(img.rotate(90, expand=True), _get_const_y_pos_l(img.height), color_rgb)
+
 
             # ret_on_no_border if all sides 0
             for size in border_size_d.values():
@@ -385,7 +397,6 @@ def remove_black_border_from_vid_if_needed(in_vid_path, out_vid_path):
                     return border_size_d
             return ret_on_no_border
 
-            # return border
 
         # Open the video file
         clip = VideoFileClip(in_vid_path)
@@ -425,29 +436,17 @@ def remove_black_border_from_vid_if_needed(in_vid_path, out_vid_path):
         # if  img.getpixel((0,0)) != 0 or \
         #     img.getpixel((img_w - 1, img_h - 1)) != 0:
         #     return False
-        border_size_d = _get_color_border_size_d_fast__if_exists(img, color_rgb = BLACK_COLOR_RGB, ret_false_if_no_border = True)
+        # border_size_d = _get_color_border_size_d_fast__if_exists(img, color_rgb = BLACK_COLOR_RGB, ret_false_if_no_border = True)
+        border_size_d = _get_color_border_size_d_fast__if_exists(img, color_rgb, ret_false_if_no_border = True)
         pprint("border_size_d:")
         pprint(border_size_d)
-        # print(f"{_get_horz_num_pixels_until_not_color_multiple_lines(img, y_pos_l = [30, 200, 500], color_rgb = 0)=}")
-        # print(f"{_get_horz_num_pixels_until_not_color_multiple_lines(img, y_pos_l = _get_const_y_pos_l(img.height), color_rgb = 0)=}")
-        # exit()
-        # rgb = img.getpixel((0,0))
-        # print(f"{rgb=}")
+        
+        if not border_size_d:
+            return False
 
-        # rgb = img.getpixel((80,80))
-        # print(f"{rgb=}")
+        return tuple(_get_crop_coords_from_border_size_d(img, border_size_d))
 
-        # rgb = img.getpixel((40,40))
-        # print(f"{rgb=}")
-
-        # rgb = img.getpixel((500,300))
-        # print(f"{rgb=}")
-
-
-
-
-
-    crop_coords = _get_crop_coords_if_needed()
+    crop_coords = _get_crop_coords_if_needed(BLACK_COLOR_RGB)
 
     # If no black border, just return in_vid_path since no other file will be generated
     if crop_coords == False:
@@ -455,6 +454,18 @@ def remove_black_border_from_vid_if_needed(in_vid_path, out_vid_path):
         return in_vid_path
 
     print("Video has a black border of some kind, cropping...")
+    print(f"{crop_coords=}")
+
+    w,h,x,y = crop_coords
+    print(w,h,x,y)
+    print(f"{get_vid_dims(in_vid_path)=}")
+    print(f"Cropping vid at {in_vid_path=} to {out_vid_path=}...")
+    crop_vid(w, h, x, y, in_vid_path, out_vid_path)
+    print(f"{in_vid_path=}")
+    print(w,h,x,y)
+    print(f"{get_vid_dims(in_vid_path)=}")
+
+    return out_vid_path
 
 
     # # Loop through the frames
