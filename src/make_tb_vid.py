@@ -149,6 +149,7 @@ def make_tb_vid(vid_dim_tup, out_vid_path, top_vid_path, bottom_vid_path, use_au
     # veu.remove_watermark(top_vid_path, "C:\\Users\\Brandon\\Documents\\Personal_Projects\\tik_tb_vid_big_data\\working\\removed_watermark_test.mp4")
 
     veu.remove_black_boarder_from_vid_if_needed(top_vid_path, "C:\\Users\\Brandon\\Documents\\Personal_Projects\\tik_tb_vid_big_data\\working\\black_bars_test.mp4")
+    # veu.trim_black_boarders(top_vid_path, "C:\\Users\\Brandon\\Documents\\Personal_Projects\\tik_tb_vid_big_data\\working\\black_bars_test.mp4")
 
 
     # # Perform custom edit to top vid

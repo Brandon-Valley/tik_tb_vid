@@ -36,6 +36,8 @@ api key in email/drive
 
 
 
+transcript site from HackerNews, saw some CLI thing - https://youtubetranscript.com/
+
 
 
 
