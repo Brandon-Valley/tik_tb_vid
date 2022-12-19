@@ -159,7 +159,7 @@ def crop_vid(w, h, x, y, in_vid_path, out_vid_path):
 import cv2
 import moviepy.editor as mp
 
-def trim_black_boarders(in_vid_path, out_vid_path):
+def trim_black_borders(in_vid_path, out_vid_path):
 
     def _get_bounding_rect_for_frame(frame):
         """ Returns False if len(contours) > 0 """
@@ -251,12 +251,12 @@ def trim_black_boarders(in_vid_path, out_vid_path):
     #     y: Vertical position, in the input video, of the top edge of the output video. It defaults to (in_h-out_h)/2. This expression is evaluated per-frame."""
 
 
-# trim_black_boarders('in_vid.mp4', 'out_vid.mp4')
+# trim_black_borders('in_vid.mp4', 'out_vid.mp4')
 
-def remove_black_boarder_from_vid_if_needed(in_vid_path, out_vid_path):
+def remove_black_border_from_vid_if_needed(in_vid_path, out_vid_path):
     # # # cmd = f"ffmpeg -ss 90 -i {in_vid_path} -vframes 10 -vf cropdetect -f null -"
     # # # cmd = f"ffmpeg -ss 90 -i {in_vid_path} -vframes 10 -vf cropdetect -f {out_vid_path} -"
-    # # cmd = f"ffmpeg -ss 90 -i {in_vid_path} -vframes 10 -vf cropdetect -f C:\\Users\\Brandon\\Documents\\Personal_Projects\\tik_tb_vid_big_data\\working\\black_boarder_coords.txt"
+    # # cmd = f"ffmpeg -ss 90 -i {in_vid_path} -vframes 10 -vf cropdetect -f C:\\Users\\Brandon\\Documents\\Personal_Projects\\tik_tb_vid_big_data\\working\\black_border_coords.txt"
     # # cmd_out = subprocess.Popen(cmd, stdout = subprocess.PIPE, bufsize = 1, shell = True)
     # # print(f"@@@@@@@@@@{cmd_out=}")
 
@@ -272,7 +272,7 @@ def remove_black_boarder_from_vid_if_needed(in_vid_path, out_vid_path):
     # print(f"{height=}")
     # print(f"{lines=}")
 
-    # get crop_coords to remove black boarder (top, bottom, sides) if exists
+    # get crop_coords to remove black border (top, bottom, sides) if exists
 
     # # returns a list of lists showing the rgb value of every pixel in an image
     # # not very efficient
@@ -292,13 +292,13 @@ def remove_black_boarder_from_vid_if_needed(in_vid_path, out_vid_path):
         ''' If no black border, return False'''
 
         # TODO put in PIL utils
-        def _get_color_border_size_d_fast__if_exists(img, color_rgb, ret_false_if_no_boarder = True):
+        def _get_color_border_size_d_fast__if_exists(img, color_rgb, ret_false_if_no_border = True):
             """
              Returns dict of # pixel size of color border of each size.
                - Does this fast by checking individual lines to find min border instead of each individual pixel.
                  - B/c of this, false positives possible, change _get_const_y_pos_l() to adjust if needed
-               - Focused on returning False in the case there is no boarder ASAP
-               - If ret_false_if_no_boarder == False, will just return normal boarder_size_d with all values = 0
+               - Focused on returning False in the case there is no border ASAP
+               - If ret_false_if_no_border == False, will just return normal border_size_d with all values = 0
             """
                                 
             def _get_const_y_pos_l(img_h):
@@ -346,20 +346,46 @@ def remove_black_boarder_from_vid_if_needed(in_vid_path, out_vid_path):
                 return img_w
 
 
-            # # If any of the 4 corners is not black, must not have a black border # TMP remove?
-            # if  img.getpixel((0,0)) != 0 or \
-            #     img.getpixel((img_w,0)) != 0 or \
-            #     img.getpixel((0,img_h)) != 0 or \
-            #     img.getpixel((img_w,img_h)) != 0:
-            #     return False
+            border_size_d = {"left"  : 0,
+                            "bottom": 0,
+                            "right"  : 0,
+                            "top" : 0}
+
+            # Set what happens if no color border is found
+            if ret_false_if_no_border:
+                ret_on_no_border = False
+            else:
+                ret_on_no_border = border_size_d
 
             # If corners of img is not given color, must not have border of given color
             if  img.getpixel((0,0)) != 0 or \
                 img.getpixel((img_w - 1, img_h - 1)) != 0:
-                return False
+                return ret_on_no_border
 
-            print(f"{_get_horz_num_pixels_until_not_color_multiple_lines(img, y_pos_l = _get_const_y_pos_l(img.height), color_rgb = 0)=}")
-            exit()
+            # print(f"{_get_horz_num_pixels_until_not_color_multiple_lines(img, y_pos_l = _get_const_y_pos_l(img.height), color_rgb = 0)=}")
+            # exit()
+            # print(img.size)
+            # print(img.width)
+            # img = img.rotate(90)
+            # print(img.size)
+            # print(img.width)
+            # exit()
+
+            border_size_d["left"]   = _get_horz_num_pixels_until_not_color_multiple_lines(img                         , _get_const_y_pos_l(img.height), color_rgb)
+            border_size_d["top"]    = _get_horz_num_pixels_until_not_color_multiple_lines(img.rotate(90,  expand=True), _get_const_y_pos_l(img.width ), color_rgb)
+            border_size_d["right"]  = _get_horz_num_pixels_until_not_color_multiple_lines(img.rotate(180, expand=True), _get_const_y_pos_l(img.height), color_rgb)
+            border_size_d["bottom"] = _get_horz_num_pixels_until_not_color_multiple_lines(img.rotate(270, expand=True), _get_const_y_pos_l(img.width ), color_rgb)
+
+            # pprint("border_size_d:")
+            # pprint(border_size_d)
+
+            # ret_on_no_border if all sides 0
+            for size in border_size_d.values():
+                if size != 0:
+                    return border_size_d
+            return ret_on_no_border
+
+            # return border
 
         # Open the video file
         clip = VideoFileClip(in_vid_path)
@@ -399,8 +425,8 @@ def remove_black_boarder_from_vid_if_needed(in_vid_path, out_vid_path):
         # if  img.getpixel((0,0)) != 0 or \
         #     img.getpixel((img_w - 1, img_h - 1)) != 0:
         #     return False
-        border_size_d = _get_color_border_size_d_fast__if_exists(img, color_rgb = BLACK_COLOR_RGB, ret_false_if_no_boarder = True)
-        pprint("border_size_d")
+        border_size_d = _get_color_border_size_d_fast__if_exists(img, color_rgb = BLACK_COLOR_RGB, ret_false_if_no_border = True)
+        pprint("border_size_d:")
         pprint(border_size_d)
         # print(f"{_get_horz_num_pixels_until_not_color_multiple_lines(img, y_pos_l = [30, 200, 500], color_rgb = 0)=}")
         # print(f"{_get_horz_num_pixels_until_not_color_multiple_lines(img, y_pos_l = _get_const_y_pos_l(img.height), color_rgb = 0)=}")
