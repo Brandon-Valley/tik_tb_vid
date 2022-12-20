@@ -27,13 +27,29 @@ END_FRAME_IMG_PATH = os.path.join(TEMP_FRAME_IMGS_DIR_PATH, "end_grey_frame_img.
 
 BLACK_COLOR_RGB = 0
 
+####################################################################################################
+# Get data about given vid
+####################################################################################################
+
 def get_vid_dims(vid_file_path):
     vid = cv2.VideoCapture(vid_file_path)
     vid_w_float, vid_h_float = vid.get(cv2.CAP_PROP_FRAME_WIDTH), vid.get(cv2.CAP_PROP_FRAME_HEIGHT)
     return(int(vid_w_float), int(vid_h_float))
 
+def get_vid_length(filename):
+    result = subprocess.run(["ffprobe", "-v", "error", "-show_entries",
+                             "format=duration", "-of",
+                             "default=noprint_wrappers=1:nokey=1", filename],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT)
+    return float(result.stdout)
+
+####################################################################################################
+# Vid Time Related
+####################################################################################################
 
 def trim_vid(in_vid_path, out_vid_path, time_tup):
+    """ Trims vid time from time_tup[0] to time_tup[1]"""
     def ffmpeg_extract_subclip(filename, t1, t2, target_name=None):
         """ Makes a new video file playing video file ``filename`` between
         the times ``t1`` and ``t2``. """
@@ -52,6 +68,10 @@ def trim_vid(in_vid_path, out_vid_path, time_tup):
 
     ffmpeg_extract_subclip(in_vid_path, time_tup[0], time_tup[1], target_name=out_vid_path)
     return out_vid_path
+
+####################################################################################################
+# Resize Vid
+####################################################################################################
 
 # TODO look into better quality? ffmpeg -i input.mp4 -vf scale=1280:720 -preset slow -crf 18 output.mp4    https://ottverse.com/change-resolution-resize-scale-video-using-ffmpeg/
 def scale_vid(new_vid_dim_tup, in_vid_path, out_vid_path):
@@ -80,15 +100,9 @@ def scale_vid(new_vid_dim_tup, in_vid_path, out_vid_path):
 
     return out_vid_path
 
-
-def get_vid_length(filename):
-    result = subprocess.run(["ffprobe", "-v", "error", "-show_entries",
-                             "format=duration", "-of",
-                             "default=noprint_wrappers=1:nokey=1", filename],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT)
-    return float(result.stdout)
-
+####################################################################################################
+# Combine multiple vids into new vid
+####################################################################################################
 
 def stack_vids(top_vid_path, bottom_vid_path, out_vid_path):
     top_vid_dim_tup = get_vid_dims(top_vid_path)
@@ -135,7 +149,9 @@ def stack_vids(top_vid_path, bottom_vid_path, out_vid_path):
     subprocess.call(cmd, shell = True)
     return out_vid_path
 
-
+####################################################################################################
+# Crop vid
+####################################################################################################
 
 def crop_vid(w, h, x, y, in_vid_path, out_vid_path):
     """
@@ -154,7 +170,7 @@ def crop_vid(w, h, x, y, in_vid_path, out_vid_path):
     subprocess.call(cmd, shell = True)
 
 
-def remove_black_border_from_vid_if_needed(in_vid_path, out_vid_path):
+def crop_black_border_from_vid_if_needed(in_vid_path, out_vid_path):
     def _get_crop_coords_if_needed(color_rgb):
         ''' If no border of color_rgb, return False'''
         # TODO put in PIL utils
