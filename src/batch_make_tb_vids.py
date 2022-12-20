@@ -42,9 +42,9 @@ def make_fg_mcpark_crop_sides_by_percent_tb_vid(crop_sides_by_percent, og_vid_pa
                 bottom_vid_path = MC_PARK_VID_PATH,
                 use_audio_from_str = "top",
                 time_trim_bottom_vid_method_str = "from_rand_start",
-                custom_edit_bottom_vid_method_str = "trim_sides",
+                custom_edit_bottom_vid_method_str = "crop_sides",
                 custom_edit_top_vid_method_str = "crop_sides_by_percent",
-                trim_top_vid_sides_percent = crop_sides_by_percent)
+                crop_top_vid_sides_percent = crop_sides_by_percent)
 
 def batch_make_tb_vids(og_vids_dir_path, out_dir_path):
 
