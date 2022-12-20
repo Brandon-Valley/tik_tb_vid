@@ -134,14 +134,17 @@ def make_tb_vid(vid_dim_tup, out_vid_path, top_vid_path, bottom_vid_path, use_au
             - LOOP???
             - MORE???
     """
+    cur_top_vid_path = top_vid_path
 
-    top_no_black_borders_vid_path = veu.remove_black_border_from_vid_if_needed(top_vid_path, "C:\\Users\\Brandon\\Documents\\Personal_Projects\\tik_tb_vid_big_data\\working\\black_bars_test.mp4")
+    # TODO make it delete old border vid no matter what
+    # Will not create new vid if no black borders need to be removed
+    cur_top_vid_path = veu.remove_black_border_from_vid_if_needed(cur_top_vid_path, "C:\\Users\\Brandon\\Documents\\Personal_Projects\\tik_tb_vid_big_data\\working\\black_bars_test.mp4")
 
     # Perform custom edit to top vid
     # - This can be different depending on custom_edit_top_vid_method_str to best match the type of vid on top
     # - This is done before final scaling (making top vid bigger or smaller) because this edit might not be
     #   pixel-perfect and the final top scale will stretch the vid a tiny bit if needed to fit pixels
-    custom_edit_top_vid(top_no_black_borders_vid_path, CUSTOM_EDITED_TOP_VID_PATH, custom_edit_top_vid_method_str, trim_top_vid_sides_percent) # PUT BACK !!!!!!!!!
+    custom_edit_top_vid(cur_top_vid_path, CUSTOM_EDITED_TOP_VID_PATH, custom_edit_top_vid_method_str, trim_top_vid_sides_percent) # PUT BACK !!!!!!!!!
 
 
     # new_top_vid_dim_tup = get_w_matched_new_vid_dims(vid_dim_tup, top_vid_path)
