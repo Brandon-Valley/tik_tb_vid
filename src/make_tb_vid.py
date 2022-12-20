@@ -37,7 +37,7 @@ def _scale_vid_to_new_w_matched_vid_dims(vid_dim_tup, in_vid_path, out_vid_path)
     return scaled_vid_path
 
 
-def custom_edit_top_vid(in_vid_path, out_vid_path, custom_edit_vid_method_str, crop_sides_percent):
+def _custom_edit_top_vid(in_vid_path, out_vid_path, custom_edit_vid_method_str, crop_sides_percent):
 
     if custom_edit_vid_method_str == "None":
         raise Exception("ERROR: not implemented yet")
@@ -77,7 +77,7 @@ def _get_and_check__final_top_vid__dims_tup__and__len(vid_dim_tup, final_top_vid
 # Bottom Vid Exclusive
 ####################################################################################################
 
-def time_trim_bottom_vid_to_match_top(final_top_vid_len, bottom_vid_path, out_vid_path, time_trim_bottom_vid_method_str):
+def _time_trim_bottom_vid_to_match_top(final_top_vid_len, bottom_vid_path, out_vid_path, time_trim_bottom_vid_method_str):
     bottom_vid_len = veu.get_vid_length(bottom_vid_path)
 
     if final_top_vid_len > bottom_vid_len + 1: # added + 1 for max_start_time just to make sure no fraction breaks anything
@@ -102,7 +102,7 @@ def time_trim_bottom_vid_to_match_top(final_top_vid_len, bottom_vid_path, out_vi
     trimmed_vid_path = veu.trim_vid(bottom_vid_path, out_vid_path, time_tup)
     return trimmed_vid_path
 
-def custom_edit_bottom_vid(vid_dim_tup_to_match_aspect_ratio, in_vid_path, out_vid_path, custom_edit_vid_method_str):
+def _custom_edit_bottom_vid(vid_dim_tup_to_match_aspect_ratio, in_vid_path, out_vid_path, custom_edit_vid_method_str):
     if custom_edit_vid_method_str == "crop_sides":
         veu.crop_sides_of_vid_to_match_aspect_ratio(vid_dim_tup_to_match_aspect_ratio, in_vid_path, out_vid_path)
     else:
@@ -141,7 +141,7 @@ def make_tb_vid(vid_dim_tup, out_vid_path, top_vid_path, bottom_vid_path, use_au
     # - This can be different depending on custom_edit_top_vid_method_str to best match the type of vid on top
     # - This is done before final scaling (making top vid bigger or smaller) because this edit might not be
     #   pixel-perfect and the final top scale will stretch the vid a tiny bit if needed to fit pixels
-    cur_top_vid_path = custom_edit_top_vid(cur_top_vid_path, CUSTOM_EDITED_TOP_VID_PATH, custom_edit_top_vid_method_str, crop_top_vid_sides_percent) # PUT BACK !!!!!!!!!
+    cur_top_vid_path = _custom_edit_top_vid(cur_top_vid_path, CUSTOM_EDITED_TOP_VID_PATH, custom_edit_top_vid_method_str, crop_top_vid_sides_percent) # PUT BACK !!!!!!!!!
 
     cur_top_vid_path = _scale_vid_to_new_w_matched_vid_dims(vid_dim_tup, cur_top_vid_path, SCALED_TOP_VID_PATH) # PUT BACK!!!!!!!!!!!
 
@@ -155,7 +155,7 @@ def make_tb_vid(vid_dim_tup, out_vid_path, top_vid_path, bottom_vid_path, use_au
     cur_bottom_vid_path = bottom_vid_path
 
     # Trim bottom vid time to match top
-    cur_bottom_vid_path = time_trim_bottom_vid_to_match_top(final_top_vid_len, cur_bottom_vid_path, TIME_TRIMMED_BOTTOM_VID_PATH, time_trim_bottom_vid_method_str) # PUT BACK !!!!!!!!!
+    cur_bottom_vid_path = _time_trim_bottom_vid_to_match_top(final_top_vid_len, cur_bottom_vid_path, TIME_TRIMMED_BOTTOM_VID_PATH, time_trim_bottom_vid_method_str) # PUT BACK !!!!!!!!!
 
     # get remaining dims to be filled by bottom_vid
     new_bottom_vid_dim_tup = (final_top_vid_dims_tup[0], vid_dim_tup[1] - final_top_vid_dims_tup[1])
@@ -165,7 +165,7 @@ def make_tb_vid(vid_dim_tup, out_vid_path, top_vid_path, bottom_vid_path, use_au
     # - This can be different depending on custom_edit_bottom_vid_method_str to best match the type of vid on bottom
     # - This is done before final scaling (making bottom vid bigger or smaller) because this edit might not be
     #   pixel-perfect and the final bottom scale will stretch the vid a tiny bit if needed to fit pixels
-    cur_bottom_vid_path = custom_edit_bottom_vid(new_bottom_vid_dim_tup, cur_bottom_vid_path, CUSTOM_EDITED_BOTTOM_VID_PATH, custom_edit_bottom_vid_method_str) # PUT BACK !!!!!!!
+    cur_bottom_vid_path = _custom_edit_bottom_vid(new_bottom_vid_dim_tup, cur_bottom_vid_path, CUSTOM_EDITED_BOTTOM_VID_PATH, custom_edit_bottom_vid_method_str) # PUT BACK !!!!!!!
 
     cur_bottom_vid_path = veu.scale_vid(new_bottom_vid_dim_tup, cur_bottom_vid_path, SCALED_BOTTOM_VID_PATH) # PUT BACK!!!!!!!!!!!
 
