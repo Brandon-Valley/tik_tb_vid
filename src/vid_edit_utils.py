@@ -77,6 +77,8 @@ def scale_vid(new_vid_dim_tup, in_vid_path, out_vid_path):
     print(f"Running: {cmd}...")
     subprocess.call(cmd, shell = True)
 
+    return out_vid_path
+
 
 def get_vid_length(filename):
     result = subprocess.run(["ffprobe", "-v", "error", "-show_entries",

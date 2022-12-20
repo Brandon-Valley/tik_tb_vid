@@ -110,6 +110,7 @@ def custom_edit_top_vid(in_vid_path, out_vid_path, custom_edit_vid_method_str, t
         _trim_sides_of_vid_by_percent(trim_sides_percent, in_vid_path, out_vid_path)
     else:
         raise Exception(f"ERROR: invalid {custom_edit_vid_method_str=}")
+    return out_vid_path
 
 def custom_edit_bottom_vid(vid_dim_tup_to_match_aspect_ratio, in_vid_path, out_vid_path, custom_edit_vid_method_str):
     if custom_edit_vid_method_str == "trim_sides":
@@ -144,14 +145,14 @@ def make_tb_vid(vid_dim_tup, out_vid_path, top_vid_path, bottom_vid_path, use_au
     # - This can be different depending on custom_edit_top_vid_method_str to best match the type of vid on top
     # - This is done before final scaling (making top vid bigger or smaller) because this edit might not be
     #   pixel-perfect and the final top scale will stretch the vid a tiny bit if needed to fit pixels
-    custom_edit_top_vid(cur_top_vid_path, CUSTOM_EDITED_TOP_VID_PATH, custom_edit_top_vid_method_str, trim_top_vid_sides_percent) # PUT BACK !!!!!!!!!
+    cur_top_vid_path = custom_edit_top_vid(cur_top_vid_path, CUSTOM_EDITED_TOP_VID_PATH, custom_edit_top_vid_method_str, trim_top_vid_sides_percent) # PUT BACK !!!!!!!!!
 
 
     # new_top_vid_dim_tup = get_w_matched_new_vid_dims(vid_dim_tup, top_vid_path)
-    new_top_vid_dim_tup = get_w_matched_new_vid_dims(vid_dim_tup, CUSTOM_EDITED_TOP_VID_PATH)
+    new_top_vid_dim_tup = get_w_matched_new_vid_dims(vid_dim_tup, cur_top_vid_path)
     print(f"..........{new_top_vid_dim_tup=}")
 
-    veu.scale_vid(new_top_vid_dim_tup, CUSTOM_EDITED_TOP_VID_PATH, SCALED_TOP_VID_PATH) # PUT BACK!!!!!!!!!!!
+    cur_top_vid_path = veu.scale_vid(new_top_vid_dim_tup, cur_top_vid_path, SCALED_TOP_VID_PATH) # PUT BACK!!!!!!!!!!!
 
     # scale_vid() can change h by 1 pixel, get fresh dims to be safe
     scaled_top_vid_dims_tup = veu.get_vid_dims(SCALED_TOP_VID_PATH)
