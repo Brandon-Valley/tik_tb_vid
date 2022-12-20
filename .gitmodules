@@ -1,3 +1,6 @@
 [submodule "src/sms/file_system_utils"]
 	path = src/sms/file_system_utils
 	url = https://github.com/Brandon-Valley/file_system_utils.git
+[submodule "src/sms/pil_utils"]
+	path = src/sms/pil_utils
+	url = https://github.com/Brandon-Valley/pil_utils.git
