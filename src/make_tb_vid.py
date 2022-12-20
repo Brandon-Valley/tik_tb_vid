@@ -52,13 +52,13 @@ def time_trim_bottom_vid_to_match_top(top_vid_path, bottom_vid_path, out_vid_pat
         end_time = rand_start_time + top_vid_len
         time_tup = (rand_start_time, end_time)
 
-
     elif time_trim_bottom_vid_method_str == "loop":
         raise Exception("ERROR: Behavior not implemented - loop")
     else:
         raise Exception(f"ERROR: invalid {time_trim_bottom_vid_method_str=}")
 
-    veu.trim_vid(bottom_vid_path, out_vid_path, time_tup)
+    trimmed_vid_path = veu.trim_vid(bottom_vid_path, out_vid_path, time_tup)
+    return trimmed_vid_path
 
 
 def _trim_sides_of_vid_to_match_aspect_ratio(vid_dim_tup_to_match_aspect_ratio, in_vid_path, out_vid_path):
@@ -139,6 +139,10 @@ def make_tb_vid(vid_dim_tup, out_vid_path, top_vid_path, bottom_vid_path, use_au
             - LOOP???
             - MORE???
     """
+    ##################
+    # Process top vid
+    ##################
+
     cur_top_vid_path = top_vid_path
 
     # TODO make it delete old border vid no matter what
@@ -161,8 +165,13 @@ def make_tb_vid(vid_dim_tup, out_vid_path, top_vid_path, bottom_vid_path, use_au
     if scaled_top_vid_dims_tup[0] != vid_dim_tup[0]:
         raise Exception(f"ERROR: width should not have changed, {scaled_top_vid_dims_tup=}, {vid_dim_tup=}")
 
+    #####################
+    # Process bottom vid
+    #####################
+    cur_bottom_vid_path = bottom_vid_path
+
     # Trim bottom vid time to match top
-    time_trim_bottom_vid_to_match_top(SCALED_TOP_VID_PATH, bottom_vid_path, TIME_TRIMMED_BOTTOM_VID_PATH, time_trim_bottom_vid_method_str) # PUT BACK !!!!!!!!!
+    cur_bottom_vid_path = time_trim_bottom_vid_to_match_top(SCALED_TOP_VID_PATH, cur_bottom_vid_path, TIME_TRIMMED_BOTTOM_VID_PATH, time_trim_bottom_vid_method_str) # PUT BACK !!!!!!!!!
 
     # get remaining dims to be filled by bottom_vid
     new_bottom_vid_dim_tup = (scaled_top_vid_dims_tup[0], vid_dim_tup[1] - scaled_top_vid_dims_tup[1])

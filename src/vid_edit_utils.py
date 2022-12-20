@@ -51,6 +51,7 @@ def trim_vid(in_vid_path, out_vid_path, time_tup):
         subprocess_call(cmd)
 
     ffmpeg_extract_subclip(in_vid_path, time_tup[0], time_tup[1], targetname=out_vid_path)
+    return out_vid_path
 
 # TODO look into better quality? ffmpeg -i input.mp4 -vf scale=1280:720 -preset slow -crf 18 output.mp4    https://ottverse.com/change-resolution-resize-scale-video-using-ffmpeg/
 def scale_vid(new_vid_dim_tup, in_vid_path, out_vid_path):
