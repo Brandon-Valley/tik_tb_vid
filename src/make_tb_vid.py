@@ -37,17 +37,17 @@ def _scale_vid_to_new_w_matched_vid_dims(vid_dim_tup, in_vid_path, out_vid_path)
     return scaled_vid_path
 
 
-def custom_edit_top_vid(in_vid_path, out_vid_path, custom_edit_vid_method_str, trim_sides_percent):
+def custom_edit_top_vid(in_vid_path, out_vid_path, custom_edit_vid_method_str, crop_sides_percent):
 
     if custom_edit_vid_method_str == "None":
         raise Exception("ERROR: not implemented yet")
 
-    # Good for trimming non-important sides of shows like Family Guy
-    #     - Hacky work-around, proper machine vision to identify characters/important things, signs,
+    # Good for cropping non-important sides of shows like Family Guy
+    #   - Hacky work-around, proper machine vision to identify characters/important things, signs,
     #     etc. is the true solution to this.
-    #     - trim_percent =  10, 20, 30, etc.
-    elif custom_edit_vid_method_str == "trim_sides_by_percent":
-        veu.crop_sides_of_vid_by_percent(trim_sides_percent, in_vid_path, out_vid_path)
+    #   - trim_percent =  10, 20, 30, etc.
+    elif custom_edit_vid_method_str == "crop_sides_by_percent":
+        veu.crop_sides_of_vid_by_percent(crop_sides_percent, in_vid_path, out_vid_path)
 
     else:
         raise Exception(f"ERROR: invalid {custom_edit_vid_method_str=}")
@@ -88,7 +88,7 @@ def time_trim_bottom_vid_to_match_top(final_top_vid_len, bottom_vid_path, out_vi
 
 def custom_edit_bottom_vid(vid_dim_tup_to_match_aspect_ratio, in_vid_path, out_vid_path, custom_edit_vid_method_str):
     if custom_edit_vid_method_str == "trim_sides":
-        veu.trim_sides_of_vid_to_match_aspect_ratio(vid_dim_tup_to_match_aspect_ratio, in_vid_path, out_vid_path)
+        veu.crop_sides_of_vid_to_match_aspect_ratio(vid_dim_tup_to_match_aspect_ratio, in_vid_path, out_vid_path)
     else:
         raise Exception(f"ERROR: invalid {custom_edit_vid_method_str=}")
     return out_vid_path
@@ -114,7 +114,7 @@ def _get_and_check__final_top_vid__dims_tup__and__len(vid_dim_tup, final_top_vid
 def make_tb_vid(vid_dim_tup, out_vid_path, top_vid_path, bottom_vid_path, use_audio_from_str = "top",
                 time_trim_bottom_vid_method_str = "from_rand_start",
                 custom_edit_bottom_vid_method_str = "trim_sides",
-                custom_edit_top_vid_method_str = "trim_sides_by_percent",
+                custom_edit_top_vid_method_str = "crop_sides_by_percent",
                 trim_top_vid_sides_percent = 10):
     """ - Zoom top vid in or out to fit vid_dim_tup,
         - Do same for bottom vid with remaining dims?

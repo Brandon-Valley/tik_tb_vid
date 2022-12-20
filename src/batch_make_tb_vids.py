@@ -32,19 +32,19 @@ TIME_TRIMMED_BOTTOM_VID_PATH = os.path.join(BIG_DATA_WORKING_DIR_PATH, "time_tri
 STACKED_VID_PATH = os.path.join(BIG_DATA_WORKING_DIR_PATH, "stacked.mp4")
 
 
-def make_fg_mcpark_trim_sides_by_percent_tb_vid(trim_sides_by_percent, og_vid_path, vid_edits_dir_path):
+def make_fg_mcpark_crop_sides_by_percent_tb_vid(crop_sides_by_percent, og_vid_path, vid_edits_dir_path):
 
     og_vid_file_name = fsu.get_basename_from_path(og_vid_path, include_ext = False)
 
     make_tb_vid(vid_dim_tup = TIK_BEST_VID_DIM_TUP,
-                out_vid_path = os.path.join(vid_edits_dir_path, og_vid_file_name + f"_tsbp_{trim_sides_by_percent}.mp4"),
+                out_vid_path = os.path.join(vid_edits_dir_path, og_vid_file_name + f"_tsbp_{crop_sides_by_percent}.mp4"),
                 top_vid_path = og_vid_path,
                 bottom_vid_path = MC_PARK_VID_PATH,
                 use_audio_from_str = "top",
                 time_trim_bottom_vid_method_str = "from_rand_start",
                 custom_edit_bottom_vid_method_str = "trim_sides",
-                custom_edit_top_vid_method_str = "trim_sides_by_percent",
-                trim_top_vid_sides_percent = trim_sides_by_percent)
+                custom_edit_top_vid_method_str = "crop_sides_by_percent",
+                trim_top_vid_sides_percent = crop_sides_by_percent)
 
 def batch_make_tb_vids(og_vids_dir_path, out_dir_path):
 
@@ -59,12 +59,12 @@ def batch_make_tb_vids(og_vids_dir_path, out_dir_path):
         fsu.delete_if_exists(vid_edits_dir_path)
         fsu.make_dir_if_not_exist(vid_edits_dir_path)
 
-        # make_fg_mcpark_trim_sides_by_percent_tb_vid(5, og_vid_path, vid_edits_dir_path)
-        # make_fg_mcpark_trim_sides_by_percent_tb_vid(10, og_vid_path, vid_edits_dir_path)
-        # make_fg_mcpark_trim_sides_by_percent_tb_vid(15, og_vid_path, vid_edits_dir_path)
-        # make_fg_mcpark_trim_sides_by_percent_tb_vid(20, og_vid_path, vid_edits_dir_path)
-        # make_fg_mcpark_trim_sides_by_percent_tb_vid(25, og_vid_path, vid_edits_dir_path)
-        make_fg_mcpark_trim_sides_by_percent_tb_vid(30, og_vid_path, vid_edits_dir_path)
+        # make_fg_mcpark_crop_sides_by_percent_tb_vid(5, og_vid_path, vid_edits_dir_path)
+        # make_fg_mcpark_crop_sides_by_percent_tb_vid(10, og_vid_path, vid_edits_dir_path)
+        # make_fg_mcpark_crop_sides_by_percent_tb_vid(15, og_vid_path, vid_edits_dir_path)
+        # make_fg_mcpark_crop_sides_by_percent_tb_vid(20, og_vid_path, vid_edits_dir_path)
+        # make_fg_mcpark_crop_sides_by_percent_tb_vid(25, og_vid_path, vid_edits_dir_path)
+        make_fg_mcpark_crop_sides_by_percent_tb_vid(30, og_vid_path, vid_edits_dir_path)
 
 def main():
     batch_make_tb_vids(BIG_DATA_PLAYLIST_OG_VIDS_DIR_PATH, FINAL_OUT_VID_DIR_PATH)
