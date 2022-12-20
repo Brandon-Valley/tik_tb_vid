@@ -245,40 +245,6 @@ def crop_vid(w, h, x, y, in_vid_path, out_vid_path):
 # # trim_black_borders('in_vid.mp4', 'out_vid.mp4')
 
 def remove_black_border_from_vid_if_needed(in_vid_path, out_vid_path):
-    # # # cmd = f"ffmpeg -ss 90 -i {in_vid_path} -vframes 10 -vf cropdetect -f null -"
-    # # # cmd = f"ffmpeg -ss 90 -i {in_vid_path} -vframes 10 -vf cropdetect -f {out_vid_path} -"
-    # # cmd = f"ffmpeg -ss 90 -i {in_vid_path} -vframes 10 -vf cropdetect -f C:\\Users\\Brandon\\Documents\\Personal_Projects\\tik_tb_vid_big_data\\working\\black_border_coords.txt"
-    # # cmd_out = subprocess.Popen(cmd, stdout = subprocess.PIPE, bufsize = 1, shell = True)
-    # # print(f"@@@@@@@@@@{cmd_out=}")
-
-    # command = ['ffprobe', '-v', 'error', '-show_entries', 'stream=width,height', '-of', 'csv=p=0', in_vid_path]
-
-    # # Run the ffprobe command and capture the output
-    # output = subprocess.run(command, capture_output=True)
-
-    # # Split the output into lines and parse the width and height values
-    # lines = output.stdout.decode().strip().split('\n')
-    # width, height = map(int, lines[-1].split(','))
-    # print(f"{width=}")
-    # print(f"{height=}")
-    # print(f"{lines=}")
-
-    # get crop_coords to remove black border (top, bottom, sides) if exists
-
-    # # returns a list of lists showing the rgb value of every pixel in an image
-    # # not very efficient
-    # def _get_pixel_color_grid(input_img):
-    #     in_img_w, in_img_h = input_img.size
-        
-    #     pixel_color_grid = []
-    #     for y in range(in_img_h):
-    #         row_l = []
-    #         for x in range(in_img_w):
-    #             rgb = input_img.getpixel((x,y))
-    #             row_l.append(rgb)
-    #         pixel_color_grid.append(row_l)
-    #     return pixel_color_grid
-
     def _get_crop_coords_if_needed(color_rgb):
         ''' If no border of color_rgb, return False'''
         # TODO put in PIL utils
@@ -349,7 +315,7 @@ def remove_black_border_from_vid_if_needed(in_vid_path, out_vid_path):
                 return min_num_pixels_until_not_color
 
                 # If get to end of img, means line of color_rgb goes all the way across
-                return img_w
+                return  # TODO should this be removed?>>>>>>>?>>>>?????
 
 
             border_size_d = {"left"  : 0,
@@ -368,19 +334,10 @@ def remove_black_border_from_vid_if_needed(in_vid_path, out_vid_path):
                 img.getpixel((img_w - 1, img_h - 1)) != 0:
                 return ret_on_no_border
 
-            # img.show()
             border_size_d["left"]   = _get_horz_num_pixels_until_not_color_multiple_lines(img                         , _get_const_y_pos_l(img.height), color_rgb)
             border_size_d["top"]    = _get_horz_num_pixels_until_not_color_multiple_lines(img.rotate(90,  expand=True), _get_const_y_pos_l(img.width ), color_rgb)
             border_size_d["right"]  = _get_horz_num_pixels_until_not_color_multiple_lines(img.rotate(180, expand=True), _get_const_y_pos_l(img.height), color_rgb)
             border_size_d["bottom"] = _get_horz_num_pixels_until_not_color_multiple_lines(img.rotate(270, expand=True), _get_const_y_pos_l(img.width ), color_rgb)
-            # img.show()
-
-
-            # border_size_d["top"]    = _get_horz_num_pixels_until_not_color_multiple_lines(img.rotate(90,  expand=True), _get_const_y_pos_l(img.width ), color_rgb)
-            # border_size_d["right"]  = _get_horz_num_pixels_until_not_color_multiple_lines(img.rotate(90, expand=True), _get_const_y_pos_l(img.height), color_rgb)
-            # border_size_d["bottom"] = _get_horz_num_pixels_until_not_color_multiple_lines(img.rotate(90, expand=True), _get_const_y_pos_l(img.width ), color_rgb)
-            # border_size_d["left"]   = _get_horz_num_pixels_until_not_color_multiple_lines(img.rotate(90, expand=True), _get_const_y_pos_l(img.height), color_rgb)
-
 
             # ret_on_no_border if all sides 0
             for size in border_size_d.values():
@@ -400,11 +357,7 @@ def remove_black_border_from_vid_if_needed(in_vid_path, out_vid_path):
 
         # Dont check very first or very last frame b/c more likely to be all black
         grey_start_frame = cv2.cvtColor(frames[10], cv2.COLOR_BGR2GRAY)
-        grey_end_frame = cv2.cvtColor(frames[-10], cv2.COLOR_BGR2GRAY)
-        # cv2.imshow("Frame", grey_start_frame)
-        # cv2.waitKey(0)
-        # cv2.imshow("Frame2", grey_end_frame)
-        # cv2.waitKey(1)
+        grey_end_frame = cv2.cvtColor(frames[-10], cv2.COLOR_BGR2GRAY) # TODO Check more frames?
 
         # Create dirs if not exist
         fsu.delete_if_exists(START_FRAME_IMG_PATH)
@@ -416,18 +369,6 @@ def remove_black_border_from_vid_if_needed(in_vid_path, out_vid_path):
         img = Image.open(START_FRAME_IMG_PATH)
         img_w, img_h = img.size
 
-        # # # If any of the 4 corners is not black, must not have a black border # TMP remove?
-        # # if  img.getpixel((0,0)) != 0 or \
-        # #     img.getpixel((img_w,0)) != 0 or \
-        # #     img.getpixel((0,img_h)) != 0 or \
-        # #     img.getpixel((img_w,img_h)) != 0:
-        # #     return False
-
-        # # If corners of img is not given color, must not have border of given color
-        # if  img.getpixel((0,0)) != 0 or \
-        #     img.getpixel((img_w - 1, img_h - 1)) != 0:
-        #     return False
-        # border_size_d = _get_color_border_size_d_fast__if_exists(img, color_rgb = BLACK_COLOR_RGB, ret_false_if_no_border = True)
         border_size_d = _get_color_border_size_d_fast__if_exists(img, color_rgb, ret_false_if_no_border = True)
         pprint("border_size_d:")
         pprint(border_size_d)
@@ -457,112 +398,6 @@ def remove_black_border_from_vid_if_needed(in_vid_path, out_vid_path):
     print(f"{get_vid_dims(in_vid_path)=}")
 
     return out_vid_path
-
-
-    # # Loop through the frames
-    # for frame in frames:
-    #     # # Convert the frame to grayscale
-    #     # gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-
-    #     # Use image processing techniques to detect the watermark
-    #     # and remove it from the frame
-    #     # Loop through the frames
-    #     for frame_num, frame in enumerate(frames):
-    #         # Convert the frame to grayscale
-    #         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-
-
-
-
-
-    # import cv2
-    # import numpy as np
-
-    # # read image
-    # img = cv2.imread('gymnast.png')
-
-    # # convert to grayscale
-    # gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
-
-    # # invert gray image
-    # gray = 255 - gray
-
-    # # gaussian blur
-    # blur = cv2.GaussianBlur(gray, (3,3), 0)
-
-    # # threshold
-    # thresh = cv2.threshold(blur,236,255,cv2.THRESH_BINARY)[1]
-
-    # # apply close and open morphology to fill tiny black and white holes
-    # kernel = np.ones((5,5), np.uint8)
-    # thresh = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, kernel)
-    # thresh = cv2.morphologyEx(thresh, cv2.MORPH_OPEN, kernel)
-
-    # # invert thresh
-    # thresh = 255 -thresh
-
-    # # get contours (presumably just one around the nonzero pixels) 
-    # # then crop it to bounding rectangle
-    # contours = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    # contours = contours[0] if len(contours) == 2 else contours[1]
-    # cntr = contours[0]
-    # x,y,w,h = cv2.boundingRect(cntr)
-    # crop = img[y:y+h, x:x+w]
-
-    # cv2.imshow("IMAGE", img)
-    # cv2.imshow("THRESH", thresh)
-    # cv2.imshow("CROP", crop)
-    # cv2.waitKey(0)
-    # cv2.destroyAllWindows()
-
-    # # save cropped image
-    # cv2.imwrite('gymnast_crop.png',crop)
-    # cv2.imwrite('gymnast_crop.png',crop)
-
-
-
-def add_subtitles_to_vid__speech_to_text(in_vid_path, out_vid_path):
-    pass
-
-
-# def remove_watermark(in_vid_path, out_vid_path):
-
-#     # Open the video file
-#     clip = VideoFileClip(in_vid_path)
-
-#     # Extract a series of frames from the video
-#     frames = [frame for frame in clip.iter_frames()]
-
-#     # Loop through the frames
-#     for frame in frames:
-#         # # Convert the frame to grayscale
-#         # gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-
-#         # Use image processing techniques to detect the watermark
-#         # and remove it from the frame
-#         # Loop through the frames
-#         for frame_num, frame in enumerate(frames):
-#             # Convert the frame to grayscale
-#             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-
-#             # Use image processing techniques to detect the watermark
-#             # and remove it from the frame
-#             thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)[1]
-#             contours = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-#             contours = contours[0] if len(contours) == 2 else contours[1]
-#             for c in contours:
-#                 x,y,w,h = cv2.boundingRect(c)
-#                 cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 255, 255), -1)
-
-#             # Save the modified frame
-#             cv2.imwrite(f'C:\\Users\\Brandon\\Documents\\Personal_Projects\\tik_tb_vid_big_data\\working\\remove_watermark_frames\\modified_frame_{frame_num}.jpg', frame)
-
-#         # # Save the modified frame
-#         # cv2.imwrite('modified_frame.jpg', frame)
-
-
-#         # Use ffmpeg to stitch the frames back together into a new video
-#         subprocess.run(['ffmpeg', '-framerate', '30', '-i', 'C:\\Users\\Brandon\\Documents\\Personal_Projects\\tik_tb_vid_big_data\\working\\modified_frame_%d.jpg', '-c:v', 'libx264', '-r', '30', 'output.mp4'])
 
 
 if __name__ == "__main__":
