@@ -12,7 +12,6 @@ TIK_BEST_VID_DIM_TUP = (1080,1920) # W x H
 SCRIPT_PARENT_DIR_PATH = os.path.abspath(os.path.dirname(__file__)) # src
 REPO_ROOT_DIR_PATH = os.path.dirname(SCRIPT_PARENT_DIR_PATH)
 PERSONAL_PROJECTS_DIR_PATH = os.path.dirname(REPO_ROOT_DIR_PATH)
-# FINAL_OUT_VID_DIR_PATH = os.path.join(PERSONAL_PROJECTS_DIR_PATH, "DELETE_THIS__VIDS",  "fg_pl_tbs__test_output")
 
 BIG_DATA_DIR_PATH = os.path.join(os.path.dirname(REPO_ROOT_DIR_PATH), "tik_tb_vid_big_data")
 BIG_DATA_PLAYLIST_OG_VIDS_DIR_PATH = os.path.join(BIG_DATA_DIR_PATH, "ignore", "playlist_og_clips",  "fg_pl_tbs")
