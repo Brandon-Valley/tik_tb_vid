@@ -184,9 +184,6 @@ def make_tb_vid(vid_dim_tup, out_vid_path, top_vid_path, bottom_vid_path, use_au
     #   pixel-perfect and the final bottom scale will stretch the vid a tiny bit if needed to fit pixels
     cur_bottom_vid_path = custom_edit_bottom_vid(new_bottom_vid_dim_tup, cur_bottom_vid_path, CUSTOM_EDITED_BOTTOM_VID_PATH, custom_edit_bottom_vid_method_str) # PUT BACK !!!!!!!
 
-    # print(f"{SCALED_BOTTOM_VID_PATH=}")
-
-    # veu.scale_vid(new_bottom_vid_dim_tup, CUSTOM_EDITED_BOTTOM_VID_PATH, SCALED_BOTTOM_VID_PATH) # PUT BACK!!!!!!!!!!!
     cur_bottom_vid_path = veu.scale_vid(new_bottom_vid_dim_tup, cur_bottom_vid_path, SCALED_BOTTOM_VID_PATH) # PUT BACK!!!!!!!!!!!
 
     #########################################################
@@ -194,7 +191,7 @@ def make_tb_vid(vid_dim_tup, out_vid_path, top_vid_path, bottom_vid_path, use_au
     #########################################################
     cur_out_vid_path = out_vid_path
 
-    cur_out_vid_path = veu.stack_vids(SCALED_TOP_VID_PATH, SCALED_BOTTOM_VID_PATH, cur_out_vid_path) # PUT BACK!!!!!!!!!
+    cur_out_vid_path = veu.stack_vids(cur_top_vid_path, cur_bottom_vid_path, cur_out_vid_path) # PUT BACK!!!!!!!!!
 
     print(f"Finished Making Top-Bottom Video: {out_vid_path}")
 
