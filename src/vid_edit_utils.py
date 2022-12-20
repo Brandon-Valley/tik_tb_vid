@@ -1,3 +1,5 @@
+import moviepy.editor as mp
+
 from pprint import pprint
 from moviepy.tools import subprocess_call
 from moviepy.config import get_setting
@@ -54,7 +56,7 @@ def trim_vid(in_vid_path, out_vid_path, time_tup):
         
     ffmpeg_extract_subclip(in_vid_path, time_tup[0], time_tup[1], targetname=out_vid_path)
     
-
+# TODO look into better quality? ffmpeg -i input.mp4 -vf scale=1280:720 -preset slow -crf 18 output.mp4    https://ottverse.com/change-resolution-resize-scale-video-using-ffmpeg/
 def scale_vid(new_vid_dim_tup, in_vid_path, out_vid_path):
     """ 
         new_vid_dims = w x h
@@ -78,6 +80,12 @@ def scale_vid(new_vid_dim_tup, in_vid_path, out_vid_path):
     cmd = f'ffmpeg -i {in_vid_path} -vf "scale={w}:{h}" {out_vid_path}'
     print(f"Running: {cmd}...")
     subprocess.call(cmd, shell = True)
+
+
+    # clip = mp.VideoFileClip(in_vid_path)
+    # # clip_resized = clip.resize(height=h) # make the height 360px ( According to moviePy documenation The width is then computed so that the width/height ratio is conserved.)
+    # clip_resized = clip.resize(width=w, height=h) # make the height 360px ( According to moviePy documenation The width is then computed so that the width/height ratio is conserved.)
+    # clip_resized.write_videofile(out_vid_path)
 
 
 def get_vid_length(filename):

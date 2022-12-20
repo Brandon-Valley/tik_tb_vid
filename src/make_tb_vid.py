@@ -148,7 +148,7 @@ def make_tb_vid(vid_dim_tup, out_vid_path, top_vid_path, bottom_vid_path, use_au
     """
     # veu.remove_watermark(top_vid_path, "C:\\Users\\Brandon\\Documents\\Personal_Projects\\tik_tb_vid_big_data\\working\\removed_watermark_test.mp4")
 
-    top_no_black_borders_vid_path = veu.remove_black_border_from_vid_if_needed(top_vid_path, "C:\\Users\\Brandon\\Documents\\Personal_Projects\\tik_tb_vid_big_data\\working\\black_bars_test.mp4")
+    # top_no_black_borders_vid_path = veu.remove_black_border_from_vid_if_needed(top_vid_path, "C:\\Users\\Brandon\\Documents\\Personal_Projects\\tik_tb_vid_big_data\\working\\black_bars_test.mp4")
     # veu.trim_black_borders(top_vid_path, "C:\\Users\\Brandon\\Documents\\Personal_Projects\\tik_tb_vid_big_data\\working\\black_bars_test.mp4")
 
 
@@ -157,7 +157,7 @@ def make_tb_vid(vid_dim_tup, out_vid_path, top_vid_path, bottom_vid_path, use_au
     # - This is done before final scaling (making top vid bigger or smaller) because this edit might not be
     #   pixel-perfect and the final top scale will stretch the vid a tiny bit if needed to fit pixels
     # custom_edit_top_vid(top_vid_path, CUSTOM_EDITED_TOP_VID_PATH, custom_edit_top_vid_method_str, trim_top_vid_sides_percent) # PUT BACK !!!!!!!!!
-    custom_edit_top_vid(top_no_black_borders_vid_path, CUSTOM_EDITED_TOP_VID_PATH, custom_edit_top_vid_method_str, trim_top_vid_sides_percent) # PUT BACK !!!!!!!!!
+    # custom_edit_top_vid(top_no_black_borders_vid_path, CUSTOM_EDITED_TOP_VID_PATH, custom_edit_top_vid_method_str, trim_top_vid_sides_percent) # PUT BACK !!!!!!!!!
     # print(f"{veu.get_vid_dims(CUSTOM_EDITED_TOP_VID_PATH)=}")
 
 
@@ -165,7 +165,8 @@ def make_tb_vid(vid_dim_tup, out_vid_path, top_vid_path, bottom_vid_path, use_au
     new_top_vid_dim_tup = get_w_matched_new_vid_dims(vid_dim_tup, CUSTOM_EDITED_TOP_VID_PATH)
     print(f"..........{new_top_vid_dim_tup=}")
 
-    veu.scale_vid(new_top_vid_dim_tup, top_vid_path, SCALED_TOP_VID_PATH) # PUT BACK!!!!!!!!!!!
+    # veu.scale_vid(new_top_vid_dim_tup, top_vid_path, SCALED_TOP_VID_PATH) # PUT BACK!!!!!!!!!!!
+    veu.scale_vid(new_top_vid_dim_tup, CUSTOM_EDITED_TOP_VID_PATH, SCALED_TOP_VID_PATH) # PUT BACK!!!!!!!!!!!
 
     # scale_vid() can change h by 1 pixel, get fresh dims to be safe
     scaled_top_vid_dims_tup = veu.get_vid_dims(SCALED_TOP_VID_PATH)
