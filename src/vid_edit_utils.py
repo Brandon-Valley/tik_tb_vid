@@ -36,12 +36,16 @@ def get_vid_dims(vid_file_path):
     vid_w_float, vid_h_float = vid.get(cv2.CAP_PROP_FRAME_WIDTH), vid.get(cv2.CAP_PROP_FRAME_HEIGHT)
     return(int(vid_w_float), int(vid_h_float))
 
-def get_vid_length(filename):
+def get_vid_length(filename, error_if_vid_not_exist = True):
+    if error_if_vid_not_exist and not Path(filename).is_file():
+        raise Exception(f"Error: Vid file does not exist: {filename}")
+
     result = subprocess.run(["ffprobe", "-v", "error", "-show_entries",
                              "format=duration", "-of",
                              "default=noprint_wrappers=1:nokey=1", filename],
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT)
+    print(result.stdout)
     return float(result.stdout)
 
 ####################################################################################################
