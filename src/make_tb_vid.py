@@ -18,6 +18,10 @@ TIME_TRIMMED_BOTTOM_VID_PATH = os.path.join(BIG_DATA_WORKING_DIR_PATH, "time_tri
 
 TEST_FINAL_OUT_STACKED_VID_PATH = os.path.join(BIG_DATA_WORKING_DIR_PATH, "stacked.mp4")
 
+####################################################################################################
+# Top Vid Exclusive
+####################################################################################################
+
 def _scale_vid_to_new_w_matched_vid_dims(vid_dim_tup, in_vid_path, out_vid_path):
     """Assumes vid_dim_tup always taller than vid_path"""
     og_vid_dim_tup = veu.get_vid_dims(in_vid_path)
@@ -33,9 +37,45 @@ def _scale_vid_to_new_w_matched_vid_dims(vid_dim_tup, in_vid_path, out_vid_path)
     return scaled_vid_path
 
 
+def custom_edit_top_vid(in_vid_path, out_vid_path, custom_edit_vid_method_str, trim_sides_percent):
+    def _trim_sides_of_vid_by_percent(trim_percent, in_vid_path, out_vid_path):
+        """
+            Good for trimming non-important sides of shows like Family Guy
+            - Hacky work-around, proper machine vision to identify characters/important things, signs,
+            etc. is the true solution to this.
+            - trim_percent =  10, 20, 30, etc.
+        """
+        in_vid_dim_tup = veu.get_vid_dims(in_vid_path)
+        in_vid_w = in_vid_dim_tup[0]
+        in_vid_h = in_vid_dim_tup[1]
+
+        num_pixels_wide_to_remove_total = int(in_vid_w / trim_percent)
+        num_pixels_wide_to_keep_total = in_vid_w - num_pixels_wide_to_remove_total
+        num_pixels_to_trim_from_both_sides = int(num_pixels_wide_to_remove_total / 2)
+
+        veu.crop_vid(w = num_pixels_wide_to_keep_total,
+                    h = in_vid_h,
+                    x = num_pixels_to_trim_from_both_sides,
+                    y = 0,
+                    in_vid_path = in_vid_path, out_vid_path = out_vid_path)
+
+    # custom_edit_top_vid ##################
+    if custom_edit_vid_method_str == "None":
+        raise Exception("ERROR: not implemented yet")
+    if custom_edit_vid_method_str == "trim_sides_by_percent":
+        _trim_sides_of_vid_by_percent(trim_sides_percent, in_vid_path, out_vid_path)
+    else:
+        raise Exception(f"ERROR: invalid {custom_edit_vid_method_str=}")
+    return out_vid_path
+
+
+
+
+####################################################################################################
+# Bottom Vid Exclusive
+####################################################################################################
 
 def time_trim_bottom_vid_to_match_top(final_top_vid_len, bottom_vid_path, out_vid_path, time_trim_bottom_vid_method_str):
-    # top_vid_len = veu.get_vid_length(top_vid_path)
     bottom_vid_len = veu.get_vid_length(bottom_vid_path)
 
     if final_top_vid_len > bottom_vid_len + 1: # added + 1 for max_start_time just to make sure no fraction breaks anything
@@ -61,64 +101,9 @@ def time_trim_bottom_vid_to_match_top(final_top_vid_len, bottom_vid_path, out_vi
     return trimmed_vid_path
 
 
-def _trim_sides_of_vid_to_match_aspect_ratio(vid_dim_tup_to_match_aspect_ratio, in_vid_path, out_vid_path):
-    """ Good for trimming sides of MC Parkour vids while keeping center """
-    in_vid_dim_tup = veu.get_vid_dims(in_vid_path)
-    in_vid_w = in_vid_dim_tup[0]
-    in_vid_h = in_vid_dim_tup[1]
-
-    # print(f"{vid_dim_tup_to_match_aspect_ratio}")
-
-    aspect_ratio = vid_dim_tup_to_match_aspect_ratio[0] / vid_dim_tup_to_match_aspect_ratio[1]
-    # print(f"{aspect_ratio=}")
-
-    # new_vid_h = in_vid_h
-    new_vid_w = in_vid_h * aspect_ratio
-    print(f"new vid dims {new_vid_w} x {in_vid_h}")
-
-    # At this point, h should be the same, only w has changed (reduced)
-    w_diff = in_vid_w - new_vid_w
-    num_pixels_to_trim_from_both_sides = int(w_diff / 2)
-
-    veu.crop_vid(w = w_diff,
-                 h = in_vid_h,
-                 x = num_pixels_to_trim_from_both_sides,
-                 y = 0,
-                 in_vid_path = in_vid_path, out_vid_path = out_vid_path)
-
-def _trim_sides_of_vid_by_percent(trim_percent, in_vid_path, out_vid_path):
-    """
-        Good for trimming non-important sides of shows like Family Guy
-        - Hacky work-around, proper machine vision to identify characters/important things, signs,
-          etc. is the true solution to this.
-        - trim_percent =  10, 20, 30, etc.
-    """
-    in_vid_dim_tup = veu.get_vid_dims(in_vid_path)
-    in_vid_w = in_vid_dim_tup[0]
-    in_vid_h = in_vid_dim_tup[1]
-
-    num_pixels_wide_to_remove_total = int(in_vid_w / trim_percent)
-    num_pixels_wide_to_keep_total = in_vid_w - num_pixels_wide_to_remove_total
-    num_pixels_to_trim_from_both_sides = int(num_pixels_wide_to_remove_total / 2)
-
-    veu.crop_vid(w = num_pixels_wide_to_keep_total,
-                 h = in_vid_h,
-                 x = num_pixels_to_trim_from_both_sides,
-                 y = 0,
-                 in_vid_path = in_vid_path, out_vid_path = out_vid_path)
-
-def custom_edit_top_vid(in_vid_path, out_vid_path, custom_edit_vid_method_str, trim_sides_percent):
-    if custom_edit_vid_method_str == "None":
-        raise Exception("ERROR: not implemented yet")
-    if custom_edit_vid_method_str == "trim_sides_by_percent":
-        _trim_sides_of_vid_by_percent(trim_sides_percent, in_vid_path, out_vid_path)
-    else:
-        raise Exception(f"ERROR: invalid {custom_edit_vid_method_str=}")
-    return out_vid_path
-
 def custom_edit_bottom_vid(vid_dim_tup_to_match_aspect_ratio, in_vid_path, out_vid_path, custom_edit_vid_method_str):
     if custom_edit_vid_method_str == "trim_sides":
-        _trim_sides_of_vid_to_match_aspect_ratio(vid_dim_tup_to_match_aspect_ratio, in_vid_path, out_vid_path)
+        veu.trim_sides_of_vid_to_match_aspect_ratio(vid_dim_tup_to_match_aspect_ratio, in_vid_path, out_vid_path)
     else:
         raise Exception(f"ERROR: invalid {custom_edit_vid_method_str=}")
     return out_vid_path
@@ -174,15 +159,9 @@ def make_tb_vid(vid_dim_tup, out_vid_path, top_vid_path, bottom_vid_path, use_au
 
     cur_top_vid_path = _scale_vid_to_new_w_matched_vid_dims(vid_dim_tup, cur_top_vid_path, SCALED_TOP_VID_PATH) # PUT BACK!!!!!!!!!!!
 
-# scale_vid() can change h by 1 pixel, get fresh dims to be safe
+    # The returns of this func. should be the only data from top vid needed to create final bottom vid
     final_top_vid_dims_tup, final_top_vid_len = _get_and_check__final_top_vid__dims_tup__and__len(vid_dim_tup, cur_top_vid_path)
-    # # scale_vid() can change h by 1 pixel, get fresh dims to be safe
-    # scaled_top_vid_dims_tup = veu.get_vid_dims(SCALED_TOP_VID_PATH)
-    # print(f"{scaled_top_vid_dims_tup=}")
 
-    # # Just in case
-    # if scaled_top_vid_dims_tup[0] != vid_dim_tup[0]:
-    #     raise Exception(f"ERROR: width should not have changed, {scaled_top_vid_dims_tup=}, {vid_dim_tup=}")
 
     #####################
     # Process bottom vid

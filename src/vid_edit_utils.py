@@ -310,6 +310,31 @@ def remove_black_border_from_vid_if_needed(in_vid_path, out_vid_path):
     return out_vid_path
 
 
+def trim_sides_of_vid_to_match_aspect_ratio(vid_dim_tup_to_match_aspect_ratio, in_vid_path, out_vid_path):
+    """
+        Makes in_vid match given aspect ratio by only cropping the sides of video
+        Good for trimming sides of MC Parkour vids while keeping center 
+    """
+    in_vid_dim_tup = get_vid_dims(in_vid_path)
+    in_vid_w = in_vid_dim_tup[0]
+    in_vid_h = in_vid_dim_tup[1]
+
+    aspect_ratio = vid_dim_tup_to_match_aspect_ratio[0] / vid_dim_tup_to_match_aspect_ratio[1]
+
+    new_vid_w = in_vid_h * aspect_ratio
+    print(f"new vid dims {new_vid_w} x {in_vid_h}")
+
+    # At this point, h should be the same, only w has changed (reduced)
+    w_diff = in_vid_w - new_vid_w
+    num_pixels_to_trim_from_both_sides = int(w_diff / 2)
+
+    crop_vid(w = w_diff,
+             h = in_vid_h,
+             x = num_pixels_to_trim_from_both_sides,
+             y = 0,
+             in_vid_path = in_vid_path, out_vid_path = out_vid_path)
+
+
 if __name__ == "__main__":
     # import make_tb_vid
     # make_tb_vid.make_tb_vid()
