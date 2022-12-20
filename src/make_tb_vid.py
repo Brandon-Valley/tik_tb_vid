@@ -2,21 +2,16 @@ import vid_edit_utils as veu
 from pathlib import Path
 import os
 import random
-SCRIPT_PARENT_DIR_PATH = os.path.abspath(os.path.dirname(__file__)) # src
-REPO_ROOT_DIR_PATH = os.path.dirname(SCRIPT_PARENT_DIR_PATH)
-BIG_DATA_DIR_PATH = os.path.join(os.path.dirname(REPO_ROOT_DIR_PATH), "tik_tb_vid_big_data")
-BIG_DATA_OG_CLIPS_DIR_PATH = os.path.join(BIG_DATA_DIR_PATH, "og_clips")
-BIG_DATA_WORKING_DIR_PATH = os.path.join(BIG_DATA_DIR_PATH, "working")
+import cfg
 
-TEST_OUT_MP4_PATH = os.path.join(BIG_DATA_DIR_PATH, "test_out_vids", "test_out.mp4")
+# Working top vid paths
+TOP__VID_PATH__SCALED = os.path.join(cfg.BIG_DATA_WORKING_DIR_PATH, "scaled_top_vid.mp4")
+TOP_VID_PATH__CUSTOM_EDIT = os.path.join(cfg.BIG_DATA_WORKING_DIR_PATH, "custom_edited_top_vid.mp4")
 
-SCALED_TOP_VID_PATH = os.path.join(BIG_DATA_WORKING_DIR_PATH, "scaled_top_vid.mp4")
-CUSTOM_EDITED_TOP_VID_PATH = os.path.join(BIG_DATA_WORKING_DIR_PATH, "custom_edited_top_vid.mp4")
-CUSTOM_EDITED_BOTTOM_VID_PATH = os.path.join(BIG_DATA_WORKING_DIR_PATH, "custom_edited_bottom_vid.mp4")
-SCALED_BOTTOM_VID_PATH = os.path.join(BIG_DATA_WORKING_DIR_PATH, "scaled_bottom_vid_after_custom_edit.mp4")
-TIME_TRIMMED_BOTTOM_VID_PATH = os.path.join(BIG_DATA_WORKING_DIR_PATH, "time_trimmed_bottom_vid.mp4")
-
-TEST_FINAL_OUT_STACKED_VID_PATH = os.path.join(BIG_DATA_WORKING_DIR_PATH, "stacked.mp4")
+# Working bottom vid paths
+BOTTOM_VID_PATH__CUSTOM_EDIT = os.path.join(cfg.BIG_DATA_WORKING_DIR_PATH, "custom_edited_bottom_vid.mp4")
+BOTTOM_VID_PATH__SCALED = os.path.join(cfg.BIG_DATA_WORKING_DIR_PATH, "scaled_bottom_vid_after_custom_edit.mp4")
+BOTTOM_VID_PATH__TIME_TRIMMED = os.path.join(cfg.BIG_DATA_WORKING_DIR_PATH, "time_trimmed_bottom_vid.mp4")
 
 ####################################################################################################
 # Top Vid Exclusive
@@ -141,9 +136,9 @@ def make_tb_vid(vid_dim_tup, out_vid_path, top_vid_path, bottom_vid_path, use_au
     # - This can be different depending on custom_edit_top_vid_method_str to best match the type of vid on top
     # - This is done before final scaling (making top vid bigger or smaller) because this edit might not be
     #   pixel-perfect and the final top scale will stretch the vid a tiny bit if needed to fit pixels
-    cur_top_vid_path = _custom_edit_top_vid(cur_top_vid_path, CUSTOM_EDITED_TOP_VID_PATH, custom_edit_top_vid_method_str, crop_top_vid_sides_percent) # PUT BACK !!!!!!!!!
+    cur_top_vid_path = _custom_edit_top_vid(cur_top_vid_path, TOP_VID_PATH__CUSTOM_EDIT, custom_edit_top_vid_method_str, crop_top_vid_sides_percent) # PUT BACK !!!!!!!!!
 
-    cur_top_vid_path = _scale_vid_to_new_w_matched_vid_dims(vid_dim_tup, cur_top_vid_path, SCALED_TOP_VID_PATH) # PUT BACK!!!!!!!!!!!
+    cur_top_vid_path = _scale_vid_to_new_w_matched_vid_dims(vid_dim_tup, cur_top_vid_path, TOP__VID_PATH__SCALED) # PUT BACK!!!!!!!!!!!
 
     # The returns of this func. should be the only data from top vid needed to create final bottom vid
     final_top_vid_dims_tup, final_top_vid_len = _get_and_check__final_top_vid__dims_tup__and__len(vid_dim_tup, cur_top_vid_path)
@@ -155,7 +150,7 @@ def make_tb_vid(vid_dim_tup, out_vid_path, top_vid_path, bottom_vid_path, use_au
     cur_bottom_vid_path = bottom_vid_path
 
     # Trim bottom vid time to match top
-    cur_bottom_vid_path = _time_trim_bottom_vid_to_match_top(final_top_vid_len, cur_bottom_vid_path, TIME_TRIMMED_BOTTOM_VID_PATH, time_trim_bottom_vid_method_str) # PUT BACK !!!!!!!!!
+    cur_bottom_vid_path = _time_trim_bottom_vid_to_match_top(final_top_vid_len, cur_bottom_vid_path, BOTTOM_VID_PATH__TIME_TRIMMED, time_trim_bottom_vid_method_str) # PUT BACK !!!!!!!!!
 
     # get remaining dims to be filled by bottom_vid
     new_bottom_vid_dim_tup = (final_top_vid_dims_tup[0], vid_dim_tup[1] - final_top_vid_dims_tup[1])
@@ -165,9 +160,9 @@ def make_tb_vid(vid_dim_tup, out_vid_path, top_vid_path, bottom_vid_path, use_au
     # - This can be different depending on custom_edit_bottom_vid_method_str to best match the type of vid on bottom
     # - This is done before final scaling (making bottom vid bigger or smaller) because this edit might not be
     #   pixel-perfect and the final bottom scale will stretch the vid a tiny bit if needed to fit pixels
-    cur_bottom_vid_path = _custom_edit_bottom_vid(new_bottom_vid_dim_tup, cur_bottom_vid_path, CUSTOM_EDITED_BOTTOM_VID_PATH, custom_edit_bottom_vid_method_str) # PUT BACK !!!!!!!
+    cur_bottom_vid_path = _custom_edit_bottom_vid(new_bottom_vid_dim_tup, cur_bottom_vid_path, BOTTOM_VID_PATH__CUSTOM_EDIT, custom_edit_bottom_vid_method_str) # PUT BACK !!!!!!!
 
-    cur_bottom_vid_path = veu.scale_vid(new_bottom_vid_dim_tup, cur_bottom_vid_path, SCALED_BOTTOM_VID_PATH) # PUT BACK!!!!!!!!!!!
+    cur_bottom_vid_path = veu.scale_vid(new_bottom_vid_dim_tup, cur_bottom_vid_path, BOTTOM_VID_PATH__SCALED) # PUT BACK!!!!!!!!!!!
 
     #########################################################
     # Combine top and bottom vids to create final output vid
