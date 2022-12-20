@@ -19,15 +19,29 @@ TIME_TRIMMED_BOTTOM_VID_PATH = os.path.join(BIG_DATA_WORKING_DIR_PATH, "time_tri
 TEST_FINAL_OUT_STACKED_VID_PATH = os.path.join(BIG_DATA_WORKING_DIR_PATH, "stacked.mp4")
 
 
-def get_w_matched_new_vid_dims(vid_dim_tup, vid_path):
+# def get_w_matched_new_vid_dims(vid_dim_tup, vid_path):
+#     """Assumes vid_dim_tup always taller than vid_path"""
+#     og_vid_dim_tup = veu.get_vid_dims(vid_path)
+#     og_vid_dim_aspect_ratio = og_vid_dim_tup[1] / og_vid_dim_tup[0]
+#     # print(f"{og_vid_dim_aspect_ratio=}")
+#     new_w = vid_dim_tup[0]
+#     new_h = int(new_w * og_vid_dim_aspect_ratio)
+#     # print(f"{og_top_vid_dim_tup}")
+#     return (new_w, new_h)
+
+def _scale_vid_to_new_w_matched_vid_dims(vid_dim_tup, in_vid_path, out_vid_path):
     """Assumes vid_dim_tup always taller than vid_path"""
-    og_vid_dim_tup = veu.get_vid_dims(vid_path)
+    og_vid_dim_tup = veu.get_vid_dims(in_vid_path)
     og_vid_dim_aspect_ratio = og_vid_dim_tup[1] / og_vid_dim_tup[0]
     # print(f"{og_vid_dim_aspect_ratio=}")
     new_w = vid_dim_tup[0]
     new_h = int(new_w * og_vid_dim_aspect_ratio)
     # print(f"{og_top_vid_dim_tup}")
-    return (new_w, new_h)
+    new_top_vid_dim_tup = (new_w, new_h)
+
+    scaled_vid_path = veu.scale_vid(new_top_vid_dim_tup, in_vid_path, out_vid_path)
+    return scaled_vid_path
+
 
 
 def time_trim_bottom_vid_to_match_top(top_vid_path, bottom_vid_path, out_vid_path, time_trim_bottom_vid_method_str):
@@ -148,11 +162,11 @@ def make_tb_vid(vid_dim_tup, out_vid_path, top_vid_path, bottom_vid_path, use_au
     cur_top_vid_path = custom_edit_top_vid(cur_top_vid_path, CUSTOM_EDITED_TOP_VID_PATH, custom_edit_top_vid_method_str, trim_top_vid_sides_percent) # PUT BACK !!!!!!!!!
 
 
-    # new_top_vid_dim_tup = get_w_matched_new_vid_dims(vid_dim_tup, top_vid_path)
-    new_top_vid_dim_tup = get_w_matched_new_vid_dims(vid_dim_tup, cur_top_vid_path)
-    print(f"..........{new_top_vid_dim_tup=}")
+    # new_top_vid_dim_tup = get_w_matched_new_vid_dims(vid_dim_tup, cur_top_vid_path)
+    # print(f"..........{new_top_vid_dim_tup=}")
 
-    cur_top_vid_path = veu.scale_vid(new_top_vid_dim_tup, cur_top_vid_path, SCALED_TOP_VID_PATH) # PUT BACK!!!!!!!!!!!
+    # cur_top_vid_path = veu.scale_vid(new_top_vid_dim_tup, cur_top_vid_path, SCALED_TOP_VID_PATH) # PUT BACK!!!!!!!!!!!
+    cur_top_vid_path = _scale_vid_to_new_w_matched_vid_dims(vid_dim_tup, cur_top_vid_path, SCALED_TOP_VID_PATH) # PUT BACK!!!!!!!!!!!
 
     # scale_vid() can change h by 1 pixel, get fresh dims to be safe
     scaled_top_vid_dims_tup = veu.get_vid_dims(SCALED_TOP_VID_PATH)
