@@ -121,6 +121,7 @@ def custom_edit_bottom_vid(vid_dim_tup_to_match_aspect_ratio, in_vid_path, out_v
         _trim_sides_of_vid_to_match_aspect_ratio(vid_dim_tup_to_match_aspect_ratio, in_vid_path, out_vid_path)
     else:
         raise Exception(f"ERROR: invalid {custom_edit_vid_method_str=}")
+    return out_vid_path
 
 
 
@@ -181,11 +182,12 @@ def make_tb_vid(vid_dim_tup, out_vid_path, top_vid_path, bottom_vid_path, use_au
     # - This can be different depending on custom_edit_bottom_vid_method_str to best match the type of vid on bottom
     # - This is done before final scaling (making bottom vid bigger or smaller) because this edit might not be
     #   pixel-perfect and the final bottom scale will stretch the vid a tiny bit if needed to fit pixels
-    custom_edit_bottom_vid(new_bottom_vid_dim_tup, TIME_TRIMMED_BOTTOM_VID_PATH, CUSTOM_EDITED_BOTTOM_VID_PATH, custom_edit_bottom_vid_method_str) # PUT BACK !!!!!!!
+    cur_bottom_vid_path = custom_edit_bottom_vid(new_bottom_vid_dim_tup, cur_bottom_vid_path, CUSTOM_EDITED_BOTTOM_VID_PATH, custom_edit_bottom_vid_method_str) # PUT BACK !!!!!!!
 
     # print(f"{SCALED_BOTTOM_VID_PATH=}")
 
-    veu.scale_vid(new_bottom_vid_dim_tup, CUSTOM_EDITED_BOTTOM_VID_PATH, SCALED_BOTTOM_VID_PATH) # PUT BACK!!!!!!!!!!!
+    # veu.scale_vid(new_bottom_vid_dim_tup, CUSTOM_EDITED_BOTTOM_VID_PATH, SCALED_BOTTOM_VID_PATH) # PUT BACK!!!!!!!!!!!
+    cur_bottom_vid_path = veu.scale_vid(new_bottom_vid_dim_tup, cur_bottom_vid_path, SCALED_BOTTOM_VID_PATH) # PUT BACK!!!!!!!!!!!
 
     # Make stacked vid
     veu.stack_vids(SCALED_TOP_VID_PATH, SCALED_BOTTOM_VID_PATH, out_vid_path) # PUT BACK!!!!!!!!!

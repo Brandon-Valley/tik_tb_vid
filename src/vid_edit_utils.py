@@ -34,23 +34,23 @@ def get_vid_dims(vid_file_path):
 
 
 def trim_vid(in_vid_path, out_vid_path, time_tup):
-    def ffmpeg_extract_subclip(filename, t1, t2, targetname=None):
+    def ffmpeg_extract_subclip(filename, t1, t2, target_name=None):
         """ Makes a new video file playing video file ``filename`` between
         the times ``t1`` and ``t2``. """
-        print('in ffmpeg_extract_subclip')#```````````````````````````````````````````````````````````````````
+        print('in ffmpeg_extract_subclip')
         name, ext = os.path.splitext(filename)
-        if not targetname:
+        if not target_name:
             T1, T2 = [int(1000*t) for t in [t1, t2]]
-            targetname = "%sSUB%d_%d.%s" % (name, T1, T2, ext)
+            target_name = "%sSUB%d_%d.%s" % (name, T1, T2, ext)
 
         cmd = [get_setting("FFMPEG_BINARY"),"-y",
                "-ss", "%0.2f"%t1,
                "-i", filename,
                "-t", "%0.2f"%(t2-t1),
-               "-vcodec", "copy", "-acodec", "copy", targetname]
+               "-vcodec", "copy", "-acodec", "copy", target_name]
         subprocess_call(cmd)
 
-    ffmpeg_extract_subclip(in_vid_path, time_tup[0], time_tup[1], targetname=out_vid_path)
+    ffmpeg_extract_subclip(in_vid_path, time_tup[0], time_tup[1], target_name=out_vid_path)
     return out_vid_path
 
 # TODO look into better quality? ffmpeg -i input.mp4 -vf scale=1280:720 -preset slow -crf 18 output.mp4    https://ottverse.com/change-resolution-resize-scale-video-using-ffmpeg/
