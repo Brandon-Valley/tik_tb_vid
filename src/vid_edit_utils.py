@@ -18,7 +18,7 @@ from PIL import Image
 from PIL import ImageDraw
 
 import PIL.ImageFont
-import PIL.ImageOps 
+import PIL.ImageOps
 
 SCRIPT_PARENT_DIR_PATH = os.path.abspath(os.path.dirname(__file__)) # src
 TEMP_FRAME_IMGS_DIR_PATH = os.path.join(SCRIPT_PARENT_DIR_PATH, "ignore__temp_frame_imgs")
@@ -42,19 +42,19 @@ def trim_vid(in_vid_path, out_vid_path, time_tup):
         if not targetname:
             T1, T2 = [int(1000*t) for t in [t1, t2]]
             targetname = "%sSUB%d_%d.%s" % (name, T1, T2, ext)
-    
+
         cmd = [get_setting("FFMPEG_BINARY"),"-y",
                "-ss", "%0.2f"%t1,
                "-i", filename,
                "-t", "%0.2f"%(t2-t1),
                "-vcodec", "copy", "-acodec", "copy", targetname]
         subprocess_call(cmd)
-        
+
     ffmpeg_extract_subclip(in_vid_path, time_tup[0], time_tup[1], targetname=out_vid_path)
-    
+
 # TODO look into better quality? ffmpeg -i input.mp4 -vf scale=1280:720 -preset slow -crf 18 output.mp4    https://ottverse.com/change-resolution-resize-scale-video-using-ffmpeg/
 def scale_vid(new_vid_dim_tup, in_vid_path, out_vid_path):
-    """ 
+    """
         new_vid_dims = w x h
         Example - ffmpeg -i video.mov -vf "scale=250:150" new_movie.mp4
         Will reduce H by 1 if not even
@@ -103,19 +103,19 @@ def stack_vids(top_vid_path, bottom_vid_path, out_vid_path):
     #     ffmpeg is the command to run ffmpeg.
     #     -i top_video.mp4 specifies the input file for the top video.
     #     -i bottom_video.mp4 specifies the input file for the bottom video.
-    #     -filter_complex "[0:v][1:v]vstack=inputs=2[v]" specifies a filter complex that takes the video streams from 
-    #                                                    both input files ([0:v] and [1:v]) and stacks them vertically 
+    #     -filter_complex "[0:v][1:v]vstack=inputs=2[v]" specifies a filter complex that takes the video streams from
+    #                                                    both input files ([0:v] and [1:v]) and stacks them vertically
     #                                                    to create a new video stream ([v]).
     #     -map "[v]" tells ffmpeg to use the stacked video stream as the output video.
     #     -map 0:a tells ffmpeg to use the audio stream from the top video (0:a) as the output audio.
     #     -c:v libx264 specifies the codec to use for the output video.
-    #     -crf 18 specifies the quality level for the output video. A lower value results in a higher quality video, 
+    #     -crf 18 specifies the quality level for the output video. A lower value results in a higher quality video,
     #             but a larger file size.
-    #     -preset veryfast specifies the speed/quality tradeoff for the output video. A faster preset will result in a 
+    #     -preset veryfast specifies the speed/quality tradeoff for the output video. A faster preset will result in a
     #                      faster encoding time, but potentially lower quality.
     #     output.mp4 specifies the output file for the combined video.
-    # Note that this command assumes that both input videos have the same length. If the videos have different lengths, 
-    # you may need to specify an additional filter to pad one of the videos to match the length of the other. You can 
+    # Note that this command assumes that both input videos have the same length. If the videos have different lengths,
+    # you may need to specify an additional filter to pad one of the videos to match the length of the other. You can
     # also adjust the parameters (e.g. codec, quality, etc.) to suit your needs.
     cmd = f'ffmpeg \
         -i {top_vid_path} \
@@ -150,100 +150,6 @@ def crop_vid(w, h, x, y, in_vid_path, out_vid_path):
     subprocess.call(cmd, shell = True)
 
 
-# def trim_black_borders(in_vid_path, out_vid_path):
-
-#     def _get_bounding_rect_for_frame(frame):
-#         """ Returns False if len(contours) > 0 """
-#         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-#         _, thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY)
-#         edges = cv2.Canny(thresh, 50, 200)
-#         # print(f"{cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)=}")
-#         # _, contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-#         contours, _hierarchy  = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-#         # print(f"{contours=}")
-#         print("contours:")
-#         pprint(contours)
-#         print(f"{_hierarchy=}")
-#         # _, contours = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-#         if len(contours) > 0:
-#             x, y, w, h = cv2.boundingRect(contours[0])
-#             return x, y, w, h
-#         return False
-
-#     clip = mp.VideoFileClip(in_vid_path)
-#     # frames = clip.iter_frames()
-
-#     # Extract a series of frames from the video
-#     frames = [frame for frame in clip.iter_frames()]
-
-#     x1 = 0
-#     y1 = 0
-#     x2 = clip.w
-#     y2 = clip.h
-
-#     # Dont check very first or very last frame b/c more likely to be all black
-#     # grey_start_frame = cv2.cvtColor(frames[10], cv2.COLOR_BGR2GRAY)
-#     start_frame = frames[10]
-#     grey_end_frame = cv2.cvtColor(frames[-10], cv2.COLOR_BGR2GRAY)
-
-
-#     # for frame in frames:
-#     #     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-#     #     _, thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY)
-#     #     edges = cv2.Canny(thresh, 50, 200)
-#     #     # print(f"{cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)=}")
-#     #     # _, contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-#     #     contours, _hierarchy  = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-#     #     # print(f"{contours=}")
-#     #     print("contours:")
-#     #     pprint(contours)
-#     #     print(f"{_hierarchy=}")
-#     #     # _, contours = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-#     #     if len(contours) > 0:
-#     #         x, y, w, h = cv2.boundingRect(contours[0])
-#     #         x1 = max(x1, x)
-#     #         y1 = max(y1, y)
-#     #         x2 = min(x2, x + w)
-#     #         y2 = min(y2, y + h)
-
-
-#     x, y, w, h = _get_bounding_rect_for_frame(start_frame)
-#     print("x, y, w, h: ", x, y, w, h)
-
-#     x1 = 0
-#     y1 = 0
-#     x2 = clip.w
-#     y2 = clip.h
-
-#     # x1 = max(x1, x)
-#     # y1 = max(y1, y)
-#     # x2 = min(x2, x + w)
-#     # y2 = min(y2, y + h)
-
-#     x1 = x
-#     y1 = y
-#     x2 = min(x2, x + w)
-#     y2 = min(y2, y + h)
-
-#     print(x1,y1,x2,y2)
-#     # cropped_clip = clip.crop(x1=x1, y1=y1, x2=x2, y2=y2)
-#     # cropped_clip.write_videofile(out_vid_path)
-    
-#     print(f"Cropping vid at {in_vid_path=} to {out_vid_path=}...")
-#     # crop_vid(w, h, x, y, in_vid_path, out_vid_path)
-#     crop_vid(w, clip.h, x, 0, in_vid_path, out_vid_path)
-#     print(f"Done Cropping vid at {in_vid_path=} to {out_vid_path=}")
-#     print("x, y, w, h: ", x, y, w, h)
-#     print(x1,y1,x2,y2)
-#     # """
-#     #     w: Width of the output video (out_w). It defaults to iw. This expression is evaluated only once during the filter configuration.
-#     #     h: Height of the output video (out_h). It defaults to ih. This expression is evaluated only once during the filter configuration.
-#     #     x: Horizontal position, in the input video, of the left edge of the output video. It defaults to (in_w-out_w)/2. This expression is evaluated per-frame.
-#     #     y: Vertical position, in the input video, of the top edge of the output video. It defaults to (in_h-out_h)/2. This expression is evaluated per-frame."""
-
-
-# # trim_black_borders('in_vid.mp4', 'out_vid.mp4')
-
 def remove_black_border_from_vid_if_needed(in_vid_path, out_vid_path):
     def _get_crop_coords_if_needed(color_rgb):
         ''' If no border of color_rgb, return False'''
@@ -272,7 +178,7 @@ def remove_black_border_from_vid_if_needed(in_vid_path, out_vid_path):
                - Focused on returning False in the case there is no border ASAP
                - If ret_false_if_no_border == False, will just return normal border_size_d with all values = 0
             """
-                                
+
             def _get_const_y_pos_l(img_h):
                 """ If too many errors, add more/different y_pos"""
                 return [
@@ -280,7 +186,7 @@ def remove_black_border_from_vid_if_needed(in_vid_path, out_vid_path):
                         int(img_h * 0.50),
                         int(img_h * 0.75)
                     ]
-                    
+
             def _get_horz_num_pixels_until_not_color_multiple_lines(img, y_pos_l, color_rgb):
 
                 def _get_horz_num_pixels_until_not_color_single_line(img, y_pos, color_rgb):
@@ -372,7 +278,7 @@ def remove_black_border_from_vid_if_needed(in_vid_path, out_vid_path):
         border_size_d = _get_color_border_size_d_fast__if_exists(img, color_rgb, ret_false_if_no_border = True)
         pprint("border_size_d:")
         pprint(border_size_d)
-        
+
         if not border_size_d:
             return False
 

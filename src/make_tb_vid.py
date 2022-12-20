@@ -83,8 +83,8 @@ def _trim_sides_of_vid_to_match_aspect_ratio(vid_dim_tup_to_match_aspect_ratio, 
                  in_vid_path = in_vid_path, out_vid_path = out_vid_path)
 
 def _trim_sides_of_vid_by_percent(trim_percent, in_vid_path, out_vid_path):
-    """ 
-        Good for trimming non-important sides of shows like Family Guy 
+    """
+        Good for trimming non-important sides of shows like Family Guy
         - Hacky work-around, proper machine vision to identify characters/important things, signs,
           etc. is the true solution to this.
         - trim_percent =  10, 20, 30, etc.
@@ -119,8 +119,8 @@ def custom_edit_bottom_vid(vid_dim_tup_to_match_aspect_ratio, in_vid_path, out_v
 
 
 
-def make_tb_vid(vid_dim_tup, out_vid_path, top_vid_path, bottom_vid_path, use_audio_from_str = "top", 
-                time_trim_bottom_vid_method_str = "from_rand_start", 
+def make_tb_vid(vid_dim_tup, out_vid_path, top_vid_path, bottom_vid_path, use_audio_from_str = "top",
+                time_trim_bottom_vid_method_str = "from_rand_start",
                 custom_edit_bottom_vid_method_str = "trim_sides",
                 custom_edit_top_vid_method_str = "trim_sides_by_percent",
                 trim_top_vid_sides_percent = 10):

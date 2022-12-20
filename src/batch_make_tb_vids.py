@@ -40,7 +40,7 @@ def make_fg_mcpark_trim_sides_by_percent_tb_vid(trim_sides_by_percent, og_vid_pa
                 top_vid_path = og_vid_path,
                 bottom_vid_path = MC_PARK_VID_PATH,
                 use_audio_from_str = "top",
-                time_trim_bottom_vid_method_str = "from_rand_start", 
+                time_trim_bottom_vid_method_str = "from_rand_start",
                 custom_edit_bottom_vid_method_str = "trim_sides",
                 custom_edit_top_vid_method_str = "trim_sides_by_percent",
                 trim_top_vid_sides_percent = trim_sides_by_percent)
