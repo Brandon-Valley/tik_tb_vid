@@ -34,22 +34,22 @@ def _scale_vid_to_new_w_matched_vid_dims(vid_dim_tup, in_vid_path, out_vid_path)
 
 
 
-def time_trim_bottom_vid_to_match_top(top_vid_path, bottom_vid_path, out_vid_path, time_trim_bottom_vid_method_str):
-    top_vid_len = veu.get_vid_length(top_vid_path)
+def time_trim_bottom_vid_to_match_top(final_top_vid_len, bottom_vid_path, out_vid_path, time_trim_bottom_vid_method_str):
+    # top_vid_len = veu.get_vid_length(top_vid_path)
     bottom_vid_len = veu.get_vid_length(bottom_vid_path)
 
-    if top_vid_len > bottom_vid_len + 1: # added + 1 for max_start_time just to make sure no fraction breaks anything
+    if final_top_vid_len > bottom_vid_len + 1: # added + 1 for max_start_time just to make sure no fraction breaks anything
         raise Exception("ERROR: Behavior not implemented for top vid being longer than bottom vid, maybe could loop?")
 
     # Get time_tup of (start_time, end_time) for trimming bottom vid based on time_trim_bottom_vid_method_str
     if time_trim_bottom_vid_method_str == "from_start":
-        time_tup = (0, top_vid_len)
+        time_tup = (0, final_top_vid_len)
 
     elif time_trim_bottom_vid_method_str == "from_rand_start":
-        max_start_time = int(bottom_vid_len - top_vid_len) - 1
+        max_start_time = int(bottom_vid_len - final_top_vid_len) - 1
 
         rand_start_time = random.randint(0,max_start_time)
-        end_time = rand_start_time + top_vid_len
+        end_time = rand_start_time + final_top_vid_len
         time_tup = (rand_start_time, end_time)
 
     elif time_trim_bottom_vid_method_str == "loop":
@@ -123,7 +123,23 @@ def custom_edit_bottom_vid(vid_dim_tup_to_match_aspect_ratio, in_vid_path, out_v
         raise Exception(f"ERROR: invalid {custom_edit_vid_method_str=}")
     return out_vid_path
 
+def _get_and_check__final_top_vid__dims_tup__and__len(vid_dim_tup, final_top_vid_path):
+    """ 
+        The returns of this func. should be the only data from top vid needed to create final bottom vid
+          - scale_vid() can change h by 1 pixel, get fresh dims to be safe
+    """
+    # Get/check top vid dims
+    final_top_vid_dims_tup = veu.get_vid_dims(final_top_vid_path)
+    print(f"{final_top_vid_dims_tup=}")
 
+    # Just in case
+    if final_top_vid_dims_tup[0] != vid_dim_tup[0]:
+        raise Exception(f"ERROR: width should not have changed, {final_top_vid_dims_tup=}, {vid_dim_tup=}")
+
+    # Get top vid length
+    final_top_vid_len = veu.get_vid_length(final_top_vid_path)
+
+    return final_top_vid_dims_tup, final_top_vid_len
 
 def make_tb_vid(vid_dim_tup, out_vid_path, top_vid_path, bottom_vid_path, use_audio_from_str = "top",
                 time_trim_bottom_vid_method_str = "from_rand_start",
@@ -158,13 +174,15 @@ def make_tb_vid(vid_dim_tup, out_vid_path, top_vid_path, bottom_vid_path, use_au
 
     cur_top_vid_path = _scale_vid_to_new_w_matched_vid_dims(vid_dim_tup, cur_top_vid_path, SCALED_TOP_VID_PATH) # PUT BACK!!!!!!!!!!!
 
-    # scale_vid() can change h by 1 pixel, get fresh dims to be safe
-    scaled_top_vid_dims_tup = veu.get_vid_dims(SCALED_TOP_VID_PATH)
-    print(f"{scaled_top_vid_dims_tup=}")
+# scale_vid() can change h by 1 pixel, get fresh dims to be safe
+    final_top_vid_dims_tup, final_top_vid_len = _get_and_check__final_top_vid__dims_tup__and__len(vid_dim_tup, cur_top_vid_path)
+    # # scale_vid() can change h by 1 pixel, get fresh dims to be safe
+    # scaled_top_vid_dims_tup = veu.get_vid_dims(SCALED_TOP_VID_PATH)
+    # print(f"{scaled_top_vid_dims_tup=}")
 
-    # Just in case
-    if scaled_top_vid_dims_tup[0] != vid_dim_tup[0]:
-        raise Exception(f"ERROR: width should not have changed, {scaled_top_vid_dims_tup=}, {vid_dim_tup=}")
+    # # Just in case
+    # if scaled_top_vid_dims_tup[0] != vid_dim_tup[0]:
+    #     raise Exception(f"ERROR: width should not have changed, {scaled_top_vid_dims_tup=}, {vid_dim_tup=}")
 
     #####################
     # Process bottom vid
@@ -172,10 +190,10 @@ def make_tb_vid(vid_dim_tup, out_vid_path, top_vid_path, bottom_vid_path, use_au
     cur_bottom_vid_path = bottom_vid_path
 
     # Trim bottom vid time to match top
-    cur_bottom_vid_path = time_trim_bottom_vid_to_match_top(SCALED_TOP_VID_PATH, cur_bottom_vid_path, TIME_TRIMMED_BOTTOM_VID_PATH, time_trim_bottom_vid_method_str) # PUT BACK !!!!!!!!!
+    cur_bottom_vid_path = time_trim_bottom_vid_to_match_top(final_top_vid_len, cur_bottom_vid_path, TIME_TRIMMED_BOTTOM_VID_PATH, time_trim_bottom_vid_method_str) # PUT BACK !!!!!!!!!
 
     # get remaining dims to be filled by bottom_vid
-    new_bottom_vid_dim_tup = (scaled_top_vid_dims_tup[0], vid_dim_tup[1] - scaled_top_vid_dims_tup[1])
+    new_bottom_vid_dim_tup = (final_top_vid_dims_tup[0], vid_dim_tup[1] - final_top_vid_dims_tup[1])
     print(f"{new_bottom_vid_dim_tup=}")
 
     # Perform custom edit to bottom vid
