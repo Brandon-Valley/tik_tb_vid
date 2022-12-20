@@ -18,7 +18,7 @@ BIG_DATA_PLAYLIST_OG_VIDS_DIR_PATH = os.path.join(BIG_DATA_DIR_PATH, "ignore", "
 FINAL_OUT_VID_DIR_PATH = os.path.join(BIG_DATA_DIR_PATH, "ignore", "final_output")
 
 BIG_DATA_OG_CLIPS_DIR_PATH = os.path.join(BIG_DATA_DIR_PATH, "og_clips")
-MC_PARK_VID_PATH = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\tik_tb_vid_big_data\\ignore\\mc_parkour_1hr_20min_Trim.mp4"
+MC_PARK_VID_PATH = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\tik_tb_vid_big_data\\ignore\\og_long_bottom_vids\\mc_parkour_1hr_20min_Trim.mp4"
 
 BIG_DATA_WORKING_DIR_PATH = os.path.join(BIG_DATA_DIR_PATH, "working")
 
