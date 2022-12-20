@@ -133,6 +133,7 @@ def stack_vids(top_vid_path, bottom_vid_path, out_vid_path):
 
     print(f"Running: {cmd}...")
     subprocess.call(cmd, shell = True)
+    return out_vid_path
 
 
 

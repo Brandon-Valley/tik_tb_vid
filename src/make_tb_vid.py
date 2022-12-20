@@ -189,8 +189,14 @@ def make_tb_vid(vid_dim_tup, out_vid_path, top_vid_path, bottom_vid_path, use_au
     # veu.scale_vid(new_bottom_vid_dim_tup, CUSTOM_EDITED_BOTTOM_VID_PATH, SCALED_BOTTOM_VID_PATH) # PUT BACK!!!!!!!!!!!
     cur_bottom_vid_path = veu.scale_vid(new_bottom_vid_dim_tup, cur_bottom_vid_path, SCALED_BOTTOM_VID_PATH) # PUT BACK!!!!!!!!!!!
 
-    # Make stacked vid
-    veu.stack_vids(SCALED_TOP_VID_PATH, SCALED_BOTTOM_VID_PATH, out_vid_path) # PUT BACK!!!!!!!!!
+    #########################################################
+    # Combine top and bottom vids to create final output vid
+    #########################################################
+    cur_out_vid_path = out_vid_path
+
+    cur_out_vid_path = veu.stack_vids(SCALED_TOP_VID_PATH, SCALED_BOTTOM_VID_PATH, cur_out_vid_path) # PUT BACK!!!!!!!!!
+
+    print(f"Finished Making Top-Bottom Video: {out_vid_path}")
 
 
 if __name__ == "__main__":
