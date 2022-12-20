@@ -12,11 +12,11 @@ TIK_BEST_VID_DIM_TUP = (1080,1920) # W x H
 SCRIPT_PARENT_DIR_PATH = os.path.abspath(os.path.dirname(__file__)) # src
 REPO_ROOT_DIR_PATH = os.path.dirname(SCRIPT_PARENT_DIR_PATH)
 PERSONAL_PROJECTS_DIR_PATH = os.path.dirname(REPO_ROOT_DIR_PATH)
-# BIG_DATA_PLAYLIST_OG_VIDS_DIR_PATH = os.path.join(PERSONAL_PROJECTS_DIR_PATH, "DELETE_THIS__VIDS",  "fg_pl_tbs")
-TEST_OUT_DIR_PATH = os.path.join(PERSONAL_PROJECTS_DIR_PATH, "DELETE_THIS__VIDS",  "fg_pl_tbs__test_output")
+# FINAL_OUT_VID_DIR_PATH = os.path.join(PERSONAL_PROJECTS_DIR_PATH, "DELETE_THIS__VIDS",  "fg_pl_tbs__test_output")
 
 BIG_DATA_DIR_PATH = os.path.join(os.path.dirname(REPO_ROOT_DIR_PATH), "tik_tb_vid_big_data")
 BIG_DATA_PLAYLIST_OG_VIDS_DIR_PATH = os.path.join(BIG_DATA_DIR_PATH, "ignore", "playlist_og_clips",  "fg_pl_tbs")
+FINAL_OUT_VID_DIR_PATH = os.path.join(BIG_DATA_DIR_PATH, "ignore", "final_output")
 
 BIG_DATA_OG_CLIPS_DIR_PATH = os.path.join(BIG_DATA_DIR_PATH, "og_clips")
 MC_PARK_VID_PATH = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\tik_tb_vid_big_data\\ignore\\mc_parkour_1hr_20min_Trim.mp4"
@@ -68,7 +68,7 @@ def batch_make_tb_vids(og_vids_dir_path, out_dir_path):
         make_fg_mcpark_trim_sides_by_percent_tb_vid(30, og_vid_path, vid_edits_dir_path)
 
 def main():
-    batch_make_tb_vids(BIG_DATA_PLAYLIST_OG_VIDS_DIR_PATH, TEST_OUT_DIR_PATH)
+    batch_make_tb_vids(BIG_DATA_PLAYLIST_OG_VIDS_DIR_PATH, FINAL_OUT_VID_DIR_PATH)
 
 if __name__ == "__main__":
     main()
