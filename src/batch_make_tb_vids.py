@@ -13,11 +13,13 @@ from sms.file_system_utils import file_system_utils as fsu
 TIK_BEST_VID_DIM_TUP = (1080,1920) # W x H
 
 # Big Data Paths
-IGNORE_DIR_PATH = os.path.join(cfg.BIG_DATA_DIR_PATH, "ignore")
+IGNORE_DIR_PATH           = os.path.join(cfg.BIG_DATA_DIR_PATH, "ignore")
+
 PLAYLIST_OG_VIDS_DIR_PATH = os.path.join(IGNORE_DIR_PATH, "playlist_og_clips", "fg_pl_tbs")
-FINAL_OUT_VID_DIR_PATH = os.path.join(IGNORE_DIR_PATH, "final_output")
-OG_LONG_BOTTOM_VIDS = os.path.join(IGNORE_DIR_PATH, "og_long_bottom_vids")
-MC_PARK_VID_PATH = os.path.join(OG_LONG_BOTTOM_VIDS, "mc_parkour_1hr_20min_Trim.mp4")
+FINAL_OUT_VID_DIR_PATH    = os.path.join(IGNORE_DIR_PATH, "final_output")
+OG_LONG_BOTTOM_VIDS       = os.path.join(IGNORE_DIR_PATH, "og_long_bottom_vids")
+
+MC_PARK_VID_PATH          = os.path.join(OG_LONG_BOTTOM_VIDS, "mc_parkour_1hr_20min_Trim.mp4")
 
 # For testing
 OG_CLIPS_DIR_PATH = os.path.join(cfg.BIG_DATA_DIR_PATH, "og_clips")
