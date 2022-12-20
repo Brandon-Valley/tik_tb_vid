@@ -38,32 +38,17 @@ def _scale_vid_to_new_w_matched_vid_dims(vid_dim_tup, in_vid_path, out_vid_path)
 
 
 def custom_edit_top_vid(in_vid_path, out_vid_path, custom_edit_vid_method_str, trim_sides_percent):
-    def _trim_sides_of_vid_by_percent(trim_percent, in_vid_path, out_vid_path):
-        """
-            Good for trimming non-important sides of shows like Family Guy
-            - Hacky work-around, proper machine vision to identify characters/important things, signs,
-            etc. is the true solution to this.
-            - trim_percent =  10, 20, 30, etc.
-        """
-        in_vid_dim_tup = veu.get_vid_dims(in_vid_path)
-        in_vid_w = in_vid_dim_tup[0]
-        in_vid_h = in_vid_dim_tup[1]
 
-        num_pixels_wide_to_remove_total = int(in_vid_w / trim_percent)
-        num_pixels_wide_to_keep_total = in_vid_w - num_pixels_wide_to_remove_total
-        num_pixels_to_trim_from_both_sides = int(num_pixels_wide_to_remove_total / 2)
-
-        veu.crop_vid(w = num_pixels_wide_to_keep_total,
-                    h = in_vid_h,
-                    x = num_pixels_to_trim_from_both_sides,
-                    y = 0,
-                    in_vid_path = in_vid_path, out_vid_path = out_vid_path)
-
-    # custom_edit_top_vid ##################
     if custom_edit_vid_method_str == "None":
         raise Exception("ERROR: not implemented yet")
-    if custom_edit_vid_method_str == "trim_sides_by_percent":
-        _trim_sides_of_vid_by_percent(trim_sides_percent, in_vid_path, out_vid_path)
+
+    # Good for trimming non-important sides of shows like Family Guy
+    #     - Hacky work-around, proper machine vision to identify characters/important things, signs,
+    #     etc. is the true solution to this.
+    #     - trim_percent =  10, 20, 30, etc.
+    elif custom_edit_vid_method_str == "trim_sides_by_percent":
+        veu.crop_sides_of_vid_by_percent(trim_sides_percent, in_vid_path, out_vid_path)
+
     else:
         raise Exception(f"ERROR: invalid {custom_edit_vid_method_str=}")
     return out_vid_path

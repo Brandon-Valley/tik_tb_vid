@@ -335,6 +335,30 @@ def trim_sides_of_vid_to_match_aspect_ratio(vid_dim_tup_to_match_aspect_ratio, i
              in_vid_path = in_vid_path, out_vid_path = out_vid_path)
 
 
+def crop_sides_of_vid_by_percent(trim_percent, in_vid_path, out_vid_path):
+    """
+        Crops trim_percent of total width of in_vid from the sides evenly, leaving the video centered
+        - Good for trimming non-important sides of shows like Family Guy
+        - trim_percent =  10, 20, 30, etc.
+        - EXAMPLE:
+            If in_vid.size == (100, 44) pixels and trim_percent == 10:
+                out_vid.size will = (90, 44) pixels, created from cropping 5 pixels from each side of in_vid
+    """
+    in_vid_dim_tup = get_vid_dims(in_vid_path)
+    in_vid_w = in_vid_dim_tup[0]
+    in_vid_h = in_vid_dim_tup[1]
+
+    num_pixels_wide_to_remove_total = int(in_vid_w / trim_percent)
+    num_pixels_wide_to_keep_total = in_vid_w - num_pixels_wide_to_remove_total
+    num_pixels_to_trim_from_both_sides = int(num_pixels_wide_to_remove_total / 2)
+
+    crop_vid(w = num_pixels_wide_to_keep_total,
+                h = in_vid_h,
+                x = num_pixels_to_trim_from_both_sides,
+                y = 0,
+                in_vid_path = in_vid_path, out_vid_path = out_vid_path)
+
+
 if __name__ == "__main__":
     # import make_tb_vid
     # make_tb_vid.make_tb_vid()
