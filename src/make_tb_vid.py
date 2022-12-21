@@ -109,11 +109,16 @@ def _custom_edit_bottom_vid(vid_dim_tup_to_match_aspect_ratio, in_vid_path, out_
 ########################################################################################################################
 # Main
 ########################################################################################################################
+# def make_tb_vid(vid_dim_tup, out_vid_path, top_vid_path, bottom_vid_path, use_audio_from_str = "top",
+#                 time_trim_bottom_vid_method_str = "from_rand_start",
+#                 custom_edit_bottom_vid_method_str = "crop_sides",
+#                 custom_edit_top_vid_method_str = "crop_sides_by_percent",
+#                 crop_top_vid_sides_percent = 10):
 def make_tb_vid(vid_dim_tup, out_vid_path, top_vid_path, bottom_vid_path, use_audio_from_str = "top",
                 time_trim_bottom_vid_method_str = "from_rand_start",
                 custom_edit_bottom_vid_method_str = "crop_sides",
                 custom_edit_top_vid_method_str = "crop_sides_by_percent",
-                crop_top_vid_sides_percent = 10):
+                crop_top_vid_sides_percent = 49):
     """ - Zoom top vid in or out to fit vid_dim_tup,
         - Do same for bottom vid with remaining dims?
         - Assume top_vid is already the length you want

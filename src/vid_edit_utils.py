@@ -222,11 +222,14 @@ def crop_sides_of_vid_by_percent(trim_percent, in_vid_path, out_vid_path):
             If in_vid.size == (100, 44) pixels and trim_percent == 10:
                 out_vid.size will = (90, 44) pixels, created from cropping 5 pixels from each side of in_vid
     """
+    print(f"in crop_sides_of_vid_by_percent() - {trim_percent=}")
+
     in_vid_dim_tup = get_vid_dims(in_vid_path)
     in_vid_w = in_vid_dim_tup[0]
     in_vid_h = in_vid_dim_tup[1]
 
-    num_pixels_wide_to_remove_total = int(in_vid_w / trim_percent)
+    # num_pixels_wide_to_remove_total = int(in_vid_w / trim_percent)
+    num_pixels_wide_to_remove_total = int(in_vid_w * (trim_percent / 100))
     num_pixels_wide_to_keep_total = in_vid_w - num_pixels_wide_to_remove_total
     num_pixels_to_trim_from_both_sides = int(num_pixels_wide_to_remove_total / 2)
 
