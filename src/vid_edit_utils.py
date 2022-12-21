@@ -163,6 +163,9 @@ def crop_black_border_from_vid_if_needed(in_vid_path, out_vid_path):
 
         return tuple(pu.get_crop_coords_from_border_size_d(img, border_size_d))
 
+
+    fsu.delete_if_exists(out_vid_path)
+
     crop_coords = _get_crop_coords_if_needed(BLACK_COLOR_RGB)
 
     # If no black border, just return in_vid_path since no other file will be generated
