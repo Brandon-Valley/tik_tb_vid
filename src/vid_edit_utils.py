@@ -202,7 +202,8 @@ def crop_sides_of_vid_to_match_aspect_ratio(vid_dim_tup_to_match_aspect_ratio, i
 
     aspect_ratio = vid_dim_tup_to_match_aspect_ratio[0] / vid_dim_tup_to_match_aspect_ratio[1]
 
-    new_vid_w = in_vid_h * aspect_ratio
+    # new_vid_w = in_vid_h * aspect_ratio
+    new_vid_w = int(in_vid_h * aspect_ratio) # TMP NOT SURE IF ADDING INT BREAKS SOMETHING
     print(f"new vid dims {new_vid_w} x {in_vid_h}")
 
     if new_vid_w > in_vid_w:
@@ -214,6 +215,10 @@ def crop_sides_of_vid_to_match_aspect_ratio(vid_dim_tup_to_match_aspect_ratio, i
 
     # At this point, h should be the same, only w has changed (reduced)
     w_diff = in_vid_w - new_vid_w
+
+    if w_diff % 2:
+        w_diff = w_diff - 1
+
     num_pixels_to_trim_from_both_sides = int(w_diff / 2)
     # print(f"----------------")
 
@@ -223,7 +228,8 @@ def crop_sides_of_vid_to_match_aspect_ratio(vid_dim_tup_to_match_aspect_ratio, i
     # print(f"----------------")
 
 
-    crop_vid(w = w_diff,
+    # crop_vid(w = w_diff,
+    crop_vid(w = new_vid_w,
              h = in_vid_h,
              x = num_pixels_to_trim_from_both_sides,
              y = 0,
@@ -232,6 +238,7 @@ def crop_sides_of_vid_to_match_aspect_ratio(vid_dim_tup_to_match_aspect_ratio, i
     print(f"----------------")
 
     print(f"{vid_dim_tup_to_match_aspect_ratio=}")
+    print(f"{in_vid_dim_tup=}")
     print(f"{in_vid_w=}")
     print(f"{new_vid_w=}")
     print(f"{w_diff=}")

@@ -142,6 +142,7 @@ def make_tb_vid(vid_dim_tup, out_vid_path, top_vid_path, bottom_vid_path, use_au
     cur_top_vid_path = _scale_vid_to_new_w_matched_vid_dims(vid_dim_tup, cur_top_vid_path, TOP__VID_PATH__SCALED) # PUT BACK!!!!!!!!!!!
 
     # The returns of this func. should be the only data from top vid needed to create final bottom vid
+    # cur_top_vid_path = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\tik_tb_vid_big_data\\working\\top__scaled.mp4" # TMP !!!!!!!!!!!!!!!!!!!
     final_top_vid_dims_tup, final_top_vid_len = _get_and_check__final_top_vid__dims_tup__and__len(vid_dim_tup, cur_top_vid_path)
     print(f"{final_top_vid_dims_tup=}")
     print(f"{final_top_vid_len=}")
@@ -162,7 +163,7 @@ def make_tb_vid(vid_dim_tup, out_vid_path, top_vid_path, bottom_vid_path, use_au
     # - This can be different depending on custom_edit_bottom_vid_method_str to best match the type of vid on bottom
     # - This is done before final scaling (making bottom vid bigger or smaller) because this edit might not be
     #   pixel-perfect and the final bottom scale will stretch the vid a tiny bit if needed to fit pixels
-    # cur_bottom_vid_path = BOTTOM_VID_PATH__TIME_TRIMMED # TMP
+    # cur_bottom_vid_path = BOTTOM_VID_PATH__TIME_TRIMMED # TMP !!!!!!!!!!!!!!!!!!!!
     cur_bottom_vid_path = _custom_edit_bottom_vid(new_bottom_vid_dim_tup, cur_bottom_vid_path, BOTTOM_VID_PATH__CUSTOM_EDIT, custom_edit_bottom_vid_method_str) # PUT BACK !!!!!!!
 
     cur_bottom_vid_path = veu.scale_vid(new_bottom_vid_dim_tup, cur_bottom_vid_path, BOTTOM_VID_PATH__SCALED) # PUT BACK!!!!!!!!!!!

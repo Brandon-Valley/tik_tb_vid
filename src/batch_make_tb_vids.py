@@ -66,13 +66,13 @@ def batch_make_tb_vids(og_vids_dir_path, out_dir_path):
         fsu.delete_if_exists(vid_edits_dir_path)
         fsu.make_dir_if_not_exist(vid_edits_dir_path)
 
-        # make_fg_mcpark_crop_sides_by_percent_tb_vid(5,  og_vid_path, vid_edits_dir_path)
+        make_fg_mcpark_crop_sides_by_percent_tb_vid(5,  og_vid_path, vid_edits_dir_path)
         # make_fg_mcpark_crop_sides_by_percent_tb_vid(10, og_vid_path, vid_edits_dir_path)
         # make_fg_mcpark_crop_sides_by_percent_tb_vid(15, og_vid_path, vid_edits_dir_path)
         # make_fg_mcpark_crop_sides_by_percent_tb_vid(20, og_vid_path, vid_edits_dir_path)
         # make_fg_mcpark_crop_sides_by_percent_tb_vid(25, og_vid_path, vid_edits_dir_path)
         # make_fg_mcpark_crop_sides_by_percent_tb_vid(30, og_vid_path, vid_edits_dir_path)
-        make_fg_mcpark_crop_sides_by_percent_tb_vid(35, og_vid_path, vid_edits_dir_path)
+        # make_fg_mcpark_crop_sides_by_percent_tb_vid(35, og_vid_path, vid_edits_dir_path)
 
 
         # make_fg_mcpark_crop_sides_by_percent_tb_vid(40, og_vid_path, vid_edits_dir_path)
