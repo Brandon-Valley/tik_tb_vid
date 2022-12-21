@@ -191,7 +191,7 @@ def crop_black_border_from_vid_if_needed(in_vid_path, out_vid_path):
 def crop_sides_of_vid_to_match_aspect_ratio(vid_dim_tup_to_match_aspect_ratio, in_vid_path, out_vid_path):
     """
         Makes in_vid match given aspect ratio by only cropping the sides of video
-        Good for trimming sides of MC Parkour vids while keeping center 
+        Good for trimming sides of MC Parkour vids while keeping center
     """
     in_vid_dim_tup = get_vid_dims(in_vid_path)
     in_vid_w = in_vid_dim_tup[0]

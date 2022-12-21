@@ -29,7 +29,7 @@ def _scale_vid_to_new_w_matched_vid_dims(vid_dim_tup, in_vid_path, out_vid_path)
     new_top_vid_dim_tup = (new_w, new_h)
 
     scaled_vid_path = veu.scale_vid(new_top_vid_dim_tup, in_vid_path, out_vid_path)
-    
+
     return scaled_vid_path
 
 
@@ -51,7 +51,7 @@ def _custom_edit_top_vid(in_vid_path, out_vid_path, custom_edit_vid_method_str, 
 
 
 def _get_and_check__final_top_vid__dims_tup__and__len(vid_dim_tup, final_top_vid_path):
-    """ 
+    """
         The returns of this func. should be the only data from top vid needed to create final bottom vid
           - scale_vid() can change h by 1 pixel, get fresh dims to be safe
     """
@@ -98,6 +98,7 @@ def _time_trim_bottom_vid_to_match_top(final_top_vid_len, bottom_vid_path, out_v
     trimmed_vid_path = veu.trim_vid(bottom_vid_path, out_vid_path, time_tup)
     return trimmed_vid_path
 
+
 def _custom_edit_bottom_vid(vid_dim_tup_to_match_aspect_ratio, in_vid_path, out_vid_path, custom_edit_vid_method_str):
     if custom_edit_vid_method_str == "crop_sides":
         veu.crop_sides_of_vid_to_match_aspect_ratio(vid_dim_tup_to_match_aspect_ratio, in_vid_path, out_vid_path)
@@ -129,7 +130,6 @@ def make_tb_vid(vid_dim_tup, out_vid_path, top_vid_path, bottom_vid_path, use_au
 
     cur_top_vid_path = top_vid_path
 
-    # TODO make it delete old border vid no matter what
     # Will not create new vid if no black borders need to be removed
     cur_top_vid_path = veu.crop_black_border_from_vid_if_needed(cur_top_vid_path, TOP_VID_PATH__BLACK_BARS_REMOVED)
 
