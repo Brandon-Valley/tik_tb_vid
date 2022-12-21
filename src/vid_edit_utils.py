@@ -255,12 +255,18 @@ def crop_sides_of_vid_by_percent(trim_percent, in_vid_path, out_vid_path):
     """
         Crops trim_percent of total width of in_vid from the sides evenly, leaving the video centered
         - Good for trimming non-important sides of shows like Family Guy
+        - If trim_percent == 0 - Will return in_vid_path
         - trim_percent =  10, 20, 30, etc.
         - EXAMPLE:
             If in_vid.size == (100, 44) pixels and trim_percent == 10:
                 out_vid.size will = (90, 44) pixels, created from cropping 5 pixels from each side of in_vid
     """
     print(f"in crop_sides_of_vid_by_percent() - {trim_percent=}")
+
+    if trim_percent == 0:
+        print(f"Told to trim sides of video by 0%, so just returning {in_vid_path=} and deleting {out_vid_path=} if exists to remove confusion...")
+        fsu.delete_if_exists(out_vid_path)
+        return in_vid_path
 
     in_vid_dim_tup = get_vid_dims(in_vid_path)
     in_vid_w = in_vid_dim_tup[0]

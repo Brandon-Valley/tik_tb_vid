@@ -20,6 +20,9 @@ BOTTOM_VID_PATH__TIME_TRIMMED = os.path.join(cfg.BIG_DATA_WORKING_DIR_PATH, "bot
 
 def _scale_vid_to_new_w_matched_vid_dims(vid_dim_tup, in_vid_path, out_vid_path):
     """Assumes vid_dim_tup always taller than vid_path"""
+    print(f"{in_vid_path=}")
+    print(f"{out_vid_path=}")
+
     og_vid_dim_tup = veu.get_vid_dims(in_vid_path)
     og_vid_dim_aspect_ratio = og_vid_dim_tup[1] / og_vid_dim_tup[0]
     # print(f"{og_vid_dim_aspect_ratio=}")
@@ -43,11 +46,10 @@ def _custom_edit_top_vid(in_vid_path, out_vid_path, custom_edit_vid_method_str, 
     #     etc. is the true solution to this.
     #   - trim_percent =  10, 20, 30, etc.
     elif custom_edit_vid_method_str == "crop_sides_by_percent":
-        veu.crop_sides_of_vid_by_percent(crop_sides_percent, in_vid_path, out_vid_path)
-
+        cropped_or_uncropped_vid = veu.crop_sides_of_vid_by_percent(crop_sides_percent, in_vid_path, out_vid_path)
+        return cropped_or_uncropped_vid
     else:
         raise Exception(f"ERROR: invalid {custom_edit_vid_method_str=}")
-    return out_vid_path
 
 
 def _get_and_check__final_top_vid__dims_tup__and__len(vid_dim_tup, final_top_vid_path):
@@ -101,10 +103,10 @@ def _time_trim_bottom_vid_to_match_top(final_top_vid_len, bottom_vid_path, out_v
 
 def _custom_edit_bottom_vid(vid_dim_tup_to_match_aspect_ratio, in_vid_path, out_vid_path, custom_edit_vid_method_str):
     if custom_edit_vid_method_str == "crop_sides":
-        veu.crop_sides_of_vid_to_match_aspect_ratio(vid_dim_tup_to_match_aspect_ratio, in_vid_path, out_vid_path)
+        side_cropped_vid_path = veu.crop_sides_of_vid_to_match_aspect_ratio(vid_dim_tup_to_match_aspect_ratio, in_vid_path, out_vid_path)
+        return side_cropped_vid_path
     else:
         raise Exception(f"ERROR: invalid {custom_edit_vid_method_str=}")
-    return out_vid_path
 
 ########################################################################################################################
 # Main
