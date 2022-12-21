@@ -310,6 +310,7 @@ def crop_sides_of_vid_by_percent(trim_percent, in_vid_path, out_vid_path):
     print(f"{num_pixels_to_trim_from_both_sides=}")
     print(f"{in_vid_dim_tup=}")
     # exit()
+    return out_vid_path
 
 ####################################################################################################
 # Combine multiple vids into new vid

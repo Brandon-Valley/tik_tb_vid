@@ -46,8 +46,9 @@ def _custom_edit_top_vid(in_vid_path, out_vid_path, custom_edit_vid_method_str, 
     #     etc. is the true solution to this.
     #   - trim_percent =  10, 20, 30, etc.
     elif custom_edit_vid_method_str == "crop_sides_by_percent":
-        cropped_or_uncropped_vid = veu.crop_sides_of_vid_by_percent(crop_sides_percent, in_vid_path, out_vid_path)
-        return cropped_or_uncropped_vid
+        cropped_or_uncropped_vid_path = veu.crop_sides_of_vid_by_percent(crop_sides_percent, in_vid_path, out_vid_path)
+        print(f"{cropped_or_uncropped_vid_path=}")
+        return cropped_or_uncropped_vid_path
     else:
         raise Exception(f"ERROR: invalid {custom_edit_vid_method_str=}")
 
