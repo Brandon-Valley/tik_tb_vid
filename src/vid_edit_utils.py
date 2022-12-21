@@ -263,6 +263,7 @@ def crop_sides_of_vid_to_match_aspect_ratio(vid_dim_tup_to_match_aspect_ratio, i
     print(f"{w_diff=}")
     print(f"{num_pixels_to_trim_from_both_sides=}")
     # exit()
+    return out_vid_path
 
 def crop_sides_of_vid_by_percent(trim_percent, in_vid_path, out_vid_path):
     """
