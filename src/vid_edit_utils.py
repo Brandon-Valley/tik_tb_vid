@@ -138,14 +138,27 @@ def crop_black_border_from_vid_if_needed(in_vid_path, out_vid_path):
         clip = VideoFileClip(in_vid_path)
 
         # Extract a series of frames from the video
-        frames = [frame for frame in clip.iter_frames()]
-
-        if (len(frames) < 22):
-            raise Exception("ERROR: No hard reason this cant work, but being lazy and if you hit this then why is vid so short?")
+        # frames = [frame for frame in clip.iter_frames()]
+        # frame = clip.iter_frames()[0]
 
         # Dont check very first or very last frame b/c more likely to be all black
-        grey_start_frame = cv2.cvtColor(frames[10], cv2.COLOR_BGR2GRAY)
-        grey_end_frame = cv2.cvtColor(frames[-10], cv2.COLOR_BGR2GRAY) # TODO Check more frames?
+        start_frame = None
+        for frame_num, frame in enumerate(clip.iter_frames()):
+            if frame_num == 10:
+                start_frame = frame
+                break
+        # cv2.imshow("video", start_frame)
+        # cv2.waitKey(0)
+
+        grey_start_frame = cv2.cvtColor(start_frame, cv2.COLOR_BGR2GRAY)
+
+
+        # if (len(frames) < 22):
+        #     raise Exception("ERROR: No hard reason this cant work, but being lazy and if you hit this then why is vid so short?")
+
+        # # Dont check very first or very last frame b/c more likely to be all black
+        # grey_start_frame = cv2.cvtColor(frames[10], cv2.COLOR_BGR2GRAY)
+        # grey_end_frame = cv2.cvtColor(frames[-10], cv2.COLOR_BGR2GRAY) # TODO Check more frames?
 
         # Create dirs if not exist
         fsu.delete_if_exists(START_FRAME_IMG_PATH)
