@@ -133,35 +133,35 @@ def make_tb_vid(vid_dim_tup, out_vid_path, top_vid_path, bottom_vid_path, use_au
     # Process top vid
     ##################
 
-    # cur_top_vid_path = top_vid_path
+    cur_top_vid_path = top_vid_path
 
-    # # Will not create new vid if no black borders need to be removed
-    # cur_top_vid_path = veu.crop_black_border_from_vid_if_needed(cur_top_vid_path, TOP_VID_PATH__BLACK_BARS_REMOVED)
+    # Will not create new vid if no black borders need to be removed
+    cur_top_vid_path = veu.crop_black_border_from_vid_if_needed(cur_top_vid_path, TOP_VID_PATH__BLACK_BARS_REMOVED)
 
-    # # Perform custom edit to top vid
-    # # - This can be different depending on custom_edit_top_vid_method_str to best match the type of vid on top
-    # # - This is done before final scaling (making top vid bigger or smaller) because this edit might not be
-    # #   pixel-perfect and the final top scale will stretch the vid a tiny bit if needed to fit pixels
-    # cur_top_vid_path = _custom_edit_top_vid(cur_top_vid_path, TOP_VID_PATH__CUSTOM_EDIT, custom_edit_top_vid_method_str, crop_top_vid_sides_percent) # PUT BACK !!!!!!!!!
+    # Perform custom edit to top vid
+    # - This can be different depending on custom_edit_top_vid_method_str to best match the type of vid on top
+    # - This is done before final scaling (making top vid bigger or smaller) because this edit might not be
+    #   pixel-perfect and the final top scale will stretch the vid a tiny bit if needed to fit pixels
+    cur_top_vid_path = _custom_edit_top_vid(cur_top_vid_path, TOP_VID_PATH__CUSTOM_EDIT, custom_edit_top_vid_method_str, crop_top_vid_sides_percent) # PUT BACK !!!!!!!!!
 
-    # cur_top_vid_path = _scale_vid_to_new_w_matched_vid_dims(vid_dim_tup, cur_top_vid_path, TOP__VID_PATH__SCALED) # PUT BACK!!!!!!!!!!!
+    cur_top_vid_path = _scale_vid_to_new_w_matched_vid_dims(vid_dim_tup, cur_top_vid_path, TOP__VID_PATH__SCALED) # PUT BACK!!!!!!!!!!!
 
     # The returns of this func. should be the only data from top vid needed to create final bottom vid
     final_top_vid_dims_tup, final_top_vid_len = _get_and_check__final_top_vid__dims_tup__and__len(vid_dim_tup, cur_top_vid_path)
     print(f"{final_top_vid_dims_tup=}")
     print(f"{final_top_vid_len=}")
 
-    # #####################
-    # # Process bottom vid
-    # #####################
-    # cur_bottom_vid_path = bottom_vid_path
+    #####################
+    # Process bottom vid
+    #####################
+    cur_bottom_vid_path = bottom_vid_path
 
-    # # Trim bottom vid time to match top
-    # cur_bottom_vid_path = _time_trim_bottom_vid_to_match_top(final_top_vid_len, cur_bottom_vid_path, BOTTOM_VID_PATH__TIME_TRIMMED, time_trim_bottom_vid_method_str) # PUT BACK !!!!!!!!!
+    # Trim bottom vid time to match top
+    cur_bottom_vid_path = _time_trim_bottom_vid_to_match_top(final_top_vid_len, cur_bottom_vid_path, BOTTOM_VID_PATH__TIME_TRIMMED, time_trim_bottom_vid_method_str) # PUT BACK !!!!!!!!!
 
-    # # get remaining dims to be filled by bottom_vid
-    # new_bottom_vid_dim_tup = (final_top_vid_dims_tup[0], vid_dim_tup[1] - final_top_vid_dims_tup[1])
-    # print(f"{new_bottom_vid_dim_tup=}")
+    # get remaining dims to be filled by bottom_vid
+    new_bottom_vid_dim_tup = (final_top_vid_dims_tup[0], vid_dim_tup[1] - final_top_vid_dims_tup[1])
+    print(f"{new_bottom_vid_dim_tup=}")
 
     # Perform custom edit to bottom vid
     # - This can be different depending on custom_edit_bottom_vid_method_str to best match the type of vid on bottom

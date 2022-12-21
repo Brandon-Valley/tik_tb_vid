@@ -4,6 +4,7 @@ import os
 import random
 
 from make_tb_vid import make_tb_vid
+from vid_edit_utils import Impossible_Dims_Exception
 
 import cfg
 
@@ -30,16 +31,24 @@ OG_CLIPS_DIR_PATH = os.path.join(cfg.BIG_DATA_DIR_PATH, "og_clips")
 def make_fg_mcpark_crop_sides_by_percent_tb_vid(crop_sides_by_percent, og_vid_path, vid_edits_dir_path):
 
     og_vid_file_name = fsu.get_basename_from_path(og_vid_path, include_ext = False)
-
-    make_tb_vid(vid_dim_tup = TIK_BEST_VID_DIM_TUP,
-                out_vid_path = os.path.join(vid_edits_dir_path, og_vid_file_name + f"_tsbp_{crop_sides_by_percent}.mp4"),
-                top_vid_path = og_vid_path,
-                bottom_vid_path = MC_PARK_VID_PATH,
-                use_audio_from_str = "top",
-                time_trim_bottom_vid_method_str = "from_rand_start",
-                custom_edit_bottom_vid_method_str = "crop_sides",
-                custom_edit_top_vid_method_str = "crop_sides_by_percent",
-                crop_top_vid_sides_percent = crop_sides_by_percent)
+    out_vid_path = os.path.join(vid_edits_dir_path, og_vid_file_name + f"_tsbp_{crop_sides_by_percent}.mp4")
+    try:
+        make_tb_vid(vid_dim_tup = TIK_BEST_VID_DIM_TUP,
+                    out_vid_path = out_vid_path,
+                    top_vid_path = og_vid_path,
+                    bottom_vid_path = MC_PARK_VID_PATH,
+                    use_audio_from_str = "top",
+                    time_trim_bottom_vid_method_str = "from_rand_start",
+                    custom_edit_bottom_vid_method_str = "crop_sides",
+                    custom_edit_top_vid_method_str = "crop_sides_by_percent",
+                    crop_top_vid_sides_percent = crop_sides_by_percent)
+    except Impossible_Dims_Exception as e:
+        print(f"WARNING: Got Impossible_Dims_Exception from make_tb_vid().\n \
+        This probably means got to crop_sides_of_vid_to_match_aspect_ratio() and turned out that given dims were impossible.\n \
+        Probably caused by crop_top_vid_sides_percent ({crop_sides_by_percent}) being set too high.\n \
+        This should be avoided since now all the time spent processing up to that point has been wasted.\n \
+        Ending current run of make_tb_vid() and deleting {out_vid_path=} if needed...")
+        fsu.delete_if_exists(out_vid_path)
 
 def batch_make_tb_vids(og_vids_dir_path, out_dir_path):
 

@@ -30,6 +30,9 @@ END_FRAME_IMG_PATH = os.path.join(TEMP_FRAME_IMGS_DIR_PATH, "end_grey_frame_img.
 
 BLACK_COLOR_RGB = 0
 
+
+class Impossible_Dims_Exception(Exception): pass
+
 ####################################################################################################
 # Get data about given vid
 ####################################################################################################
@@ -202,9 +205,23 @@ def crop_sides_of_vid_to_match_aspect_ratio(vid_dim_tup_to_match_aspect_ratio, i
     new_vid_w = in_vid_h * aspect_ratio
     print(f"new vid dims {new_vid_w} x {in_vid_h}")
 
+    if new_vid_w > in_vid_w:
+        raise Impossible_Dims_Exception(f"ERROR: {new_vid_w=} > {in_vid_w=}, This means it's impossible to make \
+        {in_vid_path=} which has W={in_vid_w} & H={in_vid_h} match \
+        {vid_dim_tup_to_match_aspect_ratio=} by only cropping sides of in_vid.  To make the aspect \
+        ratios match, would need to either need to increase width of in_vid (by adding black bars \
+        or by stretching) or by cropping height of in_vid, which is out of the scope of this function")
+
     # At this point, h should be the same, only w has changed (reduced)
     w_diff = in_vid_w - new_vid_w
     num_pixels_to_trim_from_both_sides = int(w_diff / 2)
+    # print(f"----------------")
+
+    # print(f"{in_vid_w=}")
+    # print(f"{new_vid_w=}")
+    # print(f"{w_diff=}")
+    # print(f"----------------")
+
 
     crop_vid(w = w_diff,
              h = in_vid_h,
@@ -212,6 +229,20 @@ def crop_sides_of_vid_to_match_aspect_ratio(vid_dim_tup_to_match_aspect_ratio, i
              y = 0,
              in_vid_path = in_vid_path, out_vid_path = out_vid_path)
 
+    print(f"----------------")
+
+    print(f"{vid_dim_tup_to_match_aspect_ratio=}")
+    print(f"{in_vid_w=}")
+    print(f"{new_vid_w=}")
+    print(f"{w_diff=}")
+    print(f"----------------")
+
+    print(f"{in_vid_dim_tup=}")
+    print(f"{aspect_ratio=}")
+    print(f"{new_vid_w=}")
+    print(f"{w_diff=}")
+    print(f"{num_pixels_to_trim_from_both_sides=}")
+    # exit()
 
 def crop_sides_of_vid_by_percent(trim_percent, in_vid_path, out_vid_path):
     """
@@ -233,12 +264,25 @@ def crop_sides_of_vid_by_percent(trim_percent, in_vid_path, out_vid_path):
     num_pixels_wide_to_keep_total = in_vid_w - num_pixels_wide_to_remove_total
     num_pixels_to_trim_from_both_sides = int(num_pixels_wide_to_remove_total / 2)
 
+    print(f"{num_pixels_wide_to_remove_total=}")
+    print(f"{num_pixels_wide_to_keep_total=}")
+    print(f"{num_pixels_to_trim_from_both_sides=}")
+    print(f"{in_vid_dim_tup=}")
+
     crop_vid(w = num_pixels_wide_to_keep_total,
                 h = in_vid_h,
                 x = num_pixels_to_trim_from_both_sides,
                 y = 0,
                 in_vid_path = in_vid_path, out_vid_path = out_vid_path)
 
+    print(f"{(trim_percent / 100)=}")
+    print(f"{num_pixels_wide_to_remove_total=}")
+    print(f"{num_pixels_to_trim_from_both_sides * 2=}")
+    print(f"{in_vid_w - (num_pixels_to_trim_from_both_sides * 2)=}")
+    print(f"{num_pixels_wide_to_keep_total=}")
+    print(f"{num_pixels_to_trim_from_both_sides=}")
+    print(f"{in_vid_dim_tup=}")
+    # exit()
 
 ####################################################################################################
 # Combine multiple vids into new vid
