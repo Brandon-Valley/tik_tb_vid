@@ -51,7 +51,7 @@ def get_vid_length(filename, error_if_vid_not_exist = True):
                              "default=noprint_wrappers=1:nokey=1", filename],
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT)
-    print(result.stdout)
+    # print(result.stdout)
     return float(result.stdout)
 
 ####################################################################################################
@@ -212,6 +212,8 @@ def crop_sides_of_vid_to_match_aspect_ratio(vid_dim_tup_to_match_aspect_ratio, i
     in_vid_dim_tup = get_vid_dims(in_vid_path)
     in_vid_w = in_vid_dim_tup[0]
     in_vid_h = in_vid_dim_tup[1]
+    print(f"{in_vid_w=}")
+    print(f"{in_vid_h=}")
 
     aspect_ratio = vid_dim_tup_to_match_aspect_ratio[0] / vid_dim_tup_to_match_aspect_ratio[1]
 
@@ -221,10 +223,10 @@ def crop_sides_of_vid_to_match_aspect_ratio(vid_dim_tup_to_match_aspect_ratio, i
 
     if new_vid_w > in_vid_w:
         raise Impossible_Dims_Exception(f"ERROR: {new_vid_w=} > {in_vid_w=}, This means it's impossible to make \
-        {in_vid_path=} which has W={in_vid_w} & H={in_vid_h} match \
-        {vid_dim_tup_to_match_aspect_ratio=} by only cropping sides of in_vid.  To make the aspect \
-        ratios match, would need to either need to increase width of in_vid (by adding black bars \
-        or by stretching) or by cropping height of in_vid, which is out of the scope of this function")
+{in_vid_path=} which has W={in_vid_w} & H={in_vid_h} match \
+{vid_dim_tup_to_match_aspect_ratio=} by only cropping sides of in_vid.  To make the aspect \
+ratios match, would need to either need to increase width of in_vid (by adding black bars \
+or by stretching) or by cropping height of in_vid, which is out of the scope of this function")
 
     # At this point, h should be the same, only w has changed (reduced)
     w_diff = in_vid_w - new_vid_w

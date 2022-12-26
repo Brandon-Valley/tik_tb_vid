@@ -28,6 +28,8 @@ OG_LONG_BOTTOM_VIDS_DIR_PATH = os.path.join(IGNORE_DIR_PATH, "og_long_bottom_vid
 # For testing
 OG_CLIPS_DIR_PATH = os.path.join(cfg.BIG_DATA_DIR_PATH, "og_clips")
 
+ERROR_ON_IMPOSSIBLE_DIMS_EXP = True
+
 
 def _get_rand_bottom_vid_to_time_trim(og_long_bottom_vids_dir_path, top_vid_path):
     top_vid_len = veu.get_vid_length(top_vid_path)
@@ -74,12 +76,15 @@ def make_fg_mcpark_crop_sides_by_percent_tb_vid(crop_sides_by_percent, og_vid_pa
                     custom_edit_top_vid_method_str = "crop_sides_of_vid_to_match_aspect_ratio_from_percent_of_final_dims",
                     top_vid_custom_edit_percent = crop_sides_by_percent)
     except Impossible_Dims_Exception as e:
-        print(f"WARNING: Got Impossible_Dims_Exception from make_tb_vid().\n \
-        This probably means got to crop_sides_of_vid_to_match_aspect_ratio() and turned out that given dims were impossible.\n \
-        Probably caused by crop_top_vid_sides_percent ({crop_sides_by_percent}) being set too high.\n \
-        This should be avoided since now all the time spent processing up to that point has been wasted.\n \
-        Ending current run of make_tb_vid() and deleting {out_vid_path=} if needed...")
-        fsu.delete_if_exists(out_vid_path)
+        if ERROR_ON_IMPOSSIBLE_DIMS_EXP:
+            raise(e)
+        else:
+            print(f"WARNING: Got Impossible_Dims_Exception from make_tb_vid().\n \
+            This probably means got to crop_sides_of_vid_to_match_aspect_ratio() and turned out that given dims were impossible.\n \
+            Probably caused by crop_top_vid_sides_percent ({crop_sides_by_percent}) being set too high.\n \
+            This should be avoided since now all the time spent processing up to that point has been wasted.\n \
+            Ending current run of make_tb_vid() and deleting {out_vid_path=} if needed...")
+            fsu.delete_if_exists(out_vid_path)
 
 def batch_make_tb_vids(og_vids_dir_path, out_dir_path):
 
@@ -101,9 +106,9 @@ def batch_make_tb_vids(og_vids_dir_path, out_dir_path):
         # # # # make_fg_mcpark_crop_sides_by_percent_tb_vid(5,  og_vid_path, vid_edits_dir_path)
         # make_fg_mcpark_crop_sides_by_percent_tb_vid(10, og_vid_path, vid_edits_dir_path)
         # # # # make_fg_mcpark_crop_sides_by_percent_tb_vid(15, og_vid_path, vid_edits_dir_path)
-        # make_fg_mcpark_crop_sides_by_percent_tb_vid(20, og_vid_path, vid_edits_dir_path)
+        make_fg_mcpark_crop_sides_by_percent_tb_vid(60, og_vid_path, vid_edits_dir_path)
         # # # make_fg_mcpark_crop_sides_by_percent_tb_vid(25, og_vid_path, vid_edits_dir_path)
-        make_fg_mcpark_crop_sides_by_percent_tb_vid(30, og_vid_path, vid_edits_dir_path)
+        # make_fg_mcpark_crop_sides_by_percent_tb_vid(30, og_vid_path, vid_edits_dir_path)
         # # make_fg_mcpark_crop_sides_by_percent_tb_vid(35, og_vid_path, vid_edits_dir_path)
 
 

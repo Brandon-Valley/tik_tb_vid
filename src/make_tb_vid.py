@@ -43,7 +43,19 @@ def _crop_sides_of_vid_to_match_aspect_ratio_from_percent_of_final_dims(custom_e
     print(f"{in_vid_path=}")
     print(f"{out_vid_path=}")
 
-    exit()
+    final_vid_w = final_vid_dim_tup[0]
+    final_vid_h = final_vid_dim_tup[1]
+
+    # LATER do you really need to trim sides to match aspect ratio THEN scale separately in 2 diff steps?
+    # LATER have vinal top vid dims here vv, could you save time by doing both in 1 step?
+    final_top_vid_h = int(final_vid_h * (custom_edit_percent / 100))
+    final_top_vid_dim_tup = (final_vid_w, final_top_vid_h)
+
+    # top_vid_aspect_ratio = final_vid_w / final_top_vid_h
+
+    cropped_or_uncropped_vid_path = veu.crop_sides_of_vid_to_match_aspect_ratio(final_top_vid_dim_tup, in_vid_path, out_vid_path)
+
+    return cropped_or_uncropped_vid_path
 
 
 def _custom_edit_top_vid(in_vid_path, out_vid_path, custom_edit_vid_method_str, custom_edit_percent, final_vid_dim_tup):
@@ -157,13 +169,14 @@ def make_tb_vid(final_vid_dim_tup, out_vid_path, top_vid_path, bottom_vid_path, 
     cur_top_vid_path = top_vid_path
 
     # Will not create new vid if no black borders need to be removed
-    # cur_top_vid_path = veu.crop_black_border_from_vid_if_needed(cur_top_vid_path, TOP_VID_PATH__BLACK_BARS_REMOVED) # PUT BACK!!!!
+    # cur_top_vid_path = veu.crop_black_border_from_vid_if_needed(cur_top_vid_path, TOP_VID_PATH__BLACK_BARS_REMOVED) # PUT BACK!!!!!!!!!!!!!!
 
     # Perform custom edit to top vid
     # - This can be different depending on custom_edit_top_vid_method_str to best match the type of vid on top
     # - This is done before final scaling (making top vid bigger or smaller) because this edit might not be
     #   pixel-perfect and the final top scale will stretch the vid a tiny bit if needed to fit pixels
     cur_top_vid_path = _custom_edit_top_vid(cur_top_vid_path, TOP_VID_PATH__CUSTOM_EDIT, custom_edit_top_vid_method_str, top_vid_custom_edit_percent, final_vid_dim_tup) # PUT BACK !!!!!!!!!
+    exit()
 
     cur_top_vid_path = _scale_vid_to_new_w_matched_vid_dims(final_vid_dim_tup, cur_top_vid_path, TOP__VID_PATH__SCALED) # PUT BACK!!!!!!!!!!!
 
