@@ -18,9 +18,9 @@ TIK_BEST_VID_DIM_TUP = (1080,1920) # W x H
 # Big Data Paths
 IGNORE_DIR_PATH           = os.path.join(cfg.BIG_DATA_DIR_PATH, "ignore")
 
-# PLAYLIST_OG_VIDS_DIR_PATH = os.path.join(IGNORE_DIR_PATH, "playlist_og_clips", "fg_pl_tbs__single_short_test")
+PLAYLIST_OG_VIDS_DIR_PATH = os.path.join(IGNORE_DIR_PATH, "playlist_og_clips", "fg_pl_tbs__single_short_test")
 # PLAYLIST_OG_VIDS_DIR_PATH = os.path.join(IGNORE_DIR_PATH, "playlist_og_clips", "fg_pl_tbs__10_clips_full_len_test")
-PLAYLIST_OG_VIDS_DIR_PATH    = os.path.join(IGNORE_DIR_PATH, "playlist_og_clips", "Family_Guy___TBS")
+# PLAYLIST_OG_VIDS_DIR_PATH    = os.path.join(IGNORE_DIR_PATH, "playlist_og_clips", "Family_Guy___TBS")
 FINAL_OUT_VID_DIR_PATH       = os.path.join(IGNORE_DIR_PATH, "final_output")
 OG_LONG_BOTTOM_VIDS_DIR_PATH = os.path.join(IGNORE_DIR_PATH, "og_long_bottom_vids")
 
@@ -63,16 +63,16 @@ def make_fg_mcpark_crop_sides_by_percent_tb_vid(crop_sides_by_percent, og_vid_pa
     rand_chosen_bottom_vid_path = _get_rand_bottom_vid_to_time_trim(OG_LONG_BOTTOM_VIDS_DIR_PATH, top_vid_path = og_vid_path)
 
     try:
-        make_tb_vid(vid_dim_tup = TIK_BEST_VID_DIM_TUP,
+        make_tb_vid(final_vid_dim_tup = TIK_BEST_VID_DIM_TUP,
                     out_vid_path = out_vid_path,
                     top_vid_path = og_vid_path,
-                    # bottom_vid_path = MC_PARK_VID_PATH,
                     bottom_vid_path = rand_chosen_bottom_vid_path,
                     use_audio_from_str = "top",
                     time_trim_bottom_vid_method_str = "from_rand_start",
                     custom_edit_bottom_vid_method_str = "crop_sides",
-                    custom_edit_top_vid_method_str = "crop_sides_by_percent",
-                    crop_top_vid_sides_percent = crop_sides_by_percent)
+                    # custom_edit_top_vid_method_str = "crop_sides_by_percent",
+                    custom_edit_top_vid_method_str = "crop_sides_of_vid_to_match_aspect_ratio_from_percent_of_final_dims",
+                    top_vid_custom_edit_percent = crop_sides_by_percent)
     except Impossible_Dims_Exception as e:
         print(f"WARNING: Got Impossible_Dims_Exception from make_tb_vid().\n \
         This probably means got to crop_sides_of_vid_to_match_aspect_ratio() and turned out that given dims were impossible.\n \
