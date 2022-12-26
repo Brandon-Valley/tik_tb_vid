@@ -1,3 +1,5 @@
+
+import random
 import vid_edit_utils as veu
 from pathlib import Path
 import os
@@ -18,27 +20,56 @@ IGNORE_DIR_PATH           = os.path.join(cfg.BIG_DATA_DIR_PATH, "ignore")
 
 # PLAYLIST_OG_VIDS_DIR_PATH = os.path.join(IGNORE_DIR_PATH, "playlist_og_clips", "fg_pl_tbs__single_short_test")
 # PLAYLIST_OG_VIDS_DIR_PATH = os.path.join(IGNORE_DIR_PATH, "playlist_og_clips", "fg_pl_tbs__10_clips_full_len_test")
-PLAYLIST_OG_VIDS_DIR_PATH = os.path.join(IGNORE_DIR_PATH, "playlist_og_clips", "Family_Guy___TBS")
-FINAL_OUT_VID_DIR_PATH    = os.path.join(IGNORE_DIR_PATH, "final_output")
-OG_LONG_BOTTOM_VIDS       = os.path.join(IGNORE_DIR_PATH, "og_long_bottom_vids")
+PLAYLIST_OG_VIDS_DIR_PATH    = os.path.join(IGNORE_DIR_PATH, "playlist_og_clips", "Family_Guy___TBS")
+FINAL_OUT_VID_DIR_PATH       = os.path.join(IGNORE_DIR_PATH, "final_output")
+OG_LONG_BOTTOM_VIDS_DIR_PATH = os.path.join(IGNORE_DIR_PATH, "og_long_bottom_vids")
 
-MC_PARK_VID_PATH          = os.path.join(OG_LONG_BOTTOM_VIDS, "mc_parkour_1hr_20min_Trim.mp4")
+# MC_PARK_VID_PATH          = os.path.join(OG_LONG_BOTTOM_VIDS_DIR_PATH, "mc_parkour_1hr_20min_Trim.mp4")
 
 # For testing
 OG_CLIPS_DIR_PATH = os.path.join(cfg.BIG_DATA_DIR_PATH, "og_clips")
+
+
+def _get_rand_bottom_vid_to_time_trim(og_long_bottom_vids_dir_path, top_vid_path):
+    print("in _get_rand_bottom_vid_to_time_trim(0")
+    top_vid_len = veu.get_vid_length(top_vid_path)
+
+    # build possible_bottom_vid_path_len_d
+    possible_bottom_vid_path_len_d = {}
+    
+    og_long_bottom_vid_path_l = fsu.get_dir_content_l(og_long_bottom_vids_dir_path, object_type = 'file', content_type = 'abs_path')
+    for og_long_bottom_vid_path in og_long_bottom_vid_path_l:
+        og_long_bottom_vid_len = veu.get_vid_length(og_long_bottom_vid_path)
+        
+        if top_vid_len <= og_long_bottom_vid_len:
+            possible_bottom_vid_path_len_d[og_long_bottom_vid_path] = og_long_bottom_vid_len
+
+    # Make choice of bottom vid by random weighted by vid len
+    # Not perfectly random for showing every part of every clip but good enough for now
+    # Could probably be more efficient
+    weighted_rand_choice_l = []
+    for bottom_vid_path, bottom_vid_len in possible_bottom_vid_path_len_d.items():
+        weighted_rand_choice_l += [bottom_vid_path] * int(bottom_vid_len)
+    rand_chosen_bottom_vid_path = random.choice(weighted_rand_choice_l)
+    
+    print("`Randomly` choose bottom vid: ", rand_chosen_bottom_vid_path)
+    return rand_chosen_bottom_vid_path
 
 ####################################################################################################
 # Main
 ####################################################################################################
 def make_fg_mcpark_crop_sides_by_percent_tb_vid(crop_sides_by_percent, og_vid_path, vid_edits_dir_path):
-
     og_vid_file_name = fsu.get_basename_from_path(og_vid_path, include_ext = False)
     out_vid_path = os.path.join(vid_edits_dir_path, og_vid_file_name + f"_tsbp_{crop_sides_by_percent}.mp4")
+
+    rand_chosen_bottom_vid_path = _get_rand_bottom_vid_to_time_trim(OG_LONG_BOTTOM_VIDS_DIR_PATH, top_vid_path = og_vid_path)
+    exit()
     try:
         make_tb_vid(vid_dim_tup = TIK_BEST_VID_DIM_TUP,
                     out_vid_path = out_vid_path,
                     top_vid_path = og_vid_path,
-                    bottom_vid_path = MC_PARK_VID_PATH,
+                    # bottom_vid_path = MC_PARK_VID_PATH,
+                    bottom_vid_path = rand_chosen_bottom_vid_path,
                     use_audio_from_str = "top",
                     time_trim_bottom_vid_method_str = "from_rand_start",
                     custom_edit_bottom_vid_method_str = "crop_sides",
