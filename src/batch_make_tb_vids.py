@@ -24,14 +24,12 @@ PLAYLIST_OG_VIDS_DIR_PATH    = os.path.join(IGNORE_DIR_PATH, "playlist_og_clips"
 FINAL_OUT_VID_DIR_PATH       = os.path.join(IGNORE_DIR_PATH, "final_output")
 OG_LONG_BOTTOM_VIDS_DIR_PATH = os.path.join(IGNORE_DIR_PATH, "og_long_bottom_vids")
 
-# MC_PARK_VID_PATH          = os.path.join(OG_LONG_BOTTOM_VIDS_DIR_PATH, "mc_parkour_1hr_20min_Trim.mp4")
 
 # For testing
 OG_CLIPS_DIR_PATH = os.path.join(cfg.BIG_DATA_DIR_PATH, "og_clips")
 
 
 def _get_rand_bottom_vid_to_time_trim(og_long_bottom_vids_dir_path, top_vid_path):
-    print("in _get_rand_bottom_vid_to_time_trim(0")
     top_vid_len = veu.get_vid_length(top_vid_path)
 
     # build possible_bottom_vid_path_len_d
@@ -63,7 +61,7 @@ def make_fg_mcpark_crop_sides_by_percent_tb_vid(crop_sides_by_percent, og_vid_pa
     out_vid_path = os.path.join(vid_edits_dir_path, og_vid_file_name + f"_tsbp_{crop_sides_by_percent}.mp4")
 
     rand_chosen_bottom_vid_path = _get_rand_bottom_vid_to_time_trim(OG_LONG_BOTTOM_VIDS_DIR_PATH, top_vid_path = og_vid_path)
-    exit()
+
     try:
         make_tb_vid(vid_dim_tup = TIK_BEST_VID_DIM_TUP,
                     out_vid_path = out_vid_path,
