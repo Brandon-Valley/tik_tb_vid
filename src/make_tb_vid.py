@@ -176,7 +176,7 @@ def make_tb_vid(final_vid_dim_tup, out_vid_path, top_vid_path, bottom_vid_path, 
     # - This is done before final scaling (making top vid bigger or smaller) because this edit might not be
     #   pixel-perfect and the final top scale will stretch the vid a tiny bit if needed to fit pixels
     cur_top_vid_path = _custom_edit_top_vid(cur_top_vid_path, TOP_VID_PATH__CUSTOM_EDIT, custom_edit_top_vid_method_str, top_vid_custom_edit_percent, final_vid_dim_tup) # PUT BACK !!!!!!!!!
-    exit()
+    # exit()
 
     cur_top_vid_path = _scale_vid_to_new_w_matched_vid_dims(final_vid_dim_tup, cur_top_vid_path, TOP__VID_PATH__SCALED) # PUT BACK!!!!!!!!!!!
 

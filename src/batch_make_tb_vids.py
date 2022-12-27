@@ -60,7 +60,8 @@ def _get_rand_bottom_vid_to_time_trim(og_long_bottom_vids_dir_path, top_vid_path
 ####################################################################################################
 def make_fg_mcpark_crop_sides_by_percent_tb_vid(crop_sides_by_percent, og_vid_path, vid_edits_dir_path):
     og_vid_file_name = fsu.get_basename_from_path(og_vid_path, include_ext = False)
-    out_vid_path = os.path.join(vid_edits_dir_path, og_vid_file_name + f"_tsbp_{crop_sides_by_percent}.mp4")
+    # out_vid_path = os.path.join(vid_edits_dir_path, og_vid_file_name + f"_tsbp_{crop_sides_by_percent}.mp4")
+    out_vid_path = os.path.join(vid_edits_dir_path, og_vid_file_name + f"_tsbfd_{crop_sides_by_percent}.mp4")
 
     rand_chosen_bottom_vid_path = _get_rand_bottom_vid_to_time_trim(OG_LONG_BOTTOM_VIDS_DIR_PATH, top_vid_path = og_vid_path)
 
@@ -106,7 +107,7 @@ def batch_make_tb_vids(og_vids_dir_path, out_dir_path):
         # # # # make_fg_mcpark_crop_sides_by_percent_tb_vid(5,  og_vid_path, vid_edits_dir_path)
         # make_fg_mcpark_crop_sides_by_percent_tb_vid(10, og_vid_path, vid_edits_dir_path)
         # # # # make_fg_mcpark_crop_sides_by_percent_tb_vid(15, og_vid_path, vid_edits_dir_path)
-        make_fg_mcpark_crop_sides_by_percent_tb_vid(60, og_vid_path, vid_edits_dir_path)
+        make_fg_mcpark_crop_sides_by_percent_tb_vid(45, og_vid_path, vid_edits_dir_path)
         # # # make_fg_mcpark_crop_sides_by_percent_tb_vid(25, og_vid_path, vid_edits_dir_path)
         # make_fg_mcpark_crop_sides_by_percent_tb_vid(30, og_vid_path, vid_edits_dir_path)
         # # make_fg_mcpark_crop_sides_by_percent_tb_vid(35, og_vid_path, vid_edits_dir_path)
