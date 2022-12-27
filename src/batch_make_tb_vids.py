@@ -1,4 +1,5 @@
 
+from pprint import pprint
 import random
 import vid_edit_utils as veu
 from pathlib import Path
@@ -28,7 +29,7 @@ OG_LONG_BOTTOM_VIDS_DIR_PATH = os.path.join(IGNORE_DIR_PATH, "og_long_bottom_vid
 # For testing
 OG_CLIPS_DIR_PATH = os.path.join(cfg.BIG_DATA_DIR_PATH, "og_clips")
 
-ERROR_ON_IMPOSSIBLE_DIMS_EXP = True
+ERROR_ON_IMPOSSIBLE_DIMS_EXP = False
 
 
 def _get_rand_bottom_vid_to_time_trim(og_long_bottom_vids_dir_path, top_vid_path):
@@ -76,6 +77,7 @@ def make_fg_mcpark_crop_sides_by_percent_tb_vid(crop_sides_by_percent, og_vid_pa
                     # custom_edit_top_vid_method_str = "crop_sides_by_percent",
                     custom_edit_top_vid_method_str = "crop_sides_of_vid_to_match_aspect_ratio_from_percent_of_final_dims",
                     top_vid_custom_edit_percent = crop_sides_by_percent)
+        return True
     except Impossible_Dims_Exception as e:
         if ERROR_ON_IMPOSSIBLE_DIMS_EXP:
             raise(e)
@@ -86,11 +88,14 @@ def make_fg_mcpark_crop_sides_by_percent_tb_vid(crop_sides_by_percent, og_vid_pa
             This should be avoided since now all the time spent processing up to that point has been wasted.\n \
             Ending current run of make_tb_vid() and deleting {out_vid_path=} if needed...")
             fsu.delete_if_exists(out_vid_path)
+    return False
 
 def batch_make_tb_vids(og_vids_dir_path, out_dir_path):
 
     og_vid_path_l = fsu.get_dir_content_l(og_vids_dir_path, object_type = 'file', content_type = 'abs_path')
     print(og_vid_path_l)
+
+    failed_top_vid_path_l = []
 
     for og_vid_path in og_vid_path_l:
 
@@ -107,7 +112,7 @@ def batch_make_tb_vids(og_vids_dir_path, out_dir_path):
         # # # # make_fg_mcpark_crop_sides_by_percent_tb_vid(5,  og_vid_path, vid_edits_dir_path)
         # make_fg_mcpark_crop_sides_by_percent_tb_vid(10, og_vid_path, vid_edits_dir_path)
         # # # # make_fg_mcpark_crop_sides_by_percent_tb_vid(15, og_vid_path, vid_edits_dir_path)
-        make_fg_mcpark_crop_sides_by_percent_tb_vid(40, og_vid_path, vid_edits_dir_path)
+        made_tb_vid = make_fg_mcpark_crop_sides_by_percent_tb_vid(40, og_vid_path, vid_edits_dir_path)
         # # # make_fg_mcpark_crop_sides_by_percent_tb_vid(25, og_vid_path, vid_edits_dir_path)
         # make_fg_mcpark_crop_sides_by_percent_tb_vid(30, og_vid_path, vid_edits_dir_path)
         # # make_fg_mcpark_crop_sides_by_percent_tb_vid(35, og_vid_path, vid_edits_dir_path)
@@ -115,6 +120,13 @@ def batch_make_tb_vids(og_vids_dir_path, out_dir_path):
 
         # make_fg_mcpark_crop_sides_by_percent_tb_vid(40, og_vid_path, vid_edits_dir_path)
         # # make_fg_mcpark_crop_sides_by_percent_tb_vid(45, og_vid_path, vid_edits_dir_path)
+
+        if not made_tb_vid:
+            failed_top_vid_path_l.append(og_vid_path)
+
+        print(f"{failed_top_vid_path_l=}")
+        print(f"---")
+        pprint(failed_top_vid_path_l)
 
 def main():
     batch_make_tb_vids(PLAYLIST_OG_VIDS_DIR_PATH, FINAL_OUT_VID_DIR_PATH)
