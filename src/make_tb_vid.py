@@ -169,7 +169,7 @@ def make_tb_vid(final_vid_dim_tup, out_vid_path, top_vid_path, bottom_vid_path, 
     cur_top_vid_path = top_vid_path
 
     # Will not create new vid if no black borders need to be removed
-    # cur_top_vid_path = veu.crop_black_border_from_vid_if_needed(cur_top_vid_path, TOP_VID_PATH__BLACK_BARS_REMOVED) # PUT BACK!!!!!!!!!!!!!!
+    cur_top_vid_path = veu.crop_black_border_from_vid_if_needed(cur_top_vid_path, TOP_VID_PATH__BLACK_BARS_REMOVED) # PUT BACK!!!!!!!!!!!!!!
 
     # Perform custom edit to top vid
     # - This can be different depending on custom_edit_top_vid_method_str to best match the type of vid on top
