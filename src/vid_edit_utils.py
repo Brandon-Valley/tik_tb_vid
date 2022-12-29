@@ -363,9 +363,49 @@ def stack_vids(top_vid_path, bottom_vid_path, out_vid_path):
     subprocess.call(cmd, shell = True)
     return out_vid_path
 
+# TMP might not work at all
+def embed_sub_file_into_vid_file(sub_file_path, in_vid_path, out_vid_path):
+    video = ffmpeg.input(in_vid_path)
+    audio = video.audio
+    ffmpeg.concat(video.filter("subtitles", os.path.abspath(sub_file_path)), audio, v=1, a=1).output(out_vid_path).run()
+
+def burn_subs_into_vid(sub_file_path, in_vid_path, out_vid_path):
+    cmd = f"ffmpeg -i {in_vid_path} -vf subtitles={sub_file_path} {out_vid_path}"
+    print(f"Running {cmd}...")
+    subprocess.call(cmd, shell=True)
+
+def convert_subs(in_sub_path, out_sub_path):
+    cmd = f'tt convert -i "{in_sub_path}" -o "{out_sub_path}"'
+    print(f"Running {cmd}...")
+    subprocess.call(cmd, shell=True)
+
+def extract_embedded_subs_from_vid_to_separate_file(vid_path, new_sub_file_path):
+    cmd = f'ffmpeg -i {vid_path} -map 0:s:0 {new_sub_file_path}'
+    print(f"Running {cmd}...")
+    subprocess.call(cmd, shell=True)
+
 if __name__ == "__main__":
     # import make_tb_vid
     # make_tb_vid.make_tb_vid()
 
-    import batch_make_tb_vids
-    batch_make_tb_vids.main()
+    # import batch_make_tb_vids
+    # batch_make_tb_vids.main()
+
+    print("start")
+    # burn_subs_into_vid(sub_file_path = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/test/sub_embed_test/og_clip.ttml",
+    #                              in_vid_path = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/test/sub_embed_test/og_clip.mp4",
+    #                              out_vid_path = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/test/sub_embed_test/embed_clip.mp4")
+
+    # convert_subs("C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/test/sub_embed_test/og_clip.ttml",
+    # "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/test/sub_embed_test/og_clip__PY_CONVERTED.srt")
+
+    # extract_embedded_subs_from_vid_to_separate_file("C:/Users/Brandon/Documents/Personal_Projects/youtube_utils/ignore/embed_subs_pl_test/Inventions_that_Backfire/Invention_that_backfires_2/Invention_that_backfires_2.mp4",
+    # "C:/Users/Brandon/Documents/Personal_Projects/youtube_utils/ignore/embed_subs_pl_test/Inventions_that_Backfire/Invention_that_backfires_2/Invention_that_backfires_2.srt")
+
+    convert_subs("C:/Users/Brandon/Documents/Personal_Projects/youtube_utils/ignore/embed_subs_pl_test/Inventions_that_Backfire/Invention_that_backfires_2/Invention_that_backfires_2.srt",
+    "C:/Users/Brandon/Documents/Personal_Projects/youtube_utils/ignore/embed_subs_pl_test/Inventions_that_Backfire/Invention_that_backfires_2/Invention_that_backfires_2.ttml")
+
+
+    print("done")
+
+    # tt convert -i "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/test/sub_embed_test/og_clip.ttml" -o "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/test/sub_embed_test/og_clip.srt"
