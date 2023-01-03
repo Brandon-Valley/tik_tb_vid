@@ -56,3 +56,24 @@ Split video by chapters: Videos can be split into multiple files based on chapte
 
 
 pip install --pre ttconv
+
+
+https://www.solveigmm.com/en/howto/how-to-edit-video-files-with-subtitles-with-video-splitter/
+
+https://codecguide.com/download_other.htm
+
+
+
+https://www.videohelp.com/software/VideoReDo
+
+https://forum.videohelp.com/threads/359121-How-to-extract-cut-parts-from-a-mkv-including-all-audio-and-subtitle-tracks
+
+https://www.videohelp.com/software/sections/video-editors-basic
+
+# Manual vid edit with embedded subtitles
+
+- MKVToolNix
+  - split mode by parts
+
+- media viewer classic
+  - ctrl + G

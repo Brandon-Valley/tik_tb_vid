@@ -384,6 +384,13 @@ def extract_embedded_subs_from_vid_to_separate_file(vid_path, new_sub_file_path)
     print(f"Running {cmd}...")
     subprocess.call(cmd, shell=True)
 
+def combine_mp4_and_sub_into_mkv(in_mp4_path, in_sub_path, out_mkv_path):
+    """ sub may need to be .srt """
+    # cmd = f'ffmpeg -i {in_mp4_path} -i {in_sub_path} -c copy -c:s mov_text {out_mkv_path}'
+    cmd = f'ffmpeg -i {in_mp4_path} -i {in_sub_path} -c copy -c:s copy {out_mkv_path}'
+    print(f"Running {cmd}...")
+    subprocess.call(cmd, shell=True)
+
 if __name__ == "__main__":
     # import make_tb_vid
     # make_tb_vid.make_tb_vid()
@@ -402,8 +409,13 @@ if __name__ == "__main__":
     # extract_embedded_subs_from_vid_to_separate_file("C:/Users/Brandon/Documents/Personal_Projects/youtube_utils/ignore/embed_subs_pl_test/Inventions_that_Backfire/Invention_that_backfires_2/Invention_that_backfires_2.mp4",
     # "C:/Users/Brandon/Documents/Personal_Projects/youtube_utils/ignore/embed_subs_pl_test/Inventions_that_Backfire/Invention_that_backfires_2/Invention_that_backfires_2.srt")
 
-    convert_subs("C:/Users/Brandon/Documents/Personal_Projects/youtube_utils/ignore/embed_subs_pl_test/Inventions_that_Backfire/Invention_that_backfires_2/Invention_that_backfires_2.srt",
-    "C:/Users/Brandon/Documents/Personal_Projects/youtube_utils/ignore/embed_subs_pl_test/Inventions_that_Backfire/Invention_that_backfires_2/Invention_that_backfires_2.ttml")
+    # convert_subs("C:/Users/Brandon/Documents/Personal_Projects/youtube_utils/ignore/Family_Guy__Blue_Harvest_(Clip)___TBS/Family_Guy__Blue_Harvest_(Clip)___TBS.en.ttml",
+    # "C:/Users/Brandon/Documents/Personal_Projects/youtube_utils/ignore/Family_Guy__Blue_Harvest_(Clip)___TBS/Family_Guy__Blue_Harvest_(Clip)___TBS.en.srt")
+
+    combine_mp4_and_sub_into_mkv(in_mp4_path="C:/Users/Brandon/Documents/Personal_Projects/youtube_utils/ignore/Family_Guy__Blue_Harvest_(Clip)___TBS/Family_Guy__Blue_Harvest_(Clip)___TBS.mp4",
+     in_sub_path = "C:/Users/Brandon/Documents/Personal_Projects/youtube_utils/ignore/Family_Guy__Blue_Harvest_(Clip)___TBS/Family_Guy__Blue_Harvest_(Clip)___TBS.en.srt",
+     out_mkv_path="C:/Users/Brandon/Documents/Personal_Projects/youtube_utils/ignore/Family_Guy__Blue_Harvest_(Clip)___TBS/Family_Guy__Blue_Harvest_(Clip)___TBS_combined.mkv")
+
 
 
     print("done")
