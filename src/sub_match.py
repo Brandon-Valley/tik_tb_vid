@@ -6,6 +6,8 @@ from pathlib import Path
 
 from fuzzywuzzy import fuzz
 
+import time
+
 
 FUZZ_STR_DELIM = ' '
 
@@ -93,8 +95,8 @@ def _get_best_sub_slot_offset_and_best_line_match_index(real_subs, auto_subs):
     return best_sub_slot_offset, best_auto_sub_line_match_index_for_best_sub_slot_offset
 
 
-def _get_real_sub_shift_time(real_subs, auto_subs, best_sub_slot_offset, best_auto_sub_line_match_index_for_best_sub_slot_offset):
-    print("in _get_real_sub_shift_time()")
+def _get_real_sub_shift_num_ms(real_subs, auto_subs, best_sub_slot_offset, best_auto_sub_line_match_index_for_best_sub_slot_offset):
+    print("in _get_real_sub_shift_num_ms()")
     best_match_auto_sub_line = auto_subs[best_auto_sub_line_match_index_for_best_sub_slot_offset]
     best_match_real_sub_line = real_subs[best_sub_slot_offset + best_auto_sub_line_match_index_for_best_sub_slot_offset]
     print(f"--{best_match_auto_sub_line.text=}")
@@ -105,9 +107,9 @@ def _get_real_sub_shift_time(real_subs, auto_subs, best_sub_slot_offset, best_au
     if best_match_auto_sub_line.start > best_match_real_sub_line.start:
         raise Exception(f"ERROR: {best_match_auto_sub_line.start=} > {best_match_real_sub_line.start=} - This should never be possible.")
 
-    real_sub_shift_time = best_match_real_sub_line.start - best_match_auto_sub_line.start
+    real_sub_shift_num_ms = best_match_real_sub_line.start - best_match_auto_sub_line.start
 
-    return real_sub_shift_time
+    return real_sub_shift_num_ms
 
 def trim_and_re_time_real_sub_file_from_auto_subs(real_sub_file_path, auto_sub_file_path, out_sub_path):
 
@@ -116,15 +118,20 @@ def trim_and_re_time_real_sub_file_from_auto_subs(real_sub_file_path, auto_sub_f
 
     real_subs, auto_subs = _get_and_check_real_and_auto_subs(real_sub_file_path, auto_sub_file_path)
 
+    s_time = time.time()
     best_sub_slot_offset, best_auto_sub_line_match_index_for_best_sub_slot_offset = _get_best_sub_slot_offset_and_best_line_match_index(real_subs, auto_subs)
+    exe_time = time.time() - s_time
+    print(f"_get_best_sub_slot_offset_and_best_line_match_index() took {exe_time} seconds.")
     print("after _get_best_sub_slot_offset_and_best_line_match_index()")
     print(f"  {best_sub_slot_offset=}")
     print(f"  {best_auto_sub_line_match_index_for_best_sub_slot_offset=}")
 
-    real_sub_shift_time = _get_real_sub_shift_time(real_subs, auto_subs, best_sub_slot_offset, best_auto_sub_line_match_index_for_best_sub_slot_offset)
-    print(f"{real_sub_shift_time=}")
+    real_sub_shift_num_ms = _get_real_sub_shift_num_ms(real_subs, auto_subs, best_sub_slot_offset, best_auto_sub_line_match_index_for_best_sub_slot_offset)
+    print(f"{real_sub_shift_num_ms=}")
+    neg_real_sub_shift_num_ms = real_sub_shift_num_ms * -1
 
-    # subtile_utils.shift_and_trim_subs(real_sub_file_path, out_sub_path, )
+    subtitle_utils.shift_and_trim_subs(real_sub_file_path, out_sub_path, neg_real_sub_shift_num_ms)
+
 
     # # subs.shift(s=2.5)
     # for line in subs:
@@ -141,7 +148,7 @@ def trim_and_re_time_real_sub_file_from_auto_subs(real_sub_file_path, auto_sub_f
 if __name__ == "__main__":
     real_sub_file_path = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/test/sub_match/family.guy.s10.e05.back.to.the.pilot.(2011).eng.1cd.(4413506)/Family.Guy.S10E05.720p.WEB-DL.DD5.1.H.264-CtrlHD.srt"
     auto_sub_file_path = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/test/sub_match/Family_Guy__Back_To_The_Pilot_(Clip)___TBS/Family_Guy__Back_To_The_Pilot_(Clip)___TBS.en.srt"
-    out_sub_path = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/test/sub_match/Family_Guy__Back_To_The_Pilot_(Clip)___TBS/out.en.srt"
+    out_sub_path = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/test/sub_match/Family_Guy__Back_To_The_Pilot_(Clip)___TBS.en.srt"
     trim_and_re_time_real_sub_file_from_auto_subs(real_sub_file_path, auto_sub_file_path, out_sub_path)
 
     print("Done")
