@@ -77,3 +77,16 @@ https://www.videohelp.com/software/sections/video-editors-basic
 
 - media viewer classic
   - ctrl + G
+
+
+# SUB match
+
+- https://forum.opensubtitles.org/viewtopic.php?t=16826
+- googled: opensubtitles.org family guy series overview
+- https://www.opensubtitles.org/en/ssearch/sublanguageid-all/idmovie-7533
+
+- https://www.opensubtitles.org/en/ssearch/sublanguageid-eng/idmovie-7533
+- - ^^ googled opensubtitles.org family guy series overview english subtitles
+
+$ pip install pysubs2
+
