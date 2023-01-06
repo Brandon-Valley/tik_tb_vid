@@ -88,5 +88,8 @@ https://www.videohelp.com/software/sections/video-editors-basic
 - https://www.opensubtitles.org/en/ssearch/sublanguageid-eng/idmovie-7533
 - - ^^ googled opensubtitles.org family guy series overview english subtitles
 
-$ pip install pysubs2
+pip install pysubs2
 
+<!-- pip install fuzzysearch -->
+
+pip install fuzzywuzzy

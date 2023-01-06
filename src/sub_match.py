@@ -1,14 +1,26 @@
 import pysubs2
 from sms.file_system_utils import file_system_utils as fsu
 from pathlib import Path
+# from fuzzysearch import find_near_matches
 
-FUZZ_STR_DELIM = '`'
+from fuzzywuzzy import fuzz
 
-def _subs_to_subs_fuzz_str(in_subs):
-    subs_fuzz_str = ""
-    for line in in_subs:
-        subs_fuzz_str = subs_fuzz_str + line.text + FUZZ_STR_DELIM
-    return subs_fuzz_str
+
+FUZZ_STR_DELIM = ' '
+
+# def _subs_to_subs_fuzz_str(in_subs):
+#     subs_fuzz_str = ""
+#     for line in in_subs:
+#         subs_fuzz_str = subs_fuzz_str + line.text + FUZZ_STR_DELIM
+#     return subs_fuzz_str
+
+# def _get_fuzzy_search_match_from_fuzz_strs(real_subs_fuzz_str, auto_subs_fuzz_str):
+#     # search for 'PATTERN' with a maximum Levenshtein Distance of 1
+#     # match = find_near_matches('PATTERN', '---PATERN---', max_l_dist=1)
+#     match = find_near_matches(auto_subs_fuzz_str, real_subs_fuzz_str, max_l_dist=1)
+#     print(f"{match=}")
+#     # [Match(start=3, end=9, dist=1, matched="PATERN")]
+#     return match
 
 def trim_and_re_time_real_sub_file_from_auto_subs(real_sub_file_path, auto_sub_file_path, out_sub_path):
 
@@ -20,10 +32,12 @@ def trim_and_re_time_real_sub_file_from_auto_subs(real_sub_file_path, auto_sub_f
     real_subs = pysubs2.load(real_sub_file_path, encoding="utf-8")
     auto_subs = pysubs2.load(auto_sub_file_path, encoding="utf-8")
 
-    real_subs_fuzz_str = _subs_to_subs_fuzz_str(real_subs)
-    auto_subs_fuzz_str = _subs_to_subs_fuzz_str(auto_subs)
-    print(f"{real_subs_fuzz_str=}")
-    print(f"{auto_subs_fuzz_str=}")
+    # real_subs_fuzz_str = _subs_to_subs_fuzz_str(real_subs)
+    # auto_subs_fuzz_str = _subs_to_subs_fuzz_str(auto_subs)
+    # print(f"{real_subs_fuzz_str=}")
+    # print(f"{auto_subs_fuzz_str=}")
+
+    # match = _get_fuzzy_search_match_from_fuzz_strs(real_subs_fuzz_str, auto_subs_fuzz_str)
 
     # # subs.shift(s=2.5)
     # for line in subs:
@@ -32,6 +46,8 @@ def trim_and_re_time_real_sub_file_from_auto_subs(real_sub_file_path, auto_sub_f
     #     print(f"{line.start=}")
     #     print(f"{line.end=}")
     # subs.save(out_sub_path)
+
+    print(fuzz.ratio("this is a test", "this is a test!"))
 
 
 
