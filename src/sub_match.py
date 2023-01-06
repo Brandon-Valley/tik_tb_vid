@@ -1,5 +1,6 @@
 import pysubs2
 from sms.file_system_utils import file_system_utils as fsu
+import subtitle_utils
 from pathlib import Path
 # from fuzzysearch import find_near_matches
 
@@ -91,6 +92,23 @@ def _get_best_sub_slot_offset_and_best_line_match_index(real_subs, auto_subs):
 
     return best_sub_slot_offset, best_auto_sub_line_match_index_for_best_sub_slot_offset
 
+
+def _get_real_sub_shift_time(real_subs, auto_subs, best_sub_slot_offset, best_auto_sub_line_match_index_for_best_sub_slot_offset):
+    print("in _get_real_sub_shift_time()")
+    best_match_auto_sub_line = auto_subs[best_auto_sub_line_match_index_for_best_sub_slot_offset]
+    best_match_real_sub_line = real_subs[best_sub_slot_offset + best_auto_sub_line_match_index_for_best_sub_slot_offset]
+    print(f"--{best_match_auto_sub_line.text=}")
+    print(f"--{best_match_real_sub_line.text=}")
+    print(f"--{best_match_auto_sub_line.start=}")
+    print(f"--{best_match_real_sub_line.start=}")
+
+    if best_match_auto_sub_line.start > best_match_real_sub_line.start:
+        raise Exception(f"ERROR: {best_match_auto_sub_line.start=} > {best_match_real_sub_line.start=} - This should never be possible.")
+
+    real_sub_shift_time = best_match_real_sub_line.start - best_match_auto_sub_line.start
+
+    return real_sub_shift_time
+
 def trim_and_re_time_real_sub_file_from_auto_subs(real_sub_file_path, auto_sub_file_path, out_sub_path):
 
     fsu.delete_if_exists(out_sub_path)
@@ -103,6 +121,11 @@ def trim_and_re_time_real_sub_file_from_auto_subs(real_sub_file_path, auto_sub_f
     print(f"  {best_sub_slot_offset=}")
     print(f"  {best_auto_sub_line_match_index_for_best_sub_slot_offset=}")
 
+    real_sub_shift_time = _get_real_sub_shift_time(real_subs, auto_subs, best_sub_slot_offset, best_auto_sub_line_match_index_for_best_sub_slot_offset)
+    print(f"{real_sub_shift_time=}")
+
+    # subtile_utils.shift_and_trim_subs(real_sub_file_path, out_sub_path, )
+
     # # subs.shift(s=2.5)
     # for line in subs:
     #     # line.text = "{\\be1}" + line.text
@@ -111,7 +134,7 @@ def trim_and_re_time_real_sub_file_from_auto_subs(real_sub_file_path, auto_sub_f
     #     print(f"{line.end=}")
     # subs.save(out_sub_path)
 
-    print(fuzz.ratio("this is a test", "this is a test!"))
+    # print(fuzz.ratio("this is a test", "this is a test!"))
 
 
 
