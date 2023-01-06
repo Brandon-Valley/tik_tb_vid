@@ -35,8 +35,8 @@ def _get_and_check_real_and_auto_subs(real_sub_file_path, auto_sub_file_path):
     
     return real_subs, auto_subs
 
-def _compare_sub_slots(real_subs, auto_subs, sub_slot_offset):
-    print(f"..in _compare_sub_slots() - {sub_slot_offset=}")
+def _compare_sub_slots_for_single_offset(real_subs, auto_subs, sub_slot_offset):
+    print(f"..in _compare_sub_slots_for_single_offset() - {sub_slot_offset=}")
     sub_slot_score = 0
     best_auto_sub_line_match_index = False
     best_auto_sub_line_match_score = 0
@@ -56,13 +56,7 @@ def _compare_sub_slots(real_subs, auto_subs, sub_slot_offset):
 
     return sub_slot_score, best_auto_sub_line_match_index
 
-def trim_and_re_time_real_sub_file_from_auto_subs(real_sub_file_path, auto_sub_file_path, out_sub_path):
-
-    fsu.delete_if_exists(out_sub_path)
-    Path(out_sub_path).parent.mkdir(parents=True, exist_ok=True)
-
-    real_subs, auto_subs = _get_and_check_real_and_auto_subs(real_sub_file_path, auto_sub_file_path)
-
+def _get_best_sub_slot_offset_and_best_line_match_index(real_subs, auto_subs):
     possible_sub_slots = len(real_subs) - len(auto_subs)
     print(f"{possible_sub_slots=}")
 
@@ -72,7 +66,7 @@ def trim_and_re_time_real_sub_file_from_auto_subs(real_sub_file_path, auto_sub_f
                                                                 # any way len(auto_subs) == len(real_subs) but auto_subs != real_subs? # TODO test
     for sub_slot_offset in range(possible_sub_slots):
         print(f"{sub_slot_offset=}")
-        sub_slot_score, best_auto_sub_line_match_index = _compare_sub_slots(real_subs, auto_subs, sub_slot_offset)
+        sub_slot_score, best_auto_sub_line_match_index = _compare_sub_slots_for_single_offset(real_subs, auto_subs, sub_slot_offset)
         print(f"......{sub_slot_score=}")
         print(f"......{best_auto_sub_line_match_index=}")
 
@@ -94,6 +88,51 @@ def trim_and_re_time_real_sub_file_from_auto_subs(real_sub_file_path, auto_sub_f
     print(f"  - {best_auto_sub_line_match_index_for_best_sub_slot_offset=}")
     print(f"  - {auto_subs[best_auto_sub_line_match_index_for_best_sub_slot_offset].text=}")
     print(f"  - {real_subs[best_sub_slot_offset + best_auto_sub_line_match_index_for_best_sub_slot_offset].text=}")
+
+    return best_sub_slot_offset, best_auto_sub_line_match_index_for_best_sub_slot_offset
+
+def trim_and_re_time_real_sub_file_from_auto_subs(real_sub_file_path, auto_sub_file_path, out_sub_path):
+
+    fsu.delete_if_exists(out_sub_path)
+    Path(out_sub_path).parent.mkdir(parents=True, exist_ok=True)
+
+    real_subs, auto_subs = _get_and_check_real_and_auto_subs(real_sub_file_path, auto_sub_file_path)
+
+    best_sub_slot_offset, best_auto_sub_line_match_index_for_best_sub_slot_offset = _get_best_sub_slot_offset_and_best_line_match_index(real_subs, auto_subs)
+    print("after _get_best_sub_slot_offset_and_best_line_match_index()")
+    print(f"  {best_sub_slot_offset=}")
+    print(f"  {best_auto_sub_line_match_index_for_best_sub_slot_offset=}")
+    # possible_sub_slots = len(real_subs) - len(auto_subs)
+    # print(f"{possible_sub_slots=}")
+
+    # best_sub_slot_offset = 0
+    # best_sub_slot_score = 0
+    # best_auto_sub_line_match_index_for_best_sub_slot_offset = 0 # is this correct thing to do if auto_subs == real_subs?
+    #                                                             # any way len(auto_subs) == len(real_subs) but auto_subs != real_subs? # TODO test
+    # for sub_slot_offset in range(possible_sub_slots):
+    #     print(f"{sub_slot_offset=}")
+    #     sub_slot_score, best_auto_sub_line_match_index = _compare_sub_slots_for_single_offset(real_subs, auto_subs, sub_slot_offset)
+    #     print(f"......{sub_slot_score=}")
+    #     print(f"......{best_auto_sub_line_match_index=}")
+
+    #     if best_auto_sub_line_match_index == False:
+    #         raise Exception(f"ERROR: {best_auto_sub_line_match_index=}, this means maybe some subs are empty or something else happened?")
+        
+    #     if sub_slot_score > best_sub_slot_score:
+    #         print(f"....new lead sub_slot found:")
+    #         best_sub_slot_offset = sub_slot_offset
+    #         best_sub_slot_score = sub_slot_score
+    #         best_auto_sub_line_match_index_for_best_sub_slot_offset = best_auto_sub_line_match_index
+    #         print(f"      - {best_sub_slot_offset=}")
+    #         print(f"      - {best_sub_slot_score=}")
+    #         print(f"      - {best_auto_sub_line_match_index_for_best_sub_slot_offset=}")
+    
+    # print("Final best sub_slot for file:")
+    # print(f"  - {best_sub_slot_offset=}")
+    # print(f"  - {best_sub_slot_score=}")
+    # print(f"  - {best_auto_sub_line_match_index_for_best_sub_slot_offset=}")
+    # print(f"  - {auto_subs[best_auto_sub_line_match_index_for_best_sub_slot_offset].text=}")
+    # print(f"  - {real_subs[best_sub_slot_offset + best_auto_sub_line_match_index_for_best_sub_slot_offset].text=}")
 
 
 
