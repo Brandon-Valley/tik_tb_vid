@@ -130,20 +130,15 @@ def trim_and_re_time_real_sub_file_from_auto_subs(real_sub_file_path, auto_sub_f
     print(f"{real_sub_shift_num_ms=}")
     neg_real_sub_shift_num_ms = real_sub_shift_num_ms * -1
 
-    subtitle_utils.shift_and_trim_subs(real_sub_file_path, out_sub_path, neg_real_sub_shift_num_ms)
+    # init shift
+    real_subs.shift(ms = neg_real_sub_shift_num_ms)
+    real_subs.save("C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/test/sub_match/init_shift.en.srt")
 
+    subtitle_utils.sync_subs_with_vid(vid_path = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/test/sub_match/Family_Guy__Back_To_The_Pilot_(Clip)___TBS.mp4",
+     in_sub_path = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/test/sub_match/init_shift.en.srt",
+      out_sub_path = out_sub_path)
 
-    # # subs.shift(s=2.5)
-    # for line in subs:
-    #     # line.text = "{\\be1}" + line.text
-    #     print(f"{line.text=}")
-    #     print(f"{line.start=}")
-    #     print(f"{line.end=}")
-    # subs.save(out_sub_path)
-
-    # print(fuzz.ratio("this is a test", "this is a test!"))
-
-
+    # rest of real subs still in final .srt but that seems not to matter
 
 if __name__ == "__main__":
     real_sub_file_path = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/test/sub_match/family.guy.s10.e05.back.to.the.pilot.(2011).eng.1cd.(4413506)/Family.Guy.S10E05.720p.WEB-DL.DD5.1.H.264-CtrlHD.srt"
