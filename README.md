@@ -93,3 +93,5 @@ pip install pysubs2
 <!-- pip install fuzzysearch -->
 
 pip install fuzzywuzzy
+<!-- pip install ffsubsync -->
+pip install autosubsync
