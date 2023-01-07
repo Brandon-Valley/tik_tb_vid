@@ -47,9 +47,6 @@ def _compare_sub_slots_for_single_offset(real_subs, auto_subs, sub_slot_offset):
 
     for auto_sub_line_num, auto_sub_line in enumerate(auto_subs):
         real_sub_line = real_subs[auto_sub_line_num + sub_slot_offset]
-        # print(f"....{auto_sub_line_num=}")
-        # print(f"....{auto_sub_line.text=}")
-        # print(f"....{real_sub_line.text=}")
 
         auto_sub_line_match_score = fuzz.ratio(auto_sub_line.text, real_sub_line.text)
         sub_slot_score += auto_sub_line_match_score
@@ -71,8 +68,8 @@ def _get_best_sub_slot_offset_and_best_line_match_index(real_subs, auto_subs):
     for sub_slot_offset in range(possible_sub_slots):
         print(f"{sub_slot_offset=}")
         sub_slot_score, best_auto_sub_line_match_index = _compare_sub_slots_for_single_offset(real_subs, auto_subs, sub_slot_offset)
-        print(f"......{sub_slot_score=}")
-        print(f"......{best_auto_sub_line_match_index=}")
+        # print(f"......{sub_slot_score=}")
+        # print(f"......{best_auto_sub_line_match_index=}")
 
         if best_auto_sub_line_match_index == False:
             raise Exception(f"ERROR: {best_auto_sub_line_match_index=}, this means maybe some subs are empty or something else happened?")
@@ -135,15 +132,11 @@ def trim_and_re_time_real_sub_file_from_auto_subs(vid_path, real_sub_file_path, 
     real_subs.shift(ms = neg_real_sub_shift_num_ms)
     tmp_ms_shifted_sub_path = os.path.join(Path(out_sub_path).parent.__str__(), Path(out_sub_path).stem + "__TMP_MS_SHIFTED" + ''.join(Path(out_sub_path).suffixes))
     print(f"{tmp_ms_shifted_sub_path=}")
-    # real_subs.save("C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/test/sub_match/init_shift.en.srt")
     real_subs.save(tmp_ms_shifted_sub_path)
-
-    # subtitle_utils.sync_subs_with_vid(vid_path = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/test/sub_match/Family_Guy__Back_To_The_Pilot_(Clip)___TBS.mp4",
     
     # This will throw warning, this is normal:  WARNING: low quality of fit. Wrong subtitle file?
     # This happens b/c did not trim out the first part of re-timed srt which is all set to 0 (like the theme) and did not trim end
     subtitle_utils.sync_subs_with_vid(vid_path = vid_path,
-    #  in_sub_path = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/test/sub_match/init_shift.en.srt",
      in_sub_path = tmp_ms_shifted_sub_path,
       out_sub_path = out_sub_path)
 
