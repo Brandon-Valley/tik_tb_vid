@@ -68,8 +68,8 @@ def _get_best_sub_slot_offset_and_best_line_match_index(real_subs, auto_subs):
     for sub_slot_offset in range(possible_sub_slots):
         print(f"{sub_slot_offset=}")
         sub_slot_score, best_auto_sub_line_match_index = _compare_sub_slots_for_single_offset(real_subs, auto_subs, sub_slot_offset)
-        # print(f"......{sub_slot_score=}")
-        # print(f"......{best_auto_sub_line_match_index=}")
+        print(f"......{sub_slot_score=}")
+        print(f"......{best_auto_sub_line_match_index=}")
 
         if best_auto_sub_line_match_index == False:
             raise Exception(f"ERROR: {best_auto_sub_line_match_index=}, this means maybe some subs are empty or something else happened?")
