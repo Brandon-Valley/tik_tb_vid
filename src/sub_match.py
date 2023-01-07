@@ -1,3 +1,4 @@
+import os
 import pysubs2
 from sms.file_system_utils import file_system_utils as fsu
 import subtitle_utils
@@ -111,7 +112,7 @@ def _get_real_sub_shift_num_ms(real_subs, auto_subs, best_sub_slot_offset, best_
 
     return real_sub_shift_num_ms
 
-def trim_and_re_time_real_sub_file_from_auto_subs(real_sub_file_path, auto_sub_file_path, out_sub_path):
+def trim_and_re_time_real_sub_file_from_auto_subs(vid_path, real_sub_file_path, auto_sub_file_path, out_sub_path):
 
     fsu.delete_if_exists(out_sub_path)
     Path(out_sub_path).parent.mkdir(parents=True, exist_ok=True)
@@ -132,18 +133,29 @@ def trim_and_re_time_real_sub_file_from_auto_subs(real_sub_file_path, auto_sub_f
 
     # init shift
     real_subs.shift(ms = neg_real_sub_shift_num_ms)
-    real_subs.save("C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/test/sub_match/init_shift.en.srt")
+    tmp_ms_shifted_sub_path = os.path.join(Path(out_sub_path).parent.__str__(), Path(out_sub_path).stem + "__TMP_MS_SHIFTED" + ''.join(Path(out_sub_path).suffixes))
+    print(f"{tmp_ms_shifted_sub_path=}")
+    # real_subs.save("C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/test/sub_match/init_shift.en.srt")
+    real_subs.save(tmp_ms_shifted_sub_path)
 
-    subtitle_utils.sync_subs_with_vid(vid_path = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/test/sub_match/Family_Guy__Back_To_The_Pilot_(Clip)___TBS.mp4",
-     in_sub_path = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/test/sub_match/init_shift.en.srt",
+    # subtitle_utils.sync_subs_with_vid(vid_path = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/test/sub_match/Family_Guy__Back_To_The_Pilot_(Clip)___TBS.mp4",
+    
+    # This will throw warning, this is normal:  WARNING: low quality of fit. Wrong subtitle file?
+    # This happens b/c did not trim out the first part of re-timed srt which is all set to 0 (like the theme) and did not trim end
+    subtitle_utils.sync_subs_with_vid(vid_path = vid_path,
+    #  in_sub_path = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/test/sub_match/init_shift.en.srt",
+     in_sub_path = tmp_ms_shifted_sub_path,
       out_sub_path = out_sub_path)
 
     # rest of real subs still in final .srt but that seems not to matter
+    # clean up
+    fsu.delete_if_exists(tmp_ms_shifted_sub_path)
 
 if __name__ == "__main__":
     real_sub_file_path = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/test/sub_match/family.guy.s10.e05.back.to.the.pilot.(2011).eng.1cd.(4413506)/Family.Guy.S10E05.720p.WEB-DL.DD5.1.H.264-CtrlHD.srt"
     auto_sub_file_path = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/test/sub_match/Family_Guy__Back_To_The_Pilot_(Clip)___TBS/Family_Guy__Back_To_The_Pilot_(Clip)___TBS.en.srt"
     out_sub_path = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/test/sub_match/Family_Guy__Back_To_The_Pilot_(Clip)___TBS.en.srt"
-    trim_and_re_time_real_sub_file_from_auto_subs(real_sub_file_path, auto_sub_file_path, out_sub_path)
+    vid_path = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/test/sub_match/Family_Guy__Back_To_The_Pilot_(Clip)___TBS.mp4"
+    trim_and_re_time_real_sub_file_from_auto_subs(vid_path, real_sub_file_path, auto_sub_file_path, out_sub_path)
 
     print("Done")
