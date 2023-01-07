@@ -36,7 +36,7 @@ def _get_and_check_real_and_auto_subs(real_sub_file_path, auto_sub_file_path):
         raise Exception(f"ERROR: {len(auto_subs)=} - I assume this is a problem?")
     if len(auto_subs) > len(real_subs):
         raise Exception(f"ERROR: {len(auto_subs)=} > {len(real_subs)=} - This should never be possible, maybe sub formats are weird? {real_sub_file_path=}, {auto_sub_file_path=}")
-    
+
     return real_subs, auto_subs
 
 def _compare_sub_slots_for_single_offset(real_subs, auto_subs, sub_slot_offset):
@@ -50,7 +50,7 @@ def _compare_sub_slots_for_single_offset(real_subs, auto_subs, sub_slot_offset):
 
         auto_sub_line_match_score = fuzz.ratio(auto_sub_line.text, real_sub_line.text)
         sub_slot_score += auto_sub_line_match_score
-        
+
         if auto_sub_line_match_score > best_auto_sub_line_match_score:
             best_auto_sub_line_match_score = auto_sub_line_match_score
             best_auto_sub_line_match_index = auto_sub_line_num
@@ -73,7 +73,7 @@ def _get_best_sub_slot_offset_and_best_line_match_index(real_subs, auto_subs):
 
         if best_auto_sub_line_match_index == False:
             raise Exception(f"ERROR: {best_auto_sub_line_match_index=}, this means maybe some subs are empty or something else happened?")
-        
+
         if sub_slot_score > best_sub_slot_score:
             print(f"....new lead sub_slot found:")
             best_sub_slot_offset = sub_slot_offset
@@ -82,7 +82,7 @@ def _get_best_sub_slot_offset_and_best_line_match_index(real_subs, auto_subs):
             print(f"      - {best_sub_slot_offset=}")
             print(f"      - {best_sub_slot_score=}")
             print(f"      - {best_auto_sub_line_match_index_for_best_sub_slot_offset=}")
-    
+
     print("Final best sub_slot for file:")
     print(f"  - {best_sub_slot_offset=}")
     print(f"  - {best_sub_slot_score=}")
@@ -133,7 +133,7 @@ def trim_and_re_time_real_sub_file_from_auto_subs(vid_path, real_sub_file_path, 
     tmp_ms_shifted_sub_path = os.path.join(Path(out_sub_path).parent.__str__(), Path(out_sub_path).stem + "__TMP_MS_SHIFTED" + ''.join(Path(out_sub_path).suffixes))
     print(f"{tmp_ms_shifted_sub_path=}")
     real_subs.save(tmp_ms_shifted_sub_path)
-    
+
     # This will throw warning, this is normal:  WARNING: low quality of fit. Wrong subtitle file?
     # This happens b/c did not trim out the first part of re-timed srt which is all set to 0 (like the theme) and did not trim end
     subtitle_utils.sync_subs_with_vid(vid_path = vid_path,
