@@ -3,7 +3,9 @@ from pathlib import Path
 
 
 class Episode_Sub_Data:
-    extra_metadata = None
+    extra_metadata_d = {}
+    sub_file_path_l = []
+    main_sub_file_path = None
 
     def __init__(self, episode_subs_dir_path, season_num, episode_num, load_method_str = "many_of_one_lang"):
         self.episode_subs_dir_path = episode_subs_dir_path
@@ -16,9 +18,18 @@ class Episode_Sub_Data:
         else:
             raise Exception(f"ERROR: unknown {load_method_str=}")
 
+    def _pick_main_sub_file_path(self):
+        print("in _pick_main_sub_file_path()")
+
     def _load_dir__many_of_one_lang(self):
         print("in _load_dir__many_of_one_lang()")
-        # exit()
+        
+        self.sub_file_path_l = fsu.get_dir_content_l(self.episode_subs_dir_path, "file")
+        # extra_metadata_d = []
+        self._pick_main_sub_file_path()
+
+
+
 class Series_Sub_map():
     ep_sub_data_ld = {}
 
