@@ -54,6 +54,12 @@ class Series_Sub_map():
     def __init__(self):
         pass
 
+    def get_num_episodes_in_lang(self, lang):
+        return len(self.ep_sub_data_ld[lang])
+
+    def get_episode_sub_data_l_for_lang(self, lang):
+        return self.ep_sub_data_ld[lang]
+
     def _load_lang__open_sub_lang_by_season_fg(self, in_dir_path, lang ):
         print(f"Loading {lang=} into Series_Sub_Map from: {in_dir_path}...")
 
@@ -77,6 +83,7 @@ class Series_Sub_map():
                                                lang = lang,
                                                load_method_str = "many_of_one_lang")
                 # print(ep_sub_data)
+                self.ep_sub_data_ld[lang].append(ep_sub_data)
         print(f"Done Loading {lang=}")
 
 
@@ -98,4 +105,6 @@ if __name__ == "__main__":
 
     ssm = Series_Sub_map()
     ssm.load_lang(in_dir_path, lang)
+    print(f"{ssm.get_num_episodes_in_lang(lang)=}")
+    # print(f"{ssm.get_episode_sub_data_l_for_lang(lang)=}")
     print("End of Main")
