@@ -39,8 +39,8 @@ def get_real_episode_sub_data_from_auto_sub(auto_sub_path, ssm, lang):
         real_sub_path = lang_ep_sub_data.main_sub_file_path
         real_sub_fuzz_str = _sub_path_to_fuzz_str(real_sub_path)
 
-        print(f"{auto_sub_fuzz_str=}")
-        print(f"{real_sub_fuzz_str=}")
+        # print(f"{auto_sub_fuzz_str=}")
+        # print(f"{real_sub_fuzz_str=}")
         # fuzz_ratio = fuzz.ratio(auto_sub_fuzz_str, real_sub_fuzz_str)
         fuzz_ratio = fuzz.ratio(auto_sub_fuzz_str, real_sub_fuzz_str)
 
@@ -59,8 +59,9 @@ if __name__ == "__main__":
     test_srt_path = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/test/sub_match/Family_Guy__Back_To_The_Pilot_(Clip)___TBS/Family_Guy__Back_To_The_Pilot_(Clip)___TBS.en.srt"
 
     lang = "en"
-    # in_dir_path = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en"
-    in_dir_path = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en_test_pilot"
+    in_dir_path = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en"
+    # in_dir_path = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en_test_pilot"
+    # in_dir_path = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en_test_s10_and_11"
     ssm = Series_Sub_map()
     ssm.load_lang(in_dir_path, lang)
     print(f"{ssm.get_num_episodes_in_lang(lang)=}")
