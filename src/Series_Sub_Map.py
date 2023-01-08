@@ -21,6 +21,7 @@ class Episode_Sub_Data:
             raise Exception(f"ERROR: unknown {load_method_str=}")
 
 
+
     def _pick_main_sub_file_path(self):
         # pick first .en.srt, pick first in list otherwise
         for sub_file_path in self.sub_file_path_l:
@@ -54,6 +55,7 @@ class Series_Sub_map():
         pass
 
     def _load_lang__open_sub_lang_by_season_fg(self, in_dir_path, lang ):
+        print(f"Loading {lang=} into Series_Sub_Map from: {in_dir_path}...")
 
         self.ep_sub_data_ld[lang] = []
 
@@ -63,7 +65,6 @@ class Series_Sub_map():
             # get season_num
             season_dir_name = Path(lang_season_dir_path).stem
             season_num = int(season_dir_name.split("s")[1])
-            print(f"{season_num=}")
 
             ep_dir_path_l = fsu.get_dir_content_l(lang_season_dir_path, "dir")
             for ep_dir_path in ep_dir_path_l:
@@ -75,7 +76,8 @@ class Series_Sub_map():
                                                episode_num = ep_num,
                                                lang = lang,
                                                load_method_str = "many_of_one_lang")
-                print(ep_sub_data)
+                # print(ep_sub_data)
+        print(f"Done Loading {lang=}")
 
 
     def load_lang(self, in_dir_path, lang, load_style_str = "open_sub_lang_by_season_fg"):
