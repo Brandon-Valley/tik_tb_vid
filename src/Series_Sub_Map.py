@@ -1,3 +1,4 @@
+import os
 from sms.file_system_utils import file_system_utils as fsu
 from pathlib import Path
 
@@ -7,19 +8,31 @@ class Episode_Sub_Data:
     sub_file_path_l = []
     main_sub_file_path = None
 
-    def __init__(self, episode_subs_dir_path, season_num, episode_num, load_method_str = "many_of_one_lang"):
+    def __init__(self, episode_subs_dir_path, season_num, episode_num, lang = None, load_method_str = "many_of_one_lang"):
         self.episode_subs_dir_path = episode_subs_dir_path
         self.season_num = season_num
         self.episode_num = episode_num
         self.load_method_str = load_method_str
+        self.lang = lang
 
         if load_method_str == "many_of_one_lang":
             self._load_dir__many_of_one_lang()
         else:
             raise Exception(f"ERROR: unknown {load_method_str=}")
 
+
     def _pick_main_sub_file_path(self):
         print("in _pick_main_sub_file_path()")
+
+        # pick first .en.srt, pick first in list otherwise
+        for sub_file_path in self.sub_file_path_l:
+            if f".{self.lang}.srt" in Path(sub_file_path).stem:
+                self.main_sub_file_path = sub_file_path
+                return
+        if len(self.sub_file_path_l) > 0:
+            self.main_sub_file_path = self.sub_file_path_l[0]
+
+
 
     def _load_dir__many_of_one_lang(self):
         print("in _load_dir__many_of_one_lang()")
@@ -27,6 +40,15 @@ class Episode_Sub_Data:
         self.sub_file_path_l = fsu.get_dir_content_l(self.episode_subs_dir_path, "file")
         # extra_metadata_d = []
         self._pick_main_sub_file_path()
+
+
+    def get_num_sub_files(self):
+        return len(self.sub_file_path_l)
+
+    def __repr__(self):
+        rs = f"EpSubData: S{self.season_num}E{self.episode_num}, {self.get_num_sub_files()} Subs, Main: {self.main_sub_file_path}"
+        # print(rs)
+        return rs
 
 
 
@@ -62,7 +84,9 @@ class Series_Sub_map():
                 ep_sub_data = Episode_Sub_Data(episode_subs_dir_path = ep_dir_path,
                                                season_num = season_num,
                                                episode_num = ep_num,
+                                               lang = lang,
                                                load_method_str = "many_of_one_lang")
+                print(ep_sub_data)
 
 
 
