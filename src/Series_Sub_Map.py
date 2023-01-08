@@ -20,7 +20,8 @@ class Episode_Sub_Data:
         else:
             raise Exception(f"ERROR: unknown {load_method_str=}")
 
-
+    def get_season_episode_str(self):
+        return f"S{self.season_num}E{self.episode_num}"
 
     def _pick_main_sub_file_path(self):
         # pick first .en.srt, pick first in list otherwise

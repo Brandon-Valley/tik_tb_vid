@@ -9,7 +9,8 @@ import pysubs2
 FUZZ_STR_DELIM = "`"
 
 def _sub_path_to_fuzz_str(sub_path):
-    subs = pysubs2.load(sub_path, encoding="utf-8")
+    # subs = pysubs2.load(sub_path, encoding="utf-8")
+    subs = pysubs2.load(sub_path, encoding="latin1")
 
     subs_fuzz_str = ""
     for line in subs:
@@ -30,7 +31,7 @@ def get_real_episode_sub_data_from_auto_sub(auto_sub_path, ssm, lang):
     best_lang_ep_sub_data_obj = None
 
     for lang_ep_sub_data in lang_ep_sub_data_l:
-        print(f"  Checking {lang_ep_sub_data=}...")
+        print(f"  Checking {lang_ep_sub_data.get_season_episode_str()}...")
         real_sub_path = lang_ep_sub_data.main_sub_file_path
         real_sub_fuzz_str = _sub_path_to_fuzz_str(real_sub_path)
 
