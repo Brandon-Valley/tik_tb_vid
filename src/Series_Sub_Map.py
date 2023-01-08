@@ -22,8 +22,6 @@ class Episode_Sub_Data:
 
 
     def _pick_main_sub_file_path(self):
-        print("in _pick_main_sub_file_path()")
-
         # pick first .en.srt, pick first in list otherwise
         for sub_file_path in self.sub_file_path_l:
             if f".{self.lang}.srt" in Path(sub_file_path).stem:
@@ -33,9 +31,7 @@ class Episode_Sub_Data:
             self.main_sub_file_path = self.sub_file_path_l[0]
 
 
-
     def _load_dir__many_of_one_lang(self):
-        print("in _load_dir__many_of_one_lang()")
         
         self.sub_file_path_l = fsu.get_dir_content_l(self.episode_subs_dir_path, "file")
         # extra_metadata_d = []
@@ -47,7 +43,6 @@ class Episode_Sub_Data:
 
     def __repr__(self):
         rs = f"EpSubData: S{self.season_num}E{self.episode_num}, {self.get_num_sub_files()} Subs, Main: {self.main_sub_file_path}"
-        # print(rs)
         return rs
 
 
@@ -55,23 +50,18 @@ class Episode_Sub_Data:
 class Series_Sub_map():
     ep_sub_data_ld = {}
 
-
     def __init__(self):
-        print("in init")
         pass
 
     def _load_lang__open_sub_lang_by_season_fg(self, in_dir_path, lang ):
-        print("in _load_lang__open_sub_lang_by_season_fg()")
 
         self.ep_sub_data_ld[lang] = []
 
         lang_season_dir_path_l = fsu.get_dir_content_l(in_dir_path, "dir")
-        # print(f"{lang_season_dir_path_l=}")
 
         for lang_season_dir_path in lang_season_dir_path_l:
             # get season_num
             season_dir_name = Path(lang_season_dir_path).stem
-            # print(f"{season_dir_name=}")
             season_num = int(season_dir_name.split("s")[1])
             print(f"{season_num=}")
 
@@ -79,7 +69,6 @@ class Series_Sub_map():
             for ep_dir_path in ep_dir_path_l:
                 
                 ep_num = int(Path(ep_dir_path).stem.split("episode ")[1])
-                print(f"{ep_num=}")
 
                 ep_sub_data = Episode_Sub_Data(episode_subs_dir_path = ep_dir_path,
                                                season_num = season_num,
@@ -89,15 +78,14 @@ class Series_Sub_map():
                 print(ep_sub_data)
 
 
-
-
-
     def load_lang(self, in_dir_path, lang, load_style_str = "open_sub_lang_by_season_fg"):
 
         if load_style_str == "open_sub_lang_by_season_fg":
             self._load_lang__open_sub_lang_by_season_fg(in_dir_path, lang)
         else:
             raise Exception(f"ERROR: unknown {load_style_str=}")
+
+
 
 if __name__ == "__main__":
     import os.path as path
