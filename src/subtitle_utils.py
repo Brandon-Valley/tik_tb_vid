@@ -39,6 +39,12 @@ def sync_subs_with_vid(vid_path, in_sub_path, out_sub_path):
     subprocess.call(cmd, shell=False)
 
 
+# def combine_mp4_and_sub_into_mkv(in_mp4_path, in_sub_path, out_mkv_path):
+#     """ Sub MAY need to be .srt """
+#     cmd = f'ffmpeg -i {in_mp4_path} -i {in_sub_path} -c copy -c:s copy {out_mkv_path}'
+#     print(f"Running {cmd}...")
+#     subprocess.call(cmd, shell=True)
+
 
 if __name__ == "__main__":
     import os.path as path

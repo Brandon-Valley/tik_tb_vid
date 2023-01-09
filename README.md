@@ -95,3 +95,10 @@ pip install pysubs2
 pip install fuzzywuzzy
 <!-- pip install ffsubsync -->
 pip install autosubsync
+
+
+# Steps
+
+1. d
+2. download yt playlist with youtube_utils.dl_yt_playlist__fix_sub_times_convert_to__mp4_srt()
+3. (can be combined with ^^)
