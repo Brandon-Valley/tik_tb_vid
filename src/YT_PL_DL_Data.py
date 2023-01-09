@@ -12,7 +12,10 @@ class Clip_Dir_Data:
 
         self._set_mp4_and_auto_sub_paths()
 
-        print("end of init")
+        # print("end of init")
+
+    def has_subs(self):
+        return not (self.auto_sub_path == None)
 
     def _set_mp4_and_auto_sub_paths(self):
         # clip_dir_path will pretty much always contain 1 .mp4 and 1 .srt, .mp4 is required, .srt optional, error if > 2 files in dir
@@ -45,7 +48,7 @@ class Clip_Dir_Data:
         self.mp4_path = clip_mp4_path
         self.auto_sub_path = auto_sub_srt_path
 
-        print("all good",clip_dir_file_path_l)
+        # print("all good",clip_dir_file_path_l)
 
 
 class YT_PL_DL_Data:
