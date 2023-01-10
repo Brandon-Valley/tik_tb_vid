@@ -15,6 +15,7 @@ import vid_edit_utils as veu
 WORKING_DIR_PATH = "C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS"
 FINAL_MKVS_DIR_PATH = os.path.join(WORKING_DIR_PATH, "mkvs")
 RUN_LOG_JSON_PATH = os.path.join(WORKING_DIR_PATH, "run_log_l.json")
+SSM_LOG_JSON_PATH = os.path.join(WORKING_DIR_PATH, "SSM_log_.json")
 # SERIES_SUB_EN_DIR_PATH = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en"
 # SERIES_SUB_EN_DIR_PATH = "C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en_s4_16_and_17"
 SERIES_SUB_EN_DIR_PATH = "C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en"
@@ -95,6 +96,7 @@ def main():
     # Init std subtitles for whole series data
     ssm = Series_Sub_map()
     ssm.load_lang(SERIES_SUB_EN_DIR_PATH, LANG)
+    ssm.write_log_json(SSM_LOG_JSON_PATH)
     
     if ssm.get_num_episodes_in_lang == 0:
         raise Exception(f"ERROR: ssm.get_num_episodes_in_lang == 0, this means something is wrong with loading ssm from {SERIES_SUB_EN_DIR_PATH=} in {LANG=}")

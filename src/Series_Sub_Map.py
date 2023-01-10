@@ -1,5 +1,6 @@
 import os
 from sms.file_system_utils import file_system_utils as fsu
+from sms.logger import json_logger
 from pathlib import Path
 import pysubs2
 import subtitle_utils as su
@@ -20,6 +21,19 @@ class Episode_Sub_Data:
             self._load_dir__many_of_one_lang()
         else:
             raise Exception(f"ERROR: unknown {load_method_str=}")
+
+    def get_as_json_d(self):
+        return {
+            "season_episode_str" : self.get_season_episode_str(),
+            "episode_subs_dir_path" : self.episode_subs_dir_path,
+            "main_sub_file_path" : self.main_sub_file_path,
+            "sub_file_path_l" : self.sub_file_path_l,
+            "load_method_str" : self.load_method_str,
+            "lang" : self.lang,
+            "season_num" : self.season_num,
+            "episode_num" : self.episode_num,
+            "extra_metadata_d" : self.extra_metadata_d
+            }
 
     def get_season_episode_str(self):
         str(1).zfill(2)
@@ -104,6 +118,19 @@ class Series_Sub_map():
     def get_episode_sub_data_l_for_lang(self, lang):
         return self.ep_sub_data_ld[lang]
 
+    def write_log_json(self, out_json_path):
+        out_json_d = {}
+        for lang, ep_sub_data_l in self.ep_sub_data_ld.items():
+            out_json_d[lang] = []
+            for ep_sub_data in ep_sub_data_l:
+                out_json_d[lang].append(ep_sub_data.get_as_json_d())
+        print(f"{out_json_d=}")
+        print(f"{out_json_path=}")
+        json_logger.write(out_json_d, out_json_path)
+
+
+
+
     def clean_subs_after_fresh_download(self, lang = "ALL_LANGS"):
         """
             Have gotten spanish subs not marked when dl mass english subs 
@@ -174,10 +201,12 @@ if __name__ == "__main__":
 
     lang = "en"
     # in_dir_path = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en"
-    in_dir_path = "C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en_s4_16_and_17"
+    # in_dir_path = "C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en_s4_16_and_17"
+    in_dir_path = "C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en"
 
     ssm = Series_Sub_map()
     ssm.load_lang(in_dir_path, lang)
+    ssm.write_log_json("C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/SSM_log.json")
     print(f"{ssm.get_num_episodes_in_lang(lang)=}")
     # print(f"{ssm.get_episode_sub_data_l_for_lang(lang)=}")
     print("End of Main")

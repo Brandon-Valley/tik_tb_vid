@@ -21,7 +21,8 @@ IGNORE_DIR_PATH           = os.path.join(cfg.BIG_DATA_DIR_PATH, "ignore")
 
 # PLAYLIST_OG_VIDS_DIR_PATH = os.path.join(IGNORE_DIR_PATH, "playlist_og_clips", "fg_pl_tbs__single_short_test")
 # PLAYLIST_OG_VIDS_DIR_PATH = os.path.join(IGNORE_DIR_PATH, "playlist_og_clips", "fg_pl_tbs__10_clips_full_len_test")
-PLAYLIST_OG_VIDS_DIR_PATH    = os.path.join(IGNORE_DIR_PATH, "playlist_og_clips", "Family_Guy___TBS")
+# PLAYLIST_OG_VIDS_DIR_PATH    = os.path.join(IGNORE_DIR_PATH, "playlist_og_clips", "Family_Guy___TBS")
+PLAYLIST_OG_VIDS_DIR_PATH    = os.path.join(IGNORE_DIR_PATH, "playlist_og_clips", "fg_pl_tbs__manual_edit_mkvs__test")
 FINAL_OUT_VID_DIR_PATH       = os.path.join(IGNORE_DIR_PATH, "final_output")
 OG_LONG_BOTTOM_VIDS_DIR_PATH = os.path.join(IGNORE_DIR_PATH, "og_long_bottom_vids")
 

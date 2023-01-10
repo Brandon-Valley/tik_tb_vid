@@ -77,6 +77,8 @@ https://www.videohelp.com/software/sections/video-editors-basic
 
 - media viewer classic
   - ctrl + G
+  - ctrl + <>
+  - ctrl + F3 for custom ahk to get cur time
 
 
 # SUB match
@@ -104,10 +106,18 @@ pip install autosubsync
   - top en subtitle broke stuff b/c it starts with many empty
   - have a spanish sub in dir for some reason
 - mcstroke - very hard to understand voice, makes it through every episode without getting fuzz_str > 0
-
+- Google earth
+  - got wrong subs, should be C:\p\tik_tb_vid_big_data\ignore\subs\fg\og_bulk_sub_dl_by_season\en\s10\episode 20
+  - S01E04__Family_Guy__Google_Earth__Clip____TBS.mkv
 
 # Steps
 
-1. d
+1. dl real subs for whole series
 2. download yt playlist with youtube_utils.dl_yt_playlist__fix_sub_times_convert_to__mp4_srt()
-3. (can be combined with ^^)
+3. get_init_mkvs_for_manual_edits.py (can be combined with ^^)
+   1. init clean fresh downloads
+   2. run rest of main
+      1. This will make dir of mkvs ready for manual editing
+4. manual editing
+   1. See *Manual vid edit with embedded subtitles* above
+   2. 

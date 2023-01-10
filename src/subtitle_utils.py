@@ -96,7 +96,7 @@ def write_manual_sub_line_l(manual_sub_line_l, out_sub_path):
         new_sub_line_l.append(clean_sub_line.text.replace("\\N", "\n"))
         new_sub_line_l.append("")
 
-    txt_logger.write(new_sub_line_l, out_sub_path)
+    txt_logger.write(new_sub_line_l, out_sub_path, encoding="latin1")
 
 def sub_file_readable_srt(sub_file_path):
     try:
