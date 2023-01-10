@@ -109,6 +109,10 @@ pip install autosubsync
 - Google earth
   - got wrong subs, should be C:\p\tik_tb_vid_big_data\ignore\subs\fg\og_bulk_sub_dl_by_season\en\s10\episode 20
   - S01E04__Family_Guy__Google_Earth__Clip____TBS.mkv
+- S10E20 - inserted extra subs
+  - "C:\p\tik_tb_vid_big_data\ignore\subs\fg\og_bulk_sub_dl_by_season\en\s10\episode 20\Family.Guy.S10E20.720p.HDTV.X264-DIMENSION.srt"
+  - == sync, corrected by <font color="#00ff00">elderman</font> ==
+
 
 # Steps
 

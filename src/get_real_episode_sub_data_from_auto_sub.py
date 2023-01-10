@@ -17,7 +17,10 @@ def _sub_path_to_fuzz_str(sub_path):
         subs_fuzz_str = subs_fuzz_str + line.text + FUZZ_STR_DELIM
 
     # subs_fuzz_str = subs_fuzz_str.replace("\\N", " ")
-    # subs_fuzz_str = subs_fuzz_str.replace("\'", " ")
+    subs_fuzz_str = subs_fuzz_str.replace("\\N", "\n")
+    subs_fuzz_str = subs_fuzz_str.replace("\\'", "'")
+    subs_fuzz_str = subs_fuzz_str.replace("{\\i1}", "")
+    subs_fuzz_str = subs_fuzz_str.replace("{\\i0}", "")
     # return subs_fuzz_str.lower()
     return subs_fuzz_str
 
@@ -40,19 +43,27 @@ def get_real_episode_sub_data_from_auto_sub(auto_sub_path, ssm, lang):
         real_sub_path = lang_ep_sub_data.main_sub_file_path
         real_sub_fuzz_str = _sub_path_to_fuzz_str(real_sub_path)
 
-        # print(f"{auto_sub_fuzz_str=}")
-        # print(f"{real_sub_fuzz_str=}")
-        # fuzz_ratio = fuzz.ratio(auto_sub_fuzz_str, real_sub_fuzz_str)
+        # TODO comment out
+        print(f"{auto_sub_fuzz_str=}")
+        print(f">>{real_sub_fuzz_str=}<<")
+        print(f"{real_sub_fuzz_str[-15:]=}")
+
         fuzz_ratio = fuzz.ratio(auto_sub_fuzz_str, real_sub_fuzz_str)
+
+        print(f"{fuzz_ratio=}")
 
         if fuzz_ratio > best_fuzz_ratio:
             print(f"New best_lang_ep_sub_data_obj found: {lang_ep_sub_data}")
             best_fuzz_ratio = fuzz_ratio
             best_lang_ep_sub_data_obj = lang_ep_sub_data
+
+        print(f"just finished checking {real_sub_path=}, {fuzz_ratio=}")
     
     print(f"Final {best_fuzz_ratio=}, {best_lang_ep_sub_data_obj}")
     if best_lang_ep_sub_data_obj == None:
         print("After fuzzy-searching every episode's subs, did not find single episode with fuzz_ratio > 0, returning None")
+
+    exit()
 
     total_time = time.time() - start_time
     return best_lang_ep_sub_data_obj, best_fuzz_ratio, total_time
@@ -62,18 +73,20 @@ if __name__ == "__main__":
     import os.path as path
     print("Running " , path.abspath(__file__) , '...')
 
-    test_srt_path = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/test/sub_match/Family_Guy__Back_To_The_Pilot_(Clip)___TBS/Family_Guy__Back_To_The_Pilot_(Clip)___TBS.en.srt"
+    # test_srt_path = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/test/sub_match/Family_Guy__Back_To_The_Pilot_(Clip)___TBS/Family_Guy__Back_To_The_Pilot_(Clip)___TBS.en.srt"
 
-    lang = "en"
-    in_dir_path = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en"
-    # in_dir_path = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en_test_pilot"
-    # in_dir_path = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en_test_s10_and_11"
-    ssm = Series_Sub_map()
-    ssm.load_lang(in_dir_path, lang)
-    print(f"{ssm.get_num_episodes_in_lang(lang)=}")
+    # lang = "en"
+    # in_dir_path = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en"
+    # # in_dir_path = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en_test_pilot"
+    # # in_dir_path = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en_test_s10_and_11"
+    # ssm = Series_Sub_map()
+    # ssm.load_lang(in_dir_path, lang)
+    # print(f"{ssm.get_num_episodes_in_lang(lang)=}")
 
-    get_real_episode_sub_data_from_auto_sub(test_srt_path, ssm, lang)
+    # get_real_episode_sub_data_from_auto_sub(test_srt_path, ssm, lang)
 
+    import get_init_mkvs_for_manual_edits
+    get_init_mkvs_for_manual_edits.main()
     print("End of Main") 
 
 

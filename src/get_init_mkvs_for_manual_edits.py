@@ -18,7 +18,8 @@ RUN_LOG_JSON_PATH = os.path.join(WORKING_DIR_PATH, "run_log_l.json")
 SSM_LOG_JSON_PATH = os.path.join(WORKING_DIR_PATH, "SSM_log_.json")
 # SERIES_SUB_EN_DIR_PATH = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en"
 # SERIES_SUB_EN_DIR_PATH = "C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en_s4_16_and_17"
-SERIES_SUB_EN_DIR_PATH = "C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en"
+# SERIES_SUB_EN_DIR_PATH = "C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en"
+SERIES_SUB_EN_DIR_PATH = "C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en_S10E20andS1E4"
 LANG = "en"
 
 def make_no_subs_mkv(clip_dir_data):
@@ -103,11 +104,11 @@ def main():
     print(f"{ssm.get_num_episodes_in_lang=}") 
 
     # Init std youtube playlist download data
-    yt_pl_dl_dir_path = os.path.join(WORKING_DIR_PATH, "Family_Guy___TBS")
+    # yt_pl_dl_dir_path = os.path.join(WORKING_DIR_PATH, "Family_Guy___TBS")
+    yt_pl_dl_dir_path = os.path.join(WORKING_DIR_PATH, "Family_Guy___TBS__google_earth_test")
     yt_pl_dl_dir_data = YT_PL_DL_Data(yt_pl_dl_dir_path)
 
     run_log_l = []
-    fail_clip_dir_path_l = []
 
     for clip_dir_data in yt_pl_dl_dir_data.clip_dir_data_l:
         clip_process_start_time = time.time()
@@ -122,6 +123,7 @@ def main():
             continue
 
         # Get sub data of episode that clip comes from (found by fuzzy searching w/ auto-subs)
+        print("Fuzzy-Searching for real episode subs using auto-subs...")
         ep_sub_data, fuzz_ratio, ep_sub_data_find_time = get_real_episode_sub_data_from_auto_sub(clip_dir_data.auto_sub_path, ssm, LANG)
 
         if ep_sub_data == None:
@@ -130,6 +132,9 @@ def main():
             run_log_l.append(log_d)
             json_logger.write(run_log_l, RUN_LOG_JSON_PATH)
             continue
+
+        print(f"Found real sub match for auto_sub: {ep_sub_data.main_sub_file_path=} is the real sub match to {clip_dir_data.auto_sub_path} w/ {fuzz_ratio=}")
+        exit()
 
         # if have non-series clips mixed in with playlist/just have very low fuzz_ratio for some reason, add to fail list and move on
         if fuzz_ratio == 0:
