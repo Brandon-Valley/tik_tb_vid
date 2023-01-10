@@ -1,7 +1,8 @@
 import os
 from sms.file_system_utils import file_system_utils as fsu
 from pathlib import Path
-
+import pysubs2
+import subtitle_utils as su
 
 class Episode_Sub_Data:
     extra_metadata_d = {}
@@ -21,16 +22,57 @@ class Episode_Sub_Data:
             raise Exception(f"ERROR: unknown {load_method_str=}")
 
     def get_season_episode_str(self):
-        return f"S{self.season_num}E{self.episode_num}"
+        str(1).zfill(2)
+        return f"S{str(self.season_num).zfill(2)}E{str(self.episode_num).zfill(2)}"
+
+
+    def clean_episode_subs_after_fresh_download(self):
+        """
+            Have gotten spanish subs not marked when dl mass english subs 
+                - Run this once after dl b/c it takes a bit
+                - Make new SSM after this
+        """
+        print(f"Cleaning {self.get_season_episode_str()}...")
+
+        for sub_file_path in self.sub_file_path_l:
+
+            # Delete anything that isn't a readable .srt file (no MicroDVD files allowed)
+            if not su.sub_file_readable_srt(sub_file_path):
+                print(f"Cleaning - Deleting sub file b/c it is not readable .srt file: {sub_file_path}...")
+                fsu.delete_if_exists(sub_file_path)
+                continue
+
+            # Delete any sub files that aren't the correct lang
+            print(f"  Checking {sub_file_path}...")
+            if not su.sub_file_is_correct_lang(sub_file_path, self.lang):
+                print(f"Cleaning - Deleting sub file b/c it is the wrong lang: {sub_file_path}...")
+                fsu.delete_if_exists(sub_file_path)
+                continue
+        
+        # Do not allow any empty dirs (may have been created by deleting wrong-lang-subs)
+        if len(fsu.get_dir_content_l(self.episode_subs_dir_path, "all")) == 0:
+            print(f"Cleaning - Deleting episode_subs_dir_path b/c empty after deleting bad subs: {self.episode_subs_dir_path}...")
+            fsu.delete_if_exists(self.episode_subs_dir_path)
+
 
     def _pick_main_sub_file_path(self):
         # pick first .en.srt, pick first in list otherwise
         for sub_file_path in self.sub_file_path_l:
+            # if f".{self.lang}.srt" in Path(sub_file_path).stem and su.sub_file_is_correct_lang(sub_file_path, self.lang):
             if f".{self.lang}.srt" in Path(sub_file_path).stem:
                 self.main_sub_file_path = sub_file_path
                 return
-        if len(self.sub_file_path_l) > 0:
-            self.main_sub_file_path = self.sub_file_path_l[0]
+        
+        # If none of above exist, just return the first valid sub_path in list
+        for sub_file_path in self.sub_file_path_l:
+            # if su.sub_file_is_correct_lang(sub_file_path, self.lang):
+            self.main_sub_file_path = sub_file_path
+            return
+
+        # # If the only subtitles available are the wrong lang, just take the first wrong lang sub
+        # if len(self.sub_file_path_l) > 0:
+        #     self.main_sub_file_path = self.sub_file_path_l[0]
+        #     return
 
 
     def _load_dir__many_of_one_lang(self):
@@ -38,6 +80,7 @@ class Episode_Sub_Data:
         self.sub_file_path_l = fsu.get_dir_content_l(self.episode_subs_dir_path, "file")
         # extra_metadata_d = []
         self._pick_main_sub_file_path()
+        # print(f"Picked main sub file for episode {self.get_season_episode_str()}: {self.main_sub_file_path=}")
 
 
     def get_num_sub_files(self):
@@ -60,6 +103,34 @@ class Series_Sub_map():
 
     def get_episode_sub_data_l_for_lang(self, lang):
         return self.ep_sub_data_ld[lang]
+
+    def clean_subs_after_fresh_download(self, lang = "ALL_LANGS"):
+        """
+            Have gotten spanish subs not marked when dl mass english subs 
+                - Run this once after dl b/c it takes a bit
+                - Make new SSM after this
+        """
+        def _clean_lang_ep_sub_data_l(lang):
+            print(f"  Cleaning Lang: {lang}...")
+            # ep_sub_data_l = self.ep_sub_data_ld[lang]
+            # for ep_sub_data in ep_sub_data_l:
+            for ep_sub_data in self.ep_sub_data_ld[lang]:
+                ep_sub_data.clean_episode_subs_after_fresh_download()
+
+        if lang == "ALL_LANGS":
+            print("Cleaning all Langs...")
+            for lang_key_str in self.ep_sub_data_ld.keys():
+                _clean_lang_ep_sub_data_l(lang_key_str)
+        else:
+            _clean_lang_ep_sub_data_l(lang)
+
+
+
+
+
+
+
+
 
     def _load_lang__open_sub_lang_by_season_fg(self, in_dir_path, lang ):
         print(f"Loading {lang=} into Series_Sub_Map from: {in_dir_path}...")
@@ -102,7 +173,8 @@ if __name__ == "__main__":
     print("Running ",  path.abspath(__file__),  '...')
 
     lang = "en"
-    in_dir_path = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en"
+    # in_dir_path = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en"
+    in_dir_path = "C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en_s4_16_and_17"
 
     ssm = Series_Sub_map()
     ssm.load_lang(in_dir_path, lang)

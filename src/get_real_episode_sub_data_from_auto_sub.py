@@ -1,4 +1,4 @@
-
+import time
 
 from fuzzywuzzy import fuzz
 from Series_Sub_Map import Series_Sub_map
@@ -22,6 +22,7 @@ def _sub_path_to_fuzz_str(sub_path):
     return subs_fuzz_str
 
 def get_real_episode_sub_data_from_auto_sub(auto_sub_path, ssm, lang):
+    start_time = time.time()
     print(f"in get_real_episode_sub_data_from_auto_sub() - {auto_sub_path=}")
     print(f"{ssm.get_num_episodes_in_lang(lang)=}")
 
@@ -50,6 +51,11 @@ def get_real_episode_sub_data_from_auto_sub(auto_sub_path, ssm, lang):
             best_lang_ep_sub_data_obj = lang_ep_sub_data
     
     print(f"Final {best_fuzz_ratio=}, {best_lang_ep_sub_data_obj}")
+    if best_lang_ep_sub_data_obj == None:
+        print("After fuzzy-searching every episode's subs, did not find single episode with fuzz_ratio > 0, returning None")
+
+    total_time = time.time() - start_time
+    return best_lang_ep_sub_data_obj, best_fuzz_ratio, total_time
 
 
 if __name__ == "__main__":

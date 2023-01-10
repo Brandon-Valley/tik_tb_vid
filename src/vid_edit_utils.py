@@ -13,7 +13,6 @@ import ffmpeg
 # import pvleopard
 
 from moviepy.editor import VideoFileClip
-
 from PIL import Image
 from PIL import ImageDraw
 
@@ -51,7 +50,7 @@ def get_vid_length(filename, error_if_vid_not_exist = True):
                              "default=noprint_wrappers=1:nokey=1", filename],
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT)
-    # print(result.stdout)
+    # print(f"{result.stdout=}")
     return float(result.stdout)
 
 ####################################################################################################
@@ -384,6 +383,16 @@ def extract_embedded_subs_from_vid_to_separate_file(vid_path, new_sub_file_path)
     print(f"Running {cmd}...")
     subprocess.call(cmd, shell=True)
 
+def convert_vid_to_diff_format__no_subs(in_vid_path, out_vid_path):
+    """ Can use to convert .mp4 to .mkv """
+    fsu.delete_if_exists(out_vid_path)
+    Path(out_vid_path).parent.mkdir(parents=True, exist_ok=True)
+
+    # cmd = f'ffmpeg -i {in_mp4_path} -i {in_sub_path} -c copy -c:s mov_text {out_mkv_path}'
+    cmd = f'ffmpeg -i {in_vid_path} -c copy -c:s copy {out_vid_path}'
+    print(f"Running {cmd}...")
+    subprocess.call(cmd, shell=True)
+
 def combine_mp4_and_sub_into_mkv(in_mp4_path, in_sub_path, out_mkv_path):
     """ sub may need to be .srt """
     # cmd = f'ffmpeg -i {in_mp4_path} -i {in_sub_path} -c copy -c:s mov_text {out_mkv_path}'
@@ -412,10 +421,12 @@ if __name__ == "__main__":
     # convert_subs("C:/Users/Brandon/Documents/Personal_Projects/youtube_utils/ignore/Family_Guy__Blue_Harvest_(Clip)___TBS/Family_Guy__Blue_Harvest_(Clip)___TBS.en.ttml",
     # "C:/Users/Brandon/Documents/Personal_Projects/youtube_utils/ignore/Family_Guy__Blue_Harvest_(Clip)___TBS/Family_Guy__Blue_Harvest_(Clip)___TBS.en.srt")
 
-    combine_mp4_and_sub_into_mkv(in_mp4_path="C:/Users/Brandon/Documents/Personal_Projects/youtube_utils/ignore/Family_Guy__Blue_Harvest_(Clip)___TBS/Family_Guy__Blue_Harvest_(Clip)___TBS.mp4",
-     in_sub_path = "C:/Users/Brandon/Documents/Personal_Projects/youtube_utils/ignore/Family_Guy__Blue_Harvest_(Clip)___TBS/Family_Guy__Blue_Harvest_(Clip)___TBS.en.srt",
-     out_mkv_path="C:/Users/Brandon/Documents/Personal_Projects/youtube_utils/ignore/Family_Guy__Blue_Harvest_(Clip)___TBS/Family_Guy__Blue_Harvest_(Clip)___TBS_combined.mkv")
+    # combine_mp4_and_sub_into_mkv(in_mp4_path="C:/Users/Brandon/Documents/Personal_Projects/youtube_utils/ignore/Family_Guy__Blue_Harvest_(Clip)___TBS/Family_Guy__Blue_Harvest_(Clip)___TBS.mp4",
+    #  in_sub_path = "C:/Users/Brandon/Documents/Personal_Projects/youtube_utils/ignore/Family_Guy__Blue_Harvest_(Clip)___TBS/Family_Guy__Blue_Harvest_(Clip)___TBS.en.srt",
+    #  out_mkv_path="C:/Users/Brandon/Documents/Personal_Projects/youtube_utils/ignore/Family_Guy__Blue_Harvest_(Clip)___TBS/Family_Guy__Blue_Harvest_(Clip)___TBS_combined.mkv")
 
+    convert_vid_to_diff_format__no_subs(in_vid_path = "C:/Users/Brandon/Documents/Other/temp/Family_Guy__McStroke__Clip____TBS.mp4",
+     out_vid_path = "C:/Users/Brandon/Documents/Other/temp/Family_Guy__McStroke__Clip____TBS.mkv")
 
 
     print("done")

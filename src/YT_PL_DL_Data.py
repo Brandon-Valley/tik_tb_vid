@@ -43,7 +43,7 @@ class Clip_Dir_Data:
             if len(sub_file_path_l) != 1:
                 raise Exception(f"ERROR: {len(sub_file_path_l)=} != 1, if dir contains more than just 1 .mp4 file, that means it must contain 1 .srt file, 2 files in dir, but 0 .srt files found, {clip_dir_file_path_l=}")
 
-            auto_sub_srt_path = sub_file_path_l
+            auto_sub_srt_path = sub_file_path_l[0]
 
         self.mp4_path = clip_mp4_path
         self.auto_sub_path = auto_sub_srt_path

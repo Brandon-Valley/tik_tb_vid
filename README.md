@@ -96,6 +96,15 @@ pip install fuzzywuzzy
 <!-- pip install ffsubsync -->
 pip install autosubsync
 
+# Good test caused
+- herbert clip - s4 e16 - The Courtship of Stewie's Father
+  - short 30 seconds
+  - not much dialog
+  - awful auto subs
+  - top en subtitle broke stuff b/c it starts with many empty
+  - have a spanish sub in dir for some reason
+- mcstroke - very hard to understand voice, makes it through every episode without getting fuzz_str > 0
+
 
 # Steps
 
