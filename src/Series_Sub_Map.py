@@ -62,7 +62,8 @@ class Episode_Sub_Data:
             "lang" : self.lang,
             "season_num" : self.season_num,
             "episode_num" : self.episode_num,
-            "extra_metadata_d" : self.extra_metadata_d
+            "extra_metadata_d" : self.extra_metadata_d,
+            "partial_fuzz_str_l": self.partial_fuzz_str_l
             }
 
     def get_season_episode_str(self):

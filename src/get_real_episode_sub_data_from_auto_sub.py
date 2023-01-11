@@ -264,7 +264,7 @@ def _get_best_ep_sub_partial_fuzz_ratio(ep_sub_data, auto_sub_fuzz_str):
     pprint(ep_sub_data.partial_fuzz_str_l) #TMP
 
     # exit()
-    # json_logger.write(ep_sub_data.partial_fuzz_str_l, "C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/tmp_partial.json")#TMP
+    json_logger.write(ep_sub_data.partial_fuzz_str_l, "C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/tmp_partial.json")#TMP
 
     for real_sub_partial_fuzz_str in ep_sub_data.partial_fuzz_str_l:
         
