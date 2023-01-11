@@ -22,6 +22,32 @@ def get_fuzz_str_from_sub_path(sub_path):
     # Remove anything between () or []
     subs_fuzz_str = re.sub("[\(\[].*?[\)\]]", "", subs_fuzz_str)
 
+    # Remove anything between {}
+    subs_fuzz_str = re.sub(r' {[^}]*}','',subs_fuzz_str)
+
+    subs_fuzz_str = subs_fuzz_str.replace("\\n", " ")
+    subs_fuzz_str = subs_fuzz_str.replace("\\N", " ")
+    subs_fuzz_str = subs_fuzz_str.replace("\\r", " ")
+
+    subs_fuzz_str = subs_fuzz_str.replace("{\\i0}", " ")
+    subs_fuzz_str = subs_fuzz_str.replace("{\\i1}", " ")
+
+    subs_fuzz_str = subs_fuzz_str.replace(".", " ")
+    subs_fuzz_str = subs_fuzz_str.replace("?", " ")
+    subs_fuzz_str = subs_fuzz_str.replace("!", " ")
+
+    subs_fuzz_str = subs_fuzz_str.replace("-", "")
+    subs_fuzz_str = subs_fuzz_str.replace("'", "")
+    subs_fuzz_str = subs_fuzz_str.replace('"', "")
+    subs_fuzz_str = subs_fuzz_str.replace(":", "")
+    subs_fuzz_str = subs_fuzz_str.replace(",", "")
+
+    # Remove all other special chars except spaces
+    subs_fuzz_str = re.sub('[^a-zA-Z.\d\s]', '', subs_fuzz_str)
+
+    # Substitute multiple whitespace with single whitespace
+    subs_fuzz_str = ' '.join(subs_fuzz_str.split())
+
     return subs_fuzz_str.lower()
 
 
