@@ -332,7 +332,7 @@ def get_real_episode_sub_data_from_auto_sub(auto_sub_path, ssm, lang):
         
         two_parent_display_path = f"{Path(Path(ep_sub_data.main_sub_file_path).parent.__str__()).parent.name}/{Path(ep_sub_data.main_sub_file_path).parent.name}/{Path(ep_sub_data.main_sub_file_path).name}" #TMP
         # txt_logger.write(f"{str(ep_sub_fuzz_ratio)} :{two_parent_display_path}\r" , fuzz_ratio_file_path, "append") #TMP
-        json_logger.write(fuzz_ratio_real_sub_info_dd, fuzz_ratio_ep_sub_data_d_json_path)
+        json_logger.write(fuzz_ratio_real_sub_info_dd, fuzz_ratio_real_sub_info_dd_json_path)
 
         # if ep_sub_fuzz_ratio > best_fuzz_ratio:
         #     print(f"    {ep_sub_data.get_season_episode_str()} - Found new best fuzz ratio - {ep_sub_fuzz_ratio=}")
