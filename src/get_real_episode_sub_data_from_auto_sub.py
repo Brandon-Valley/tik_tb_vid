@@ -260,13 +260,16 @@ def _get_best_ep_sub_partial_fuzz_ratio(ep_sub_data, auto_sub_fuzz_str):
     best_fuzz_ratio = 0
     best_real_sub_partial_fuzz_str = None
 
-    print(f"{ep_sub_data=}")
-    pprint(ep_sub_data.partial_fuzz_str_l) #TMP
+    # print(f"{ep_sub_data=}")
+    # pprint(ep_sub_data.partial_fuzz_str_l) #TMP
 
     # exit()
-    json_logger.write(ep_sub_data.partial_fuzz_str_l, "C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/tmp_partial.json")#TMP
+    # json_logger.write(ep_sub_data.partial_fuzz_str_l, "C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/tmp_partial.json")#TMP
 
-    for real_sub_partial_fuzz_str in ep_sub_data.partial_fuzz_str_l:
+    partial_fuzz_str_l = ep_sub_data.get_partial_fuzz_str_l()
+    print(f"{len(partial_fuzz_str_l)=}")
+
+    for real_sub_partial_fuzz_str in partial_fuzz_str_l:
         
         fuzz_ratio = fuzz.ratio(auto_sub_fuzz_str, real_sub_partial_fuzz_str)
         # print(f"{auto_sub_fuzz_str=}")
@@ -316,6 +319,7 @@ def get_real_episode_sub_data_from_auto_sub(auto_sub_path, ssm, lang):
         txt_logger.write(f"{str(ep_sub_fuzz_ratio)} :{two_parent_display_path}\r" , fuzz_ratio_file_path, "append") #TMP
 
         if ep_sub_fuzz_ratio > best_fuzz_ratio:
+            print(f"    {ep_sub_data.get_season_episode_str()} - Found new best fuzz ratio - {ep_sub_fuzz_ratio=}")
             best_fuzz_ratio = ep_sub_fuzz_ratio
             best_ep_sub_data = ep_sub_data
             best_ep_sub_best_partial_fuzz_str = ep_sub_best_partial_fuzz_str

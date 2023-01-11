@@ -40,6 +40,10 @@ class Episode_Sub_Data:
         else:
             raise Exception(f"ERROR: unknown {load_method_str=}")
 
+    def get_partial_fuzz_str_l(self):
+        partial_fuzz_str_l = json_logger.read(self.partial_fuzz_str_l_json_path)
+        return partial_fuzz_str_l
+
 
     def _get_total_fuzz_str___then___set_len___then___write_total_fuzz_str_to_json(self):
         print(f"{self.get_season_episode_str()} - Getting total_fuzz_str...")
@@ -411,7 +415,6 @@ if __name__ == "__main__":
 
     ssm = Series_Sub_map()
     ssm.load_lang(in_dir_path, lang)
-    print("here")
     # print(ssm.get_min_and_max_episode_fuzz_str_len(lang))
     ssm.write_log_json("C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/SSM_log.json")
     # print(f"{ssm.get_num_episodes_in_lang(lang)=}")
