@@ -72,6 +72,13 @@ https://www.videohelp.com/software/sections/video-editors-basic
 
 # Manual vid edit with embedded subtitles
 
+## Setup
+
+- make subs play by default
+  - From: https://codecs.forumotion.net/t3018-subtitles-default-question
+    - MPC-HC options > Playback > Default Track Preference > Subtitles > 1
+
+## Usage
 - MKVToolNix
   - split mode by parts
 
@@ -97,6 +104,8 @@ pip install pysubs2
 pip install fuzzywuzzy
 <!-- pip install ffsubsync -->
 pip install autosubsync
+pip3 install subnuker
+pip install aeidon
 
 # Good test caused
 - herbert clip - s4 e16 - The Courtship of Stewie's Father
@@ -112,7 +121,7 @@ pip install autosubsync
 - S10E20 - inserted extra subs
   - "C:\p\tik_tb_vid_big_data\ignore\subs\fg\og_bulk_sub_dl_by_season\en\s10\episode 20\Family.Guy.S10E20.720p.HDTV.X264-DIMENSION.srt"
   - == sync, corrected by <font color="#00ff00">elderman</font> ==
-
+- S5E17 - also got random modern family subs for some reason
 
 # Steps
 

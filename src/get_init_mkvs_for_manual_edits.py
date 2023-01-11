@@ -1,4 +1,4 @@
-
+import statistics
 import time
 import os
 from pathlib import Path
@@ -15,11 +15,14 @@ import vid_edit_utils as veu
 WORKING_DIR_PATH = "C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS"
 FINAL_MKVS_DIR_PATH = os.path.join(WORKING_DIR_PATH, "mkvs")
 RUN_LOG_JSON_PATH = os.path.join(WORKING_DIR_PATH, "run_log_l.json")
-SSM_LOG_JSON_PATH = os.path.join(WORKING_DIR_PATH, "SSM_log_.json")
+SSM_LOG_JSON_PATH = os.path.join(WORKING_DIR_PATH, "SSM_log.json")
+FINAL_STATS_JSON_PATH = os.path.join(WORKING_DIR_PATH, "final_stats.json")
 # SERIES_SUB_EN_DIR_PATH = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en"
 # SERIES_SUB_EN_DIR_PATH = "C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en_s4_16_and_17"
 # SERIES_SUB_EN_DIR_PATH = "C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en"
-SERIES_SUB_EN_DIR_PATH = "C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en_S10E20andS1E4"
+SERIES_SUB_EN_DIR_PATH = "C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en_S10E20andS1E4__and__s15e14_and_s10_e5"
+# SERIES_SUB_EN_DIR_PATH = "C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en_s5_e17"
+# SERIES_SUB_EN_DIR_PATH = "C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en_S10E20andS1E4"
 LANG = "en"
 
 def make_no_subs_mkv(clip_dir_data):
@@ -83,7 +86,63 @@ def normal_successful_clip_w_subs_created__get_log_d(clip_dir_data, ep_sub_data,
                 "process_time" : get_clip_process_time(clip_process_start_time)
             }
 
+def write_final_stats(run_log_l, main_start_time):
+    stats_d = {"Total Run Time": time.time() - main_start_time,
+                "Total Clips Processed": 0,
+                "Total Vids Made": 0,
+                "Total fuzz_ratio == None": 0,
+                }
+    fuzz_ratio_d = {}
+    fail_reason_d = {}
+    process_time_l = []
+    trim_and_re_time_real_sub_time_l = []
+    ep_sub_data_find_time_l = []
+
+    for run_log_d in run_log_l:
+        fuzz_ratio = run_log_d["fuzz_ratio"]
+        fail_reason = run_log_d["fail_reason"]
+        trim_and_re_time_real_sub_time = run_log_d["trim_and_re_time_real_sub_time"]
+
+        if process_time_l != None:
+            process_time_l.append(run_log_d["process_time"])
+        if trim_and_re_time_real_sub_time != None:
+            trim_and_re_time_real_sub_time_l.append(trim_and_re_time_real_sub_time)
+        if ep_sub_data_find_time_l != None:
+            ep_sub_data_find_time_l.append(run_log_d["ep_sub_data_find_time"])
+
+        stats_d["Total Clips Processed"] += 1
+
+        if run_log_d["made_vid"]:
+            stats_d["Total Vids Made"] += 1
+
+        if fuzz_ratio == None:
+            stats_d["Total fuzz_ratio == None"] += 1
+        else:
+            if fuzz_ratio in fuzz_ratio_d.keys():
+                fuzz_ratio_d[fuzz_ratio] += 1
+            else:
+                fuzz_ratio_d[fuzz_ratio] = 1
+
+        if fail_reason != None:
+            if fail_reason in fail_reason_d.keys():
+                fail_reason_d[fail_reason] += 1
+            else:
+                fail_reason_d[fail_reason] = 1
+        
+    stats_d["fuzz_ratio_d"] = fuzz_ratio_d
+    stats_d["fail_reason_d"] = fail_reason_d
+    stats_d["process_time_l__AVG"] = statistics.mean(process_time_l)
+    stats_d["process_time_l__MAX"] = max(process_time_l)
+    stats_d["trim_and_re_time_real_sub_time_l__AVG"] = statistics.mean(trim_and_re_time_real_sub_time_l)
+    stats_d["trim_and_re_time_real_sub_time_l__MAX"] = max(trim_and_re_time_real_sub_time_l)
+    stats_d["ep_sub_data_find_time_l__AVG"] = statistics.mean(ep_sub_data_find_time_l)
+    stats_d["ep_sub_data_find_time_l__MAX"] = max(ep_sub_data_find_time_l)
+
+    json_logger.write(stats_d, FINAL_STATS_JSON_PATH)
+
+
 def main():
+    main_start_time = time.time()
     fsu.delete_if_exists(FINAL_MKVS_DIR_PATH)
     Path(FINAL_MKVS_DIR_PATH).mkdir(parents=True, exist_ok=True)
 
@@ -92,20 +151,23 @@ def main():
     # tmp_ssm_for_cleaning = Series_Sub_map()
     # tmp_ssm_for_cleaning.load_lang(SERIES_SUB_EN_DIR_PATH, LANG)
     # tmp_ssm_for_cleaning.clean_subs_after_fresh_download(LANG)
+    # exit()
 
-    # TODO download yt playlist with youtube_utils.dl_yt_playlist__fix_sub_times_convert_to__mp4_srt()
     # Init std subtitles for whole series data
     ssm = Series_Sub_map()
     ssm.load_lang(SERIES_SUB_EN_DIR_PATH, LANG)
     ssm.write_log_json(SSM_LOG_JSON_PATH)
+    # min_real_sub_num_char, max_real_sub_num_char = ssm.get_min_and_max_episode_fuzz_str_len(LANG)
     
     if ssm.get_num_episodes_in_lang == 0:
         raise Exception(f"ERROR: ssm.get_num_episodes_in_lang == 0, this means something is wrong with loading ssm from {SERIES_SUB_EN_DIR_PATH=} in {LANG=}")
     print(f"{ssm.get_num_episodes_in_lang=}") 
 
+    # TODO download yt playlist with youtube_utils.dl_yt_playlist__fix_sub_times_convert_to__mp4_srt()
     # Init std youtube playlist download data
     # yt_pl_dl_dir_path = os.path.join(WORKING_DIR_PATH, "Family_Guy___TBS")
-    yt_pl_dl_dir_path = os.path.join(WORKING_DIR_PATH, "Family_Guy___TBS__google_earth_test")
+    yt_pl_dl_dir_path = os.path.join(WORKING_DIR_PATH, "Family_Guy___TBS__google_earth_test__and__pilot")
+    # yt_pl_dl_dir_path = os.path.join(WORKING_DIR_PATH, "Family_Guy___TBS__google_earth_test")
     yt_pl_dl_dir_data = YT_PL_DL_Data(yt_pl_dl_dir_path)
 
     run_log_l = []
@@ -124,7 +186,21 @@ def main():
 
         # Get sub data of episode that clip comes from (found by fuzzy searching w/ auto-subs)
         print("Fuzzy-Searching for real episode subs using auto-subs...")
-        ep_sub_data, fuzz_ratio, ep_sub_data_find_time = get_real_episode_sub_data_from_auto_sub(clip_dir_data.auto_sub_path, ssm, LANG)
+        # min_real_sub_total_fuzz_str_len = ssm.get_min_fuzz_str_len_for_lang(LANG)
+        # ep_sub_data, fuzz_ratio, ep_sub_data_find_time = get_real_episode_sub_data_from_auto_sub(clip_dir_data.auto_sub_path, ssm, LANG, min_real_sub_total_fuzz_str_len)
+        # ep_sub_data, fuzz_ratio, ep_sub_data_find_time = get_real_episode_sub_data_from_auto_sub(clip_dir_data.auto_sub_path, ssm, LANG)
+        # fuzz_ratio, ep_sub_data, ep_sub_partial_fuzz_str, ep_sub_data_find_time 
+        out_tup = get_real_episode_sub_data_from_auto_sub(clip_dir_data.auto_sub_path, ssm, LANG)
+        fuzz_ratio              = out_tup[0]
+        ep_sub_data             = out_tup[1]
+        ep_sub_partial_fuzz_str = out_tup[2]
+        ep_sub_data_find_time   = out_tup[3]
+        print(f"{clip_dir_data.auto_sub_path=}")
+        print(f"{fuzz_ratio             =}")
+        print(f"{ep_sub_data            =}")
+        # print(f"{ep_sub_partial_fuzz_str=}")
+        print(f"{ep_sub_data_find_time  =}")
+        # exit()
 
         if ep_sub_data == None:
             print("init_mkvs - After fuzzy-searching every episode's subs, did not find single episode with fuzz_ratio > 0, creating .mkv without subtitles...")
@@ -134,7 +210,7 @@ def main():
             continue
 
         print(f"Found real sub match for auto_sub: {ep_sub_data.main_sub_file_path=} is the real sub match to {clip_dir_data.auto_sub_path} w/ {fuzz_ratio=}")
-        exit()
+        # exit()
 
         # if have non-series clips mixed in with playlist/just have very low fuzz_ratio for some reason, add to fail list and move on
         if fuzz_ratio == 0:
@@ -151,12 +227,14 @@ def main():
                                                                                         real_sub_file_path = ep_sub_data.main_sub_file_path,
                                                                                         auto_sub_file_path = clip_dir_data.auto_sub_path,
                                                                                         out_sub_path = tmp_srt_path)
+        print(f"{trim_and_re_time_real_sub_time=}")
         
         subtitle_utils.combine_mp4_and_sub_into_mkv(in_mp4_path = clip_dir_data.mp4_path,
                                                     in_sub_path = tmp_srt_path,
                                                     out_mkv_path = new_mkv_path)
         fsu.delete_if_exists(tmp_srt_path)
 
+        # print("before normal_successful_clip_w_subs_created__get_log_d()")
         log_d = normal_successful_clip_w_subs_created__get_log_d(clip_dir_data, ep_sub_data, fuzz_ratio, clip_process_start_time, ep_sub_data_find_time, trim_and_re_time_real_sub_time)
         run_log_l.append(log_d)
         json_logger.write(run_log_l, RUN_LOG_JSON_PATH)
@@ -170,6 +248,7 @@ def main():
     pprint(run_log_l)
 
     json_logger.write(run_log_l, RUN_LOG_JSON_PATH)
+    write_final_stats(run_log_l, main_start_time)
     print("Done")
 
 

@@ -57,6 +57,15 @@ def combine_mp4_and_sub_into_mkv(in_mp4_path, in_sub_path, out_mkv_path):
     print(f"Running {cmd}...")
     subprocess.call(cmd, shell=True)
 
+
+def make_single_embedded_mkv_sub_show_by_default(mkv_path):
+    """ UNTESTED!!!!!! """
+    mp_path = "C:/Program Files (x86)/MKVToolNix/mkvpropedit.exe" # TODO
+    cmd = f'"{mp_path}" "{mkv_path}" --edit track:a1 --set flag-default=0'
+    print(f"Running {cmd}...")
+    subprocess.call(cmd, shell=True)
+
+
 def ms_to_srt_time_str(ms):
     Times = namedtuple("Times", ["h", "m", "s", "ms"])
 
@@ -128,10 +137,38 @@ def sub_file_is_correct_lang(sub_file_path, lang):
         return False
 
 
+def remove_advertising_from_sub_file(sub_file_path):
+    cmd = f'subnuker --yes --aeidon "{sub_file_path}"'
+    print(f"Running {cmd=}...")
+    subprocess.call(cmd, shell=True)
+
+    cmd = f'subnuker --yes --regex "{sub_file_path}"'
+    print(f"Running {cmd=}...")
+    subprocess.call(cmd, shell=True)
+
+def remove_advertising_from_sub_file_path_l(sub_file_path_l):
+    cmd = f"subnuker --yes --aeidon"
+    for sub_file_path in sub_file_path_l:
+        cmd += f' "{sub_file_path}"'
+    # print(f"Running {cmd=}...")
+    subprocess.call(cmd, shell=True)
+
+    cmd = f"subnuker --yes --regex"
+    for sub_file_path in sub_file_path_l:
+        cmd += f' "{sub_file_path}"'
+    # print(f"Running {cmd=}...")
+    subprocess.call(cmd, shell=True)
+
+
 if __name__ == "__main__":
     import os.path as path
     print("Running ",  path.abspath(__file__),  '...')
-    sync_subs_with_vid(vid_path = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/test/sub_match/Family_Guy__Back_To_The_Pilot_(Clip)___TBS.mp4",
-     in_sub_path = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/test/sub_match/init_shift.en.srt",
-      out_sub_path = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/test/sub_match/Family_Guy__Back_To_The_Pilot_(Clip)___TBS.en.srt")
+    # sync_subs_with_vid(vid_path = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/test/sub_match/Family_Guy__Back_To_The_Pilot_(Clip)___TBS.mp4",
+    #  in_sub_path = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/test/sub_match/init_shift.en.srt",
+    #   out_sub_path = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/test/sub_match/Family_Guy__Back_To_The_Pilot_(Clip)___TBS.en.srt")
+
+    # remove_advertising_from_sub_file("C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en_s5_e17/s05/episode 17/Modern.Family.S05E17.720p.WEB-DL.DD5.1.H.264-HWD.en.srt")
+    make_single_embedded_mkv_sub_show_by_default("C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/mkvs/S04E16__Family_Guy__Google_Earth__Clip____TBS.mkv")
+    # remove_advertising_from_sub_file_path_l(["C:/p/tik_tb_vid_big_data/ignore/test/sub_adv_remove_test/Family.Guy.S10E20.720p.HDTV.X264-DIMENSION - Copy.srt",
+    # "C:/p/tik_tb_vid_big_data/ignore/test/sub_adv_remove_test/Family.Guy.S10E20.720p.HDTV.X264-DIMENSION - Copy - Copy.srt"])
     print("End of Main")

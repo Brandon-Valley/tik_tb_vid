@@ -151,6 +151,12 @@ def _clean_trimmed_subs(in_sub_path, out_sub_path, vid_num_ms):
     su.write_manual_sub_line_l(clean_sub_line_l, out_sub_path)
 
 def trim_and_re_time_real_sub_file_from_auto_subs(vid_path, real_sub_file_path, auto_sub_file_path, out_sub_path):
+    print(f"in trim_and_re_time_real_sub_file_from_auto_subs()")
+    print(f"{vid_path=}")
+    print(f"{real_sub_file_path=}")
+    print(f"{auto_sub_file_path=}")
+    print(f"{out_sub_path=}")
+    
     start_time = time.time()
     fsu.delete_if_exists(out_sub_path)
     Path(out_sub_path).parent.mkdir(parents=True, exist_ok=True)
