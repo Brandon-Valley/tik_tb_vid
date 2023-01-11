@@ -43,10 +43,10 @@ def get_fuzz_str_from_sub_path(sub_path):
     subs_fuzz_str = subs_fuzz_str.replace(",", "")
 
     # Remove all other special chars except spaces
-    subs_fuzz_str = re.sub('[^a-zA-Z.\d\s]', '', subs_fuzz_str)
+    subs_fuzz_str = re.sub('[^a-zA-Z.\d\s]', ' ', subs_fuzz_str)
 
-    # Substitute multiple whitespace with single whitespace
-    subs_fuzz_str = ' '.join(subs_fuzz_str.split())
+    # Substitute multiple whitespace with single 0 whitespace
+    subs_fuzz_str = ''.join(subs_fuzz_str.split())
 
     return subs_fuzz_str.lower()
 
