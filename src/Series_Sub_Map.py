@@ -36,14 +36,7 @@ class Episode_Sub_Data:
             self.sub_file_path_l = fsu.get_dir_content_l(self.episode_subs_dir_path, "file")
             self.main_sub_file_path = self._get_main_sub_file_path()
 
-            # print(f"{self.get_season_episode_str()} - Getting main_sub_fuzz_str from main_sub_path...")
             self._get_total_fuzz_str___then___set_len___then___write_total_fuzz_str_to_json()
-
-            # print(f"{self.get_season_episode_str()} - Getting main_sub_fuzz_str_len...")
-            # self.main_sub_fuzz_str_len = len(self.main_sub_fuzz_str)
-            # self._load_dir__many_of_one_lang()
-            print(f"{self.main_sub_fuzz_str_len=}")
-            exit()
         else:
             raise Exception(f"ERROR: unknown {load_method_str=}")
 
