@@ -27,14 +27,9 @@ class Episode_Sub_Data:
         self.series_name = series_name
 
         self.ssm_data_ep_dir_path = self._get_and_init_ssm_data_ep_dir_path()
-        print(f"{self.ssm_data_ep_dir_path=}")
-
         self.total_fuzz_str_json_path     = os.path.join(self.ssm_data_ep_dir_path, f"{self.get_season_episode_str()}_total_fuzz_str.json")
         self.partial_fuzz_str_l_json_path = os.path.join(self.ssm_data_ep_dir_path, f"{self.get_season_episode_str()}_partial_fuzz_str_l.json")
 
-        print(f"{self.total_fuzz_str_json_path=}")
-        print(f"{self.partial_fuzz_str_l_json_path=}")
-        exit()
         self._set_series_name_match_l()
 
         if load_method_str == "many_of_one_lang":
@@ -42,7 +37,10 @@ class Episode_Sub_Data:
             self.main_sub_file_path = self._get_main_sub_file_path()
 
             print(f"{self.get_season_episode_str()} - Getting main_sub_fuzz_str from main_sub_path...")
-            self.main_sub_fuzz_str = fuzz_common.get_fuzz_str_from_sub_path(self.main_sub_file_path)
+            self._write_total_fuzz_str_to_json()
+            # total_fuzz_str = fuzz_common.get_fuzz_str_from_sub_path(self.main_sub_file_path)
+            # json_logg
+            exit()
 
 
             print(f"{self.get_season_episode_str()} - Getting main_sub_fuzz_str_len...")
@@ -50,6 +48,13 @@ class Episode_Sub_Data:
             self._load_dir__many_of_one_lang()
         else:
             raise Exception(f"ERROR: unknown {load_method_str=}")
+
+
+    def _write_total_fuzz_str_to_json(self):
+        print(f"{self.get_season_episode_str()} - Getting total_fuzz_str...")
+        total_fuzz_str = fuzz_common.get_fuzz_str_from_sub_path(self.main_sub_file_path)
+        print(f"{self.get_season_episode_str()} - Got total_fuzz_str, writing to json: {self.total_fuzz_str_json_path}...")
+        json_logger.write(total_fuzz_str, self.total_fuzz_str_json_path)
 
     def _get_and_init_ssm_data_ep_dir_path(self):
         dir_path = os.path.join(SSM_DATA_DIR_PATH, f"S{str(self.season_num).zfill(2)}/{self.get_season_episode_str()}")
