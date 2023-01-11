@@ -18,6 +18,10 @@ def get_fuzz_str_from_sub_path(sub_path):
     subs_fuzz_str = ""
     for line in subs:
         subs_fuzz_str = subs_fuzz_str + line.text + FUZZ_STR_DELIM
+
+    # Remove anything between () or []
+    subs_fuzz_str = re.sub("[\(\[].*?[\)\]]", "", subs_fuzz_str)
+
     return subs_fuzz_str.lower()
 
 
