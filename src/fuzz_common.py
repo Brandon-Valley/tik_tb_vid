@@ -20,6 +20,9 @@ def get_fuzz_str_from_sub_path(sub_path):
         subs_fuzz_str = subs_fuzz_str + line.text + FUZZ_STR_DELIM
     return subs_fuzz_str.lower()
 
+
+
+
 # # TODO make more efficient
 # TODO pass offset to use in exact match?
 def get_partial_fuzz_str_l_from_total_fuzz_str(total_fuzz_str, min_partial_fuzz_str_num_char):
@@ -31,14 +34,31 @@ def get_partial_fuzz_str_l_from_total_fuzz_str(total_fuzz_str, min_partial_fuzz_
     elif len(total_fuzz_str) < min_partial_fuzz_str_num_char:
         raise Exception(f"ERROR: {total_fuzz_str=} can never be less than {min_partial_fuzz_str_num_char=}")
 
+
+    print("----------------------------------------------------------")
+
+    print(f"{len(total_fuzz_str)=}")
+    print(f"{min_partial_fuzz_str_num_char=}")
+    print(f"{min_partial_fuzz_str_num_char / 2 =}")
+    print(f"{len(total_fuzz_str) - min_partial_fuzz_str_num_char=}")
+
     partial_fuzz_str_l = []
     offset = 0
 
     while(offset + min_partial_fuzz_str_num_char < len(total_fuzz_str)):
-        partial_fuzz_str = total_fuzz_str[offset:min_partial_fuzz_str_num_char]
+        print(f"  Top of while - {offset=}")
+        new_end_index = offset + min_partial_fuzz_str_num_char
+        print(f"   {new_end_index=}")
+        # partial_fuzz_str = total_fuzz_str[offset:min_partial_fuzz_str_num_char]
+        partial_fuzz_str = total_fuzz_str[offset:new_end_index]
         partial_fuzz_str_l.append(partial_fuzz_str)
         # TODO make this more efficient vv
         offset = offset + int(min_partial_fuzz_str_num_char / 2)
+        print(f"    Bottom of while - {offset=}")
+        print(f"      {offset + min_partial_fuzz_str_num_char=}")
+        print(f"        {min_partial_fuzz_str_num_char - (offset + min_partial_fuzz_str_num_char)=}")
+        print(f"          {(offset + min_partial_fuzz_str_num_char < len(total_fuzz_str))=}")
+        
 
     # if perfect match, no need for final partial_sub_str
     if offset + min_partial_fuzz_str_num_char == len(total_fuzz_str):
@@ -51,10 +71,17 @@ def get_partial_fuzz_str_l_from_total_fuzz_str(total_fuzz_str, min_partial_fuzz_
     # pprint(len(partial_fuzz_str_l))
 
     # exit()
+    # _tmp_test_partial_fuzz_str_l(partial_fuzz_str_l, min_partial_fuzz_str_num_char)
+    # exit()
     return partial_fuzz_str_l
     
 
+def _tmp_test_partial_fuzz_str_l(partial_fuzz_str_l, min_partial_fuzz_str_num_char):
+    print(f"{len(partial_fuzz_str_l)=}")
 
+    for partial_fuzz_str_num, partial_fuzz_str in enumerate(partial_fuzz_str_l):
+        print(f"partial_fuzz_str # {partial_fuzz_str_num} len: {len(partial_fuzz_str)=}")
+    print(f"None should be larger than {min_partial_fuzz_str_num_char=}")
 
 
 def _sub_path_to_fuzz_str(sub_path):
