@@ -157,20 +157,42 @@ class Episode_Sub_Data:
                     return True
             return False
 
+        def _file_name_contains_any_bad_str(file_path):
+            for bad_str in BAD_SUB_FILENAME_STR_L:
+                if file_path.__contains__(bad_str):
+                    return True
+            return False
+
         # Default to picking sub with largest file size
         #  - # lines might be better but file size is WAY faster
         sub_file_path_l_most_lines_first = sorted(self.sub_file_path_l,key=os.path.getsize, reverse=True)
 
-        # If any files exist with series name in file name, pick largest file
+        # Pick largest file that has the series name and no bad strings in its filename
         # - Don't want to be fooled by subs for wrong show getting mixed-in
+        # - Also dont want hearing impaired or directors comment
+        for sub_file_path in sub_file_path_l_most_lines_first:
+            if _file_name_contains_series_name(sub_file_path) and not _file_name_contains_any_bad_str(sub_file_path):
+                return sub_file_path
+
+        # If none of above exist, pick the largest sub_file with the series name in its filename
+        # - Don't want to be fooled by subs for wrong show getting mixed-in
+        # - Choose having series name over not having any bad strings b/c while bad strings are bad,
+        #   they are very uncommon and might produce a match but anything without series name in 
+        #   file name might be a sub for wrong series that got mixed-in.
         for sub_file_path in sub_file_path_l_most_lines_first:
             if _file_name_contains_series_name(sub_file_path):
                 return sub_file_path
 
-        # If no files exist with series name in file name, just pick largest file
+        # If none of above exist, pick the largest sub_file without any bad strings in filename
+        for sub_file_path in sub_file_path_l_most_lines_first:
+            if not _file_name_contains_any_bad_str(sub_file_path):
+                return sub_file_path
+
+        # If none of above exist, just just pick largest file (if any exist)
         if len(sub_file_path_l_most_lines_first) > 0:
             return sub_file_path_l_most_lines_first[0]
 
+        # if self.sub_file_path_l is empty, return None
         return None
 
 
