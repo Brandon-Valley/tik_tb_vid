@@ -59,12 +59,10 @@ class Episode_Sub_Data:
 
     # LATER Can mem hold total fuzz str an partial at same time?
     def _create_and_write__partial_fuzz_str_l__to_json(self, min_total_fuzz_str_len):
-        # partial_fuzz_str_l = fuzz_common.get_partial_fuzz_str_cut_tup_l_from_total_fuzz_str(self.main_sub_fuzz_str, min_total_fuzz_str_len)
         total_fuzz_str = json_logger.read(self.total_fuzz_str_json_path)
         partial_fuzz_str_l = fuzz_common.get_partial_fuzz_str_l_from_total_fuzz_str(total_fuzz_str, min_total_fuzz_str_len)
         print(f"    {self.get_season_episode_str()} - Got partial_fuzz_str_l to: {self.partial_fuzz_str_l_json_path}...")
         json_logger.write(partial_fuzz_str_l, self.partial_fuzz_str_l_json_path)
-        exit()
 
 
 
@@ -354,6 +352,7 @@ class Series_Sub_map():
         # Now that we know the min_fuzz_str_len, Go through all episodes again and create/write out
         # the partial_fuzz_str_l (from each episode's chosen main sub file) to json
         self._create_and_write__partial_fuzz_str_l__to_json__for_each__ep__for_lang(lang)
+        print("here")
         exit()
 
 
