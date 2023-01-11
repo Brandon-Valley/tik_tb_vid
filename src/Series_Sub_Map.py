@@ -16,7 +16,7 @@ class Episode_Sub_Data:
     sub_file_path_l = []
     main_sub_file_path = None
     series_name_match_str_set = set()
-    partial_fuzz_str_l = []
+    # partial_fuzz_str_l = []
 
     def __init__(self, episode_subs_dir_path, season_num, episode_num, lang = None, series_name = "Family Guy", load_method_str = "many_of_one_lang"):
         self.episode_subs_dir_path = episode_subs_dir_path
@@ -57,24 +57,16 @@ class Episode_Sub_Data:
         Path(dir_path).mkdir(parents=True, exist_ok=True)
         return dir_path
 
-    # def _get_and_init_total_fuzz_str_json_path(self):
-    #     json_path = os.path.join(SSM_DATA_DIR_PATH, f"self.ss#TODO/{self.get_season_episode_str()}_total_fuzz_str.json")
-    #     fsu.delete_if_exists(json_path)
-    #     Path(json_path).parent.mkdir(parents=True, exist_ok=True)
-    #     return json_path
+    # LATER Can mem hold total fuzz str an partial at same time?
+    def _create_and_write__partial_fuzz_str_l__to_json(self, min_total_fuzz_str_len):
+        # partial_fuzz_str_l = fuzz_common.get_partial_fuzz_str_cut_tup_l_from_total_fuzz_str(self.main_sub_fuzz_str, min_total_fuzz_str_len)
+        total_fuzz_str = json_logger.read(self.total_fuzz_str_json_path)
+        partial_fuzz_str_l = fuzz_common.get_partial_fuzz_str_l_from_total_fuzz_str(total_fuzz_str, min_total_fuzz_str_len)
+        print(f"    {self.get_season_episode_str()} - Got partial_fuzz_str_l to: {self.partial_fuzz_str_l_json_path}...")
+        json_logger.write(partial_fuzz_str_l, self.partial_fuzz_str_l_json_path)
+        exit()
 
-    # def _get_and_init_partial_fuzz_str_l_json_path(self):
-    #     json_path = os.path.join(SSM_DATA_DIR_PATH, f"S{str(self.season_num).zfill(2)}/{self.get_season_episode_str()}/{self.get_season_episode_str()}_partial_fuzz_str_l.json")
-    #     fsu.delete_if_exists(json_path)
-    #     Path(json_path).parent.mkdir(parents=True, exist_ok=True)
-    #     return json_path
 
-    # def _get_num_char_in_main_sub_file(self):
-    #     num_char = 0
-    #     subs = pysubs2.load(self.main_sub_file_path, encoding="latin1")
-    #     for line in subs:
-    #         num_char += len(line.text)
-    #     return num_char
 
     # LATER save inicies if takes too much mem
     def _set_partial_fuzz_str_l(self, main_sub_fuzz_str, min_partial_fuzz_str_len):
@@ -338,17 +330,33 @@ class Series_Sub_map():
 
 
 
+    def _create_and_write__partial_fuzz_str_l__to_json__for_each__ep__for_lang(self, lang):
+        print("  Creating/Writing partial_fuzz_str_l to json for each episode...")
+        min_fuzz_str_len = self.get_min_fuzz_str_len_for_lang(lang)
+
+        for ep_sub_data in self.ep_sub_data_ld[lang]:
+            print(f"    {ep_sub_data.get_season_episode_str()} - Creating/Writing partial_fuzz_str_l to json...")
+            ep_sub_data._create_and_write__partial_fuzz_str_l__to_json(min_fuzz_str_len)
+
+
+
 
     def load_lang(self, in_dir_path, lang, series_name = "Family Guy", load_style_str = "open_sub_lang_by_season_fg"):
-
+        # Init all Episode_Sub_Data objects in lang
         if load_style_str == "open_sub_lang_by_season_fg":
             self._load_lang__open_sub_lang_by_season_fg(in_dir_path, lang, series_name)
         else:
             raise Exception(f"ERROR: unknown {load_style_str=}")
 
-        self.set_lang_min_max_fuzz_str_len_ep_sub_data_d_for_lang(lang)
+        # Go through all episodes and find min and max fuzz_str length
+        self._set_lang_min_max_fuzz_str_len_ep_sub_data_d_for_lang(lang)
 
-        min_fuzz_str_len = self.get_min_fuzz_str_len_for_lang(lang)
+        # Now that we know the min_fuzz_str_len, Go through all episodes again and create/write out
+        # the partial_fuzz_str_l (from each episode's chosen main sub file) to json
+        self._create_and_write__partial_fuzz_str_l__to_json__for_each__ep__for_lang(lang)
+        exit()
+
+
 
         
         # print(f"{self.get_season_episode_str()} - Getting main_sub_fuzz_str from main_sub_path...")
@@ -360,20 +368,18 @@ class Series_Sub_map():
         for ep_sub_data in self.ep_sub_data_ld[lang]:
             ep_sub_data._set_partial_fuzz_str_l(ep_main_sub_fuzz_str, min_fuzz_str_len)
 
+
     def get_min_fuzz_str_len_for_lang(self, lang):
         return self.lang_min_max_fuzz_str_len_ep_sub_data_d[lang]["min"].main_sub_fuzz_str_len
-
     def get_max_fuzz_str_len_for_lang(self, lang):
         return self.lang_min_max_fuzz_str_len_ep_sub_data_d[lang]["max"].main_sub_fuzz_str_len
-
     def get_min_fuzz_str_len_ep_sub_data_lang(self, lang):
         return self.lang_min_max_fuzz_str_len_ep_sub_data_d[lang]["min"]
-
     def get_max_fuzz_str_len_ep_sub_data_lang(self, lang):
         return self.lang_min_max_fuzz_str_len_ep_sub_data_d[lang]["max"]
 
 
-    def set_lang_min_max_fuzz_str_len_ep_sub_data_d_for_lang(self, lang):
+    def _set_lang_min_max_fuzz_str_len_ep_sub_data_d_for_lang(self, lang):
         print("Getting min and max char lengths of main sub files...")
 
         min_char_ep_sub_data = None
