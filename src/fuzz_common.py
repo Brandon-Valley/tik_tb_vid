@@ -35,29 +35,29 @@ def get_partial_fuzz_str_l_from_total_fuzz_str(total_fuzz_str, min_partial_fuzz_
         raise Exception(f"ERROR: {total_fuzz_str=} can never be less than {min_partial_fuzz_str_num_char=}")
 
 
-    print("----------------------------------------------------------")
+    # print("----------------------------------------------------------")
 
-    print(f"{len(total_fuzz_str)=}")
-    print(f"{min_partial_fuzz_str_num_char=}")
-    print(f"{min_partial_fuzz_str_num_char / 2 =}")
-    print(f"{len(total_fuzz_str) - min_partial_fuzz_str_num_char=}")
+    # print(f"{len(total_fuzz_str)=}")
+    # print(f"{min_partial_fuzz_str_num_char=}")
+    # print(f"{min_partial_fuzz_str_num_char / 2 =}")
+    # print(f"{len(total_fuzz_str) - min_partial_fuzz_str_num_char=}")
 
     partial_fuzz_str_l = []
     offset = 0
 
     while(offset + min_partial_fuzz_str_num_char < len(total_fuzz_str)):
-        print(f"  Top of while - {offset=}")
+        # print(f"  Top of while - {offset=}")
         new_end_index = offset + min_partial_fuzz_str_num_char
-        print(f"   {new_end_index=}")
+        # print(f"   {new_end_index=}")
         # partial_fuzz_str = total_fuzz_str[offset:min_partial_fuzz_str_num_char]
         partial_fuzz_str = total_fuzz_str[offset:new_end_index]
         partial_fuzz_str_l.append(partial_fuzz_str)
         # TODO make this more efficient vv
         offset = offset + int(min_partial_fuzz_str_num_char / 2)
-        print(f"    Bottom of while - {offset=}")
-        print(f"      {offset + min_partial_fuzz_str_num_char=}")
-        print(f"        {min_partial_fuzz_str_num_char - (offset + min_partial_fuzz_str_num_char)=}")
-        print(f"          {(offset + min_partial_fuzz_str_num_char < len(total_fuzz_str))=}")
+        # print(f"    Bottom of while - {offset=}")
+        # print(f"      {offset + min_partial_fuzz_str_num_char=}")
+        # print(f"        {min_partial_fuzz_str_num_char - (offset + min_partial_fuzz_str_num_char)=}")
+        # print(f"          {(offset + min_partial_fuzz_str_num_char < len(total_fuzz_str))=}")
         
 
     # if perfect match, no need for final partial_sub_str
