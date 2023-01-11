@@ -326,7 +326,6 @@ class Series_Sub_map():
         print(f"Done Loading {lang=}")
 
 
-
     def _create_and_write__partial_fuzz_str_l__to_json__for_each__ep__for_lang(self, lang):
         print("  Creating/Writing partial_fuzz_str_l to json for each episode...")
         min_fuzz_str_len = self.get_min_fuzz_str_len_for_lang(lang)
@@ -334,8 +333,6 @@ class Series_Sub_map():
         for ep_sub_data in self.ep_sub_data_ld[lang]:
             print(f"    {ep_sub_data.get_season_episode_str()} - Creating/Writing partial_fuzz_str_l to json...")
             ep_sub_data._create_and_write__partial_fuzz_str_l__to_json(min_fuzz_str_len)
-
-
 
 
     def load_lang(self, in_dir_path, lang, series_name = "Family Guy", load_style_str = "open_sub_lang_by_season_fg"):
@@ -373,7 +370,6 @@ class Series_Sub_map():
             print(f"{ep_sub_data.get_season_episode_str()} - Getting min and max char lengths of main sub file...")
 
             num_char = ep_sub_data.main_sub_fuzz_str_len
-            # print(f"{num_char=}")
 
             # init and if only 1 ep_sub_data
             if min_char_ep_sub_data == None:
@@ -397,23 +393,10 @@ class Series_Sub_map():
         self.lang_min_max_fuzz_str_len_ep_sub_data_d[lang]["max"] = max_char_ep_sub_data
 
         print("  Got min and max char lengths of main sub files:")
-        # # print(f"{min=}")
-        # # print(f"{max=}")
-        # print(f"{min_char_ep_sub_data=}")
-        # print(f"{max_char_ep_sub_data=}")
-
-        # if min_char_ep_sub_data
-        # pprint(self.lang_min_max_fuzz_str_len_ep_sub_data_d)
         print(f"    {self.get_min_fuzz_str_len_for_lang(lang)}")
         print(f"    {self.get_max_fuzz_str_len_for_lang(lang)}")
         print(f"    {self.get_min_fuzz_str_len_ep_sub_data_lang(lang)}")
         print(f"    {self.get_max_fuzz_str_len_ep_sub_data_lang(lang)}")
-
-
-
-
-
-
 
 
 
@@ -423,8 +406,8 @@ if __name__ == "__main__":
 
     lang = "en"
     # in_dir_path = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en"
-    in_dir_path = "C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en_s4_16_and_17"
-    # in_dir_path = "C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en"
+    # in_dir_path = "C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en_s4_16_and_17"
+    in_dir_path = "C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en"
 
     ssm = Series_Sub_map()
     ssm.load_lang(in_dir_path, lang)
