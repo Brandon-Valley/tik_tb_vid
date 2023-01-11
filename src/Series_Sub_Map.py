@@ -7,6 +7,9 @@ from sms.logger import json_logger
 from pathlib import Path
 import pysubs2
 import subtitle_utils as su
+import cfg
+
+SSM_DATA_DIR_PATH = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "SSM_DATA")
 
 class Episode_Sub_Data:
     extra_metadata_d = {}
@@ -23,6 +26,15 @@ class Episode_Sub_Data:
         self.lang = lang
         self.series_name = series_name
 
+        self.ssm_data_ep_dir_path = self._get_and_init_ssm_data_ep_dir_path()
+        print(f"{self.ssm_data_ep_dir_path=}")
+
+        self.total_fuzz_str_json_path     = os.path.join(self.ssm_data_ep_dir_path, f"{self.get_season_episode_str()}_total_fuzz_str.json")
+        self.partial_fuzz_str_l_json_path = os.path.join(self.ssm_data_ep_dir_path, f"{self.get_season_episode_str()}_partial_fuzz_str_l.json")
+
+        print(f"{self.total_fuzz_str_json_path=}")
+        print(f"{self.partial_fuzz_str_l_json_path=}")
+        exit()
         self._set_series_name_match_l()
 
         if load_method_str == "many_of_one_lang":
@@ -32,11 +44,30 @@ class Episode_Sub_Data:
             print(f"{self.get_season_episode_str()} - Getting main_sub_fuzz_str from main_sub_path...")
             self.main_sub_fuzz_str = fuzz_common.get_fuzz_str_from_sub_path(self.main_sub_file_path)
 
+
             print(f"{self.get_season_episode_str()} - Getting main_sub_fuzz_str_len...")
             self.main_sub_fuzz_str_len = len(self.main_sub_fuzz_str)
-            # self._load_dir__many_of_one_lang()
+            self._load_dir__many_of_one_lang()
         else:
             raise Exception(f"ERROR: unknown {load_method_str=}")
+
+    def _get_and_init_ssm_data_ep_dir_path(self):
+        dir_path = os.path.join(SSM_DATA_DIR_PATH, f"S{str(self.season_num).zfill(2)}/{self.get_season_episode_str()}")
+        fsu.delete_if_exists(dir_path)
+        Path(dir_path).mkdir(parents=True, exist_ok=True)
+        return dir_path
+
+    # def _get_and_init_total_fuzz_str_json_path(self):
+    #     json_path = os.path.join(SSM_DATA_DIR_PATH, f"self.ss#TODO/{self.get_season_episode_str()}_total_fuzz_str.json")
+    #     fsu.delete_if_exists(json_path)
+    #     Path(json_path).parent.mkdir(parents=True, exist_ok=True)
+    #     return json_path
+
+    # def _get_and_init_partial_fuzz_str_l_json_path(self):
+    #     json_path = os.path.join(SSM_DATA_DIR_PATH, f"S{str(self.season_num).zfill(2)}/{self.get_season_episode_str()}/{self.get_season_episode_str()}_partial_fuzz_str_l.json")
+    #     fsu.delete_if_exists(json_path)
+    #     Path(json_path).parent.mkdir(parents=True, exist_ok=True)
+    #     return json_path
 
     # def _get_num_char_in_main_sub_file(self):
     #     num_char = 0
@@ -46,9 +77,12 @@ class Episode_Sub_Data:
     #     return num_char
 
     # LATER save inicies if takes too much mem
-    def _set_partial_fuzz_str_l(self, min_partial_fuzz_str_len):
+    def _set_partial_fuzz_str_l(self, main_sub_fuzz_str, min_partial_fuzz_str_len):
         # self.partial_fuzz_str_l = fuzz_common.get_partial_fuzz_str_l_from_total_fuzz_str(self.main_sub_fuzz_str, min_partial_fuzz_str_len)
-        self.partial_fuzz_str_l = fuzz_common.get_partial_fuzz_str_l_from_total_fuzz_str(self.main_sub_fuzz_str, min_partial_fuzz_str_len)
+        # self.partial_fuzz_str_l = fuzz_common.get_partial_fuzz_str_l_from_total_fuzz_str(self.main_sub_fuzz_str, min_partial_fuzz_str_len)
+
+        #TMP paging file (mem) too small to hold all these big strings, so just save indicies to cut
+        self.partial_fuzz_str_l = fuzz_common.get_partial_fuzz_str_cut_tup_l_from_total_fuzz_str(self.main_sub_fuzz_str, min_partial_fuzz_str_len)
         print(f"{self.partial_fuzz_str_l=}")
         pass
 
@@ -231,6 +265,8 @@ class Series_Sub_map():
     lang_min_max_fuzz_str_len_ep_sub_data_d = {}
 
     def __init__(self):
+        fsu.delete_if_exists(SSM_DATA_DIR_PATH)
+        Path(SSM_DATA_DIR_PATH).mkdir(parents=True, exist_ok=True)
         pass
 
 
@@ -314,8 +350,15 @@ class Series_Sub_map():
 
         min_fuzz_str_len = self.get_min_fuzz_str_len_for_lang(lang)
 
+        
+        # print(f"{self.get_season_episode_str()} - Getting main_sub_fuzz_str from main_sub_path...")
+        # self.main_sub_fuzz_str = fuzz_common.get_fuzz_str_from_sub_path(self.main_sub_file_path)
+        # TODO
+        print(f"{self.get_season_episode_str()} - Getting main_sub_fuzz_str_len...")
+        min_fuzz_str_len = len(self.main_sub_fuzz_str)
+
         for ep_sub_data in self.ep_sub_data_ld[lang]:
-            ep_sub_data._set_partial_fuzz_str_l(min_fuzz_str_len)
+            ep_sub_data._set_partial_fuzz_str_l(ep_main_sub_fuzz_str, min_fuzz_str_len)
 
     def get_min_fuzz_str_len_for_lang(self, lang):
         return self.lang_min_max_fuzz_str_len_ep_sub_data_d[lang]["min"].main_sub_fuzz_str_len
@@ -333,22 +376,12 @@ class Series_Sub_map():
     def set_lang_min_max_fuzz_str_len_ep_sub_data_d_for_lang(self, lang):
         print("Getting min and max char lengths of main sub files...")
 
-        # self.lang_min_max_fuzz_str_len_ep_sub_data_d[lang] = {
-        #     "min" : None,
-        #     "max" : None,
-        #     "min_char_ep_sub_data": None,
-        #     "max_char_ep_sub_data": None
-        # }
-        
-        # min = None
-        # max = None
         min_char_ep_sub_data = None
         max_char_ep_sub_data = None
 
         for ep_sub_data in self.ep_sub_data_ld[lang]:
             print(f"{ep_sub_data.get_season_episode_str()} - Getting min and max char lengths of main sub file...")
-            # sub_path = ep_sub_data.main_sub_file_path
-            # num_char = ep_sub_data._get_num_char_in_main_sub_file()
+
             num_char = ep_sub_data.main_sub_fuzz_str_len
             # print(f"{num_char=}")
 
@@ -388,49 +421,6 @@ class Series_Sub_map():
 
 
 
-        # return min, max
-
-
-
-    # def _get_min_and_max_episode_fuzz_str_len(self, lang):
-    #     print("Getting min and max char lengths of main sub files...")
-
-    #     min = None
-    #     max = None
-    #     min_char_ep_sub_data = None
-    #     max_char_ep_sub_data = None
-
-    #     for ep_sub_data in self.ep_sub_data_ld[lang]:
-    #         print(f"Getting min and max char lengths of main sub files - Checking {ep_sub_data.get_season_episode_str()}")
-    #         # sub_path = ep_sub_data.main_sub_file_path
-    #         # num_char = ep_sub_data._get_num_char_in_main_sub_file()
-    #         num_char = ep_sub_data.main_sub_fuzz_str_len
-
-    #         # init and if only 1 ep_sub_data
-    #         if min == None:
-    #             max_char_ep_sub_data = ep_sub_data
-    #             max = num_char
-    #             min_char_ep_sub_data = ep_sub_data
-    #             min = num_char
-    #             continue
-
-    #         if num_char < min:
-    #             min_char_ep_sub_data = ep_sub_data
-    #             min = num_char
-    #             continue
-
-    #         if num_char > max:
-    #             max_char_ep_sub_data = ep_sub_data
-    #             max = num_char
-    #             continue
-
-    #     print("Got min and max char lengths of main sub files:")
-    #     print(f"{min=}")
-    #     print(f"{max=}")
-    #     print(f"{min_char_ep_sub_data=}")
-    #     print(f"{max_char_ep_sub_data=}")
-
-    #     return min, max
 
 
 
