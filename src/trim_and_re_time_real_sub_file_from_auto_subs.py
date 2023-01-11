@@ -120,7 +120,7 @@ def _get_real_sub_shift_num_ms(real_subs, auto_subs, best_sub_slot_offset, best_
     print(f"--{best_match_real_sub_line.start=}")
 
     if best_match_auto_sub_line.start > best_match_real_sub_line.start:
-        raise Exception(f"ERROR: {best_match_auto_sub_line.start=} > {best_match_real_sub_line.start=} - This should never be possible.")
+        raise Exception(f"ERROR: {best_match_auto_sub_line.start=} > {best_match_real_sub_line.start=} - This should never be possible. Last time this happened it was caused by picking wrong real subs episode.")
 
     real_sub_shift_num_ms = best_match_real_sub_line.start - best_match_auto_sub_line.start
 
@@ -172,7 +172,7 @@ def trim_and_re_time_real_sub_file_from_auto_subs(vid_path, real_sub_file_path, 
     fsu.delete_if_exists(out_sub_path)
     Path(out_sub_path).parent.mkdir(parents=True, exist_ok=True)
 
-    
+
     real_subs, auto_subs = _get_and_check_real_and_auto_subs(real_sub_file_path, auto_sub_file_path)
 
     s_time = time.time()
@@ -183,14 +183,18 @@ def trim_and_re_time_real_sub_file_from_auto_subs(vid_path, real_sub_file_path, 
     print(f"  {best_sub_slot_offset=}")
     print(f"  {best_auto_sub_line_match_index_for_best_sub_slot_offset=}")
 
+    print(f"@@@@@@@@@@@@@@@@@{real_sub_file_path=}")
+    print(f"@@@@@@@@@@@@@@@@@{auto_sub_file_path=}")
     real_sub_shift_num_ms = _get_real_sub_shift_num_ms(real_subs, auto_subs, best_sub_slot_offset, best_auto_sub_line_match_index_for_best_sub_slot_offset)
     print(f"{real_sub_shift_num_ms=}")
     neg_real_sub_shift_num_ms = real_sub_shift_num_ms * -1
 
     # init shift
     real_subs.shift(ms = neg_real_sub_shift_num_ms)
-    tmp_ms_shifted_sub_path        = os.path.join(Path(out_sub_path).parent.__str__(), Path(out_sub_path).stem + "__TMP_MS_SHIFTED."          + ''.join(Path(out_sub_path).suffixes))
-    tmp_synced_ms_shifted_sub_path = os.path.join(Path(out_sub_path).parent.__str__(), Path(out_sub_path).stem + "__TMP_MS_SHIFTED__SYNCED." + ''.join(Path(out_sub_path).suffixes))
+    # tmp_ms_shifted_sub_path        = os.path.join(Path(out_sub_path).parent.__str__(), Path(out_sub_path).stem + "__TMP_MS_SHIFTED."          + ''.join(Path(out_sub_path).suffixes))
+    # tmp_synced_ms_shifted_sub_path = os.path.join(Path(out_sub_path).parent.__str__(), Path(out_sub_path).stem + "__TMP_MS_SHIFTED__SYNCED." + ''.join(Path(out_sub_path).suffixes))
+    tmp_ms_shifted_sub_path        = os.path.normpath(os.path.join(Path(out_sub_path).parent.__str__(), Path(out_sub_path).stem + "__TMP_MS_SHIFTED."          + ''.join(Path(out_sub_path).suffixes)))
+    tmp_synced_ms_shifted_sub_path = os.path.normpath(os.path.join(Path(out_sub_path).parent.__str__(), Path(out_sub_path).stem + "__TMP_MS_SHIFTED__SYNCED." + ''.join(Path(out_sub_path).suffixes)))
     # tmp_cleaned_ms_shifted_sub_path = os.path.join(Path(out_sub_path).parent.__str__(), Path(out_sub_path).stem + "__TMP_MS_SHIFTED__CLEANED" + ''.join(Path(out_sub_path).suffixes))
     print(f"{tmp_ms_shifted_sub_path=}")
     real_subs.save(tmp_ms_shifted_sub_path)

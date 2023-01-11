@@ -308,22 +308,39 @@ def get_real_episode_sub_data_from_auto_sub(auto_sub_path, ssm, lang):
     fuzz_ratio_file_path = os.path.join(f"C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS", Path(auto_sub_path).stem + "__fuzz_r.txt" ) #TMP
     fsu.delete_if_exists(fuzz_ratio_file_path)#TMP
 
+    fuzz_ratio_real_sub_info_dd_json_path = os.path.join(f"C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS", Path(auto_sub_path).stem + "__fuzz_ratio_real_sub_info_dd.json" ) #TMP
+    fsu.delete_if_exists(fuzz_ratio_real_sub_info_dd_json_path)#TMP
+
+
+
+    # LATER only store paths instead of ep_dir_data objects if low mem or too slow
+    fuzz_ratio_real_sub_info_dd = {}
 
     for ep_sub_data in ep_sub_data_l:
         print(f"  Checking {ep_sub_data.get_season_episode_str()}...")
 
         ep_sub_fuzz_ratio, ep_sub_best_partial_fuzz_str = _get_best_ep_sub_partial_fuzz_ratio(ep_sub_data, auto_sub_fuzz_str)
         print(f"{ep_sub_fuzz_ratio=}")
+
+        se_str_real_sub_path_d = {"se_str": ep_sub_data.get_season_episode_str(),
+                                  "sub_path": ep_sub_data.main_sub_file_path}
+
+        if ep_sub_fuzz_ratio in fuzz_ratio_real_sub_info_dd.keys():
+            fuzz_ratio_real_sub_info_dd[ep_sub_fuzz_ratio].append(se_str_real_sub_path_d)
+        else:
+            fuzz_ratio_real_sub_info_dd[ep_sub_fuzz_ratio] = [se_str_real_sub_path_d]
         
         two_parent_display_path = f"{Path(Path(ep_sub_data.main_sub_file_path).parent.__str__()).parent.name}/{Path(ep_sub_data.main_sub_file_path).parent.name}/{Path(ep_sub_data.main_sub_file_path).name}" #TMP
-        txt_logger.write(f"{str(ep_sub_fuzz_ratio)} :{two_parent_display_path}\r" , fuzz_ratio_file_path, "append") #TMP
+        # txt_logger.write(f"{str(ep_sub_fuzz_ratio)} :{two_parent_display_path}\r" , fuzz_ratio_file_path, "append") #TMP
+        json_logger.write(fuzz_ratio_real_sub_info_dd, fuzz_ratio_ep_sub_data_d_json_path)
 
-        if ep_sub_fuzz_ratio > best_fuzz_ratio:
-            print(f"    {ep_sub_data.get_season_episode_str()} - Found new best fuzz ratio - {ep_sub_fuzz_ratio=}")
-            best_fuzz_ratio = ep_sub_fuzz_ratio
-            best_ep_sub_data = ep_sub_data
-            best_ep_sub_best_partial_fuzz_str = ep_sub_best_partial_fuzz_str
+        # if ep_sub_fuzz_ratio > best_fuzz_ratio:
+        #     print(f"    {ep_sub_data.get_season_episode_str()} - Found new best fuzz ratio - {ep_sub_fuzz_ratio=}")
+        #     best_fuzz_ratio = ep_sub_fuzz_ratio
+        #     best_ep_sub_data = ep_sub_data
+        #     best_ep_sub_best_partial_fuzz_str = ep_sub_best_partial_fuzz_str
 
+    exit()
     if best_ep_sub_data == None:
         print("After fuzzy-searching every episode's subs, did not find single episode with fuzz_ratio > 0, returning None")
     else:
