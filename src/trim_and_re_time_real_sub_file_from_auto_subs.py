@@ -151,6 +151,17 @@ def _clean_trimmed_subs(in_sub_path, out_sub_path, vid_num_ms):
     su.write_manual_sub_line_l(clean_sub_line_l, out_sub_path)
 
 def trim_and_re_time_real_sub_file_from_auto_subs(vid_path, real_sub_file_path, auto_sub_file_path, out_sub_path):
+    """ 
+        - After finding correct real sub file with faster get_real_episode_sub_data_from_auto_sub(), 
+          go through real_sub_file and find exact amount to shift real_sub_file by to align to clip.
+            - This is done by finding real_sub_shift_num_ms
+        - Then use this real_sub_shift_num_ms to shift real sub path to align with clip 
+            - This will get things close but not perfect yet
+        - Then sub sync to make sure everything aligns perfectly
+        - Finally, trim out the unused sub lines from the new re-timed real_sub_file
+            - This is needed b/c otherwise it messes with vid length of final vid once embedded as
+              single mkv.
+    """
     print(f"in trim_and_re_time_real_sub_file_from_auto_subs()")
     print(f"{vid_path=}")
     print(f"{real_sub_file_path=}")
@@ -161,6 +172,7 @@ def trim_and_re_time_real_sub_file_from_auto_subs(vid_path, real_sub_file_path, 
     fsu.delete_if_exists(out_sub_path)
     Path(out_sub_path).parent.mkdir(parents=True, exist_ok=True)
 
+    
     real_subs, auto_subs = _get_and_check_real_and_auto_subs(real_sub_file_path, auto_sub_file_path)
 
     s_time = time.time()

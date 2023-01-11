@@ -11,6 +11,11 @@ import cfg
 
 SSM_DATA_DIR_PATH = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "SSM_DATA")
 
+# Examples:
+#  - Family Guy - S06E01 - Blue Harvest (english - directors comment - 25fps - UTF-8).srt
+#  - Family Guy - S06E01 - Blue Harvest (english for hearing impaired - 25fps - UTF-8).srt
+BAD_SUB_FILENAME_STR_L = ["directors", "comment", "fps", "UTF", "hearing", "impaired"]
+
 class Episode_Sub_Data:
     extra_metadata_d = {}
     sub_file_path_l = []
@@ -146,19 +151,11 @@ class Episode_Sub_Data:
     def _get_main_sub_file_path(self):
         print(f"{self.get_season_episode_str()} - Getting main_sub_file_path...")
 
-        # def _get_num_lines_in_file(file_path):
-        #     # return sum(1 for i in open(file_path, 'rb'))
-        #     # return 1
-        #     return os.path.getsize(file_path)
-
         def _file_name_contains_series_name(file_path):
             for series_name_match_str in self.series_name_match_str_set:
                 if Path(file_path).name.__contains__(series_name_match_str):
                     return True
             return False
-
-        # sub_file_path_l_most_lines_first = self.sub_file_path_l.sort(key=_get_num_lines_in_file, reverse=True)
-        # sub_file_path_l_most_lines_first = sorted(self.sub_file_path_l,key=_get_num_lines_in_file, reverse=True)
 
         # Default to picking sub with largest file size
         #  - # lines might be better but file size is WAY faster
@@ -169,55 +166,12 @@ class Episode_Sub_Data:
         for sub_file_path in sub_file_path_l_most_lines_first:
             if _file_name_contains_series_name(sub_file_path):
                 return sub_file_path
-                # self.main_sub_file_path = sub_file_path
-                # return
 
         # If no files exist with series name in file name, just pick largest file
         if len(sub_file_path_l_most_lines_first) > 0:
-            # self.main_sub_file_path = sub_file_path
-            # return
             return sub_file_path_l_most_lines_first[0]
 
         return None
-
-        # # If any files exist with series name in file name, pick file with most lines
-        # for sub_file_path in list(sfp for sfp in self.sub_file_path_l if _file_name_contains_series_name(sfp)).sort(key=_get_num_lines_in_file, reverse=True):
-        #     self.main_sub_file_path =sub_file_path
-        #     return
-
-        # # If no files exist with series name in file name:
-
-        # # # If any files exist with series name in file name
-        # # for sub_file_path in self.sub_file_path_l:
-        # #     # if f".{self.lang}.srt" in Path(sub_file_path).stem and _file_name_contains_series_name(sub_file_path):
-        # #     if f".{self.lang}.srt" in Path(sub_file_path).name and _file_name_contains_series_name(sub_file_path):
-        # #         self.main_sub_file_path = sub_file_path
-        # #         return
-
-        # # If none of above exist, pick file with series name in file name
-        # for sub_file_path in self.sub_file_path_l:
-        #     if _file_name_contains_series_name(sub_file_path):
-        #         self.main_sub_file_path = sub_file_path
-        #         return
-
-        # # If none of above exist, pick file with .en.srt
-        # for sub_file_path in self.sub_file_path_l:
-        #     # if f".{self.lang}.srt" in Path(sub_file_path).stem:
-        #     if f".{self.lang}.srt" in Path(sub_file_path).name:
-        #         self.main_sub_file_path = sub_file_path
-        #         return
-
-        # # # If none of above exist, just return the first sub with a match in self.series_name_match_str_set
-        # # for sub_file_path in self.sub_file_path_l:
-        # #     for series_name_match_str in self.series_name_match_str_set:
-        # #         if Path(sub_file_path).name.__contains__(series_name_match_str):
-        # #             self.main_sub_file_path = sub_file_path
-        # #             return
-        
-        # # If none of above exist, just return the first valid sub_path in list
-        # for sub_file_path in self.sub_file_path_l:
-        #     self.main_sub_file_path = sub_file_path
-        #     return
 
 
     def _set_series_name_match_l(self):
