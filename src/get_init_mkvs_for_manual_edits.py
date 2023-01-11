@@ -165,8 +165,8 @@ def main():
 
     # TODO download yt playlist with youtube_utils.dl_yt_playlist__fix_sub_times_convert_to__mp4_srt()
     # Init std youtube playlist download data
-    # yt_pl_dl_dir_path = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "Family_Guy___TBS")
-    yt_pl_dl_dir_path = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "Family_Guy___TBS__google_earth_test__and__pilot")
+    yt_pl_dl_dir_path = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "Family_Guy___TBS")
+    # yt_pl_dl_dir_path = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "Family_Guy___TBS__google_earth_test__and__pilot")
     # yt_pl_dl_dir_path = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "Family_Guy___TBS__google_earth_test")
     yt_pl_dl_dir_data = YT_PL_DL_Data(yt_pl_dl_dir_path)
 
