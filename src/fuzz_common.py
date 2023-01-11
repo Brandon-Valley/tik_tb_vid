@@ -15,9 +15,15 @@ FUZZ_STR_DELIM = " "
 
 def get_fuzz_str_from_sub_path(sub_path):
     subs = pysubs2.load(sub_path, encoding="latin1")
+
     subs_fuzz_str = ""
     for line in subs:
-        subs_fuzz_str = subs_fuzz_str + line.text + FUZZ_STR_DELIM
+        # Get rid of everything from start of line until ":"
+        #  - "COMMENTATOR 1: They're just" --> " They're just"
+        #    - From S06E01 - Blue Harvest
+        after_colon_line = line.text.split(":")[-1]
+        
+        subs_fuzz_str = subs_fuzz_str + after_colon_line + FUZZ_STR_DELIM
 
     # Remove anything between () or []
     subs_fuzz_str = re.sub("[\(\[].*?[\)\]]", "", subs_fuzz_str)
