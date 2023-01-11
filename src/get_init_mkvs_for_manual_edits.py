@@ -256,4 +256,9 @@ if __name__ == "__main__":
     import os.path as path
     print(f"Running " , path.abspath(__file__) , '...')
     main()
+    # fpl = fsu.get_dir_content_l("C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en/s09","file", recurs_dirs=True)
+    # for file_path in fpl:
+    #     if file_path.__contains__("S10"):
+    #         print(file_path)
+    #         fsu.delete_if_exists(file_path)
     print("End of Main") 

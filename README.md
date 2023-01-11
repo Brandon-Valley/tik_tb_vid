@@ -106,6 +106,7 @@ pip install fuzzywuzzy
 pip install autosubsync
 pip3 install subnuker
 pip install aeidon
+install python-levenshtein
 
 # Good test caused
 - herbert clip - s4 e16 - The Courtship of Stewie's Father
