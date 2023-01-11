@@ -87,7 +87,6 @@ class Episode_Sub_Data:
             "season_num" : self.season_num,
             "episode_num" : self.episode_num,
             "extra_metadata_d" : self.extra_metadata_d,
-            "partial_fuzz_str_l": self.partial_fuzz_str_l
             }
 
     def get_season_episode_str(self):
@@ -352,20 +351,6 @@ class Series_Sub_map():
         # Now that we know the min_fuzz_str_len, Go through all episodes again and create/write out
         # the partial_fuzz_str_l (from each episode's chosen main sub file) to json
         self._create_and_write__partial_fuzz_str_l__to_json__for_each__ep__for_lang(lang)
-        print("here")
-        exit()
-
-
-
-        
-        # print(f"{self.get_season_episode_str()} - Getting main_sub_fuzz_str from main_sub_path...")
-        # self.main_sub_fuzz_str = fuzz_common.get_fuzz_str_from_sub_path(self.main_sub_file_path)
-        # TODO
-        print(f"{self.get_season_episode_str()} - Getting main_sub_fuzz_str_len...")
-        min_fuzz_str_len = len(self.main_sub_fuzz_str)
-
-        for ep_sub_data in self.ep_sub_data_ld[lang]:
-            ep_sub_data._set_partial_fuzz_str_l(ep_main_sub_fuzz_str, min_fuzz_str_len)
 
 
     def get_min_fuzz_str_len_for_lang(self, lang):
@@ -443,6 +428,7 @@ if __name__ == "__main__":
 
     ssm = Series_Sub_map()
     ssm.load_lang(in_dir_path, lang)
+    print("here")
     # print(ssm.get_min_and_max_episode_fuzz_str_len(lang))
     ssm.write_log_json("C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/SSM_log.json")
     # print(f"{ssm.get_num_episodes_in_lang(lang)=}")
