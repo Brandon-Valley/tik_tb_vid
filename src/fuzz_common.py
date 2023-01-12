@@ -59,6 +59,91 @@ def get_fuzz_str_from_sub_path(sub_path):
 
 
 
+
+
+# # TODO make more efficient
+# TODO pass offset to use in exact match?
+def get_partial_fuzz_str_l_from_total_fuzz_str(total_fuzz_str, min_partial_fuzz_str_num_char, min_overlap_char = None):
+
+    # TODO add extra % allowed?
+    if len(total_fuzz_str) == min_partial_fuzz_str_num_char:
+        print(f"Given total_fuzz_str is exact same len as {min_partial_fuzz_str_num_char=}, so just returning [total_fuzz_str]...")
+        return [total_fuzz_str]
+    elif len(total_fuzz_str) < min_partial_fuzz_str_num_char:
+        raise Exception(f"ERROR: {total_fuzz_str=} can never be less than {min_partial_fuzz_str_num_char=}")
+
+
+    # print("----------------------------------------------------------")
+
+    # print(f"{len(total_fuzz_str)=}")
+    # print(f"{min_partial_fuzz_str_num_char=}")
+    # print(f"{min_partial_fuzz_str_num_char / 2 =}")
+    # print(f"{len(total_fuzz_str) - min_partial_fuzz_str_num_char=}")
+
+    partial_fuzz_str_l = []
+    offset = 0
+
+    while(offset + min_partial_fuzz_str_num_char < len(total_fuzz_str)):
+        # print(f"  Top of while - {offset=}")
+        new_end_index = offset + min_partial_fuzz_str_num_char
+        # print(f"   {new_end_index=}")
+        # partial_fuzz_str = total_fuzz_str[offset:min_partial_fuzz_str_num_char]
+        partial_fuzz_str = total_fuzz_str[offset:new_end_index]
+        partial_fuzz_str_l.append(partial_fuzz_str)
+        # TODO make this more efficient vv
+
+        min_offset = offset + int(min_partial_fuzz_str_num_char / 2)
+
+        if min_overlap_char == None:
+            offset = min_offset
+        else:
+            # offset = min_offset # TODO
+            offset = offset + (min_partial_fuzz_str_num_char - min_overlap_char)
+
+
+
+        # print(f"    Bottom of while - {offset=}")
+        # print(f"      {offset + min_partial_fuzz_str_num_char=}")
+        # print(f"        {min_partial_fuzz_str_num_char - (offset + min_partial_fuzz_str_num_char)=}")
+        # print(f"          {(offset + min_partial_fuzz_str_num_char < len(total_fuzz_str))=}")
+        
+
+    # if perfect match, no need for final partial_sub_str
+    if offset + min_partial_fuzz_str_num_char == len(total_fuzz_str):
+        return partial_fuzz_str_l
+        
+    final_partial_sub_str = total_fuzz_str[len(total_fuzz_str) - min_partial_fuzz_str_num_char:]
+    partial_fuzz_str_l.append(final_partial_sub_str)
+    # print("partial_fuzz_str_l VV")
+    # pprint(partial_fuzz_str_l)
+    # pprint(len(partial_fuzz_str_l))
+
+    # exit()
+    # _tmp_test_partial_fuzz_str_l(partial_fuzz_str_l, min_partial_fuzz_str_num_char)
+    # exit()
+    return partial_fuzz_str_l
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # # TODO make more efficient
 # TODO pass offset to use in exact match?
 def get_default_partial_fuzz_str_l_from_total_fuzz_str(total_fuzz_str, min_partial_fuzz_str_num_char):

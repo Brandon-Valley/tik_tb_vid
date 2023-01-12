@@ -1,5 +1,5 @@
 from pprint import pprint
-import fuzz_common
+import fuzz_common as fc
 import os
 from pathlib import Path
 import regex
@@ -274,9 +274,16 @@ def _get_best_ep_sub_partial_fuzz_ratio(ep_sub_data, auto_sub_fuzz_str, method_k
         partial_fuzz_str_l = ep_sub_data.get_default_partial_fuzz_str_l()
     elif method_key == SEARCH_METHOD_KEY__AUTO_SUB_FUZZ_LEN_BASED:
         partial_fuzz_str_num_char = len(auto_sub_fuzz_str) * NUM_TIMES_BIGGER_MIN_FUZZ_LEN_CAN_BE_FOR_INIT_PARTIAL_FUZZ_SEARCH_METHOD # TMP THIS CAN CHANGE!
+        ep_sub_total_fuzz_str = json_logger.read(ep_sub_data.total_fuzz_str_json_path)
         # partial_fuzz_str_l = ep_sub_data.get_custom_partial_fuzz_str_l(partial_fuzz_str_num_char, len(auto_sub_fuzz_str))
-        print("Hereeeeeeeeeeeeeeeee")
-        exit()
+        partial_fuzz_str_l = fc.get_partial_fuzz_str_l_from_total_fuzz_str(total_fuzz_str = ep_sub_total_fuzz_str,
+                                                                                    min_partial_fuzz_str_num_char = partial_fuzz_str_num_char,
+                                                                                    min_overlap_char = len(auto_sub_fuzz_str))
+        # partial_fuzz_str_l = fc.get_partial_fuzz_str_l_from_total_fuzz_str(partial_fuzz_str_num_char, len(auto_sub_fuzz_str))
+        # print(f"{partial_fuzz_str_l=}")
+        print(f"{len(partial_fuzz_str_l)=}")
+        # print("Hereeeeeeeeeeeeeeeee")
+        # exit()
     
     print(f"{len(partial_fuzz_str_l)=}")
 
@@ -439,7 +446,7 @@ def get_real_episode_sub_data_from_auto_sub(auto_sub_path, ssm, lang):
     print(f"in get_real_episode_sub_data_from_auto_sub() - {auto_sub_path=}")
     print(f"{ssm.get_num_episodes_in_lang(lang)=}")
 
-    auto_sub_fuzz_str = fuzz_common.get_fuzz_str_from_sub_path(auto_sub_path)
+    auto_sub_fuzz_str = fc.get_fuzz_str_from_sub_path(auto_sub_path)
 
     search_method_key = _predict_search_method(auto_sub_fuzz_str, ssm, lang)
     print(f"{search_method_key=}")
