@@ -258,6 +258,21 @@ class Series_Sub_map():
             out_json_d[lang] = []
             for ep_sub_data in ep_sub_data_l:
                 out_json_d[lang].append(ep_sub_data.get_as_json_d())
+        json_logger.write(out_json_d, out_json_path)
+
+    def write_stats_json(self, out_json_path):
+        out_json_d = {}
+        for lang, ep_sub_data_l in self.ep_sub_data_ld.items():
+
+            out_json_d[lang] = {
+                "num_episodes": self.get_num_episodes_in_lang(lang),
+                "max_fuzz_str_len": self.get_max_fuzz_str_len_for_lang(lang),
+                "max_fuzz_str_len_ep_sub_data": str(self.get_max_fuzz_str_len_ep_sub_data_lang(lang)),
+                "min_fuzz_str_len": self.get_min_fuzz_str_len_for_lang(lang),
+                "min_fuzz_str_len_ep_sub_data": str(self.get_min_fuzz_str_len_ep_sub_data_lang(lang)),
+            }
+            # for ep_sub_data in ep_sub_data_l:
+            #     out_json_d[lang].append(ep_sub_data.get_as_json_d())
         # print(f"{out_json_d=}")
         # print(f"{out_json_path=}")
         json_logger.write(out_json_d, out_json_path)
@@ -399,6 +414,9 @@ if __name__ == "__main__":
     ssm.load_lang(in_dir_path, lang)
     # print(ssm.get_min_and_max_episode_fuzz_str_len(lang))
     ssm.write_log_json("C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/SSM_log.json")
+    ssm.write_stats_json("C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/SSM_stats.json")
+    print(ssm.get_min_fuzz_str_len_for_lang(lang))
+    print(ssm.get_max_fuzz_str_len_for_lang(lang))
     # print(f"{ssm.get_num_episodes_in_lang(lang)=}")
     # print(f"{ssm.get_episode_sub_data_l_for_lang(lang)=}")
     print("End of Main")

@@ -16,10 +16,12 @@ import cfg
 FINAL_MKVS_DIR_PATH = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "mkvs")
 RUN_LOG_JSON_PATH = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "run_log_l.json")
 SSM_LOG_JSON_PATH = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "SSM_log.json")
+SSM_STATS_JSON_PATH = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "SSM_stats.json")
 FINAL_STATS_JSON_PATH = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "final_stats.json")
 # SERIES_SUB_EN_DIR_PATH = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en"
 # SERIES_SUB_EN_DIR_PATH = "C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en_s4_16_and_17"
-SERIES_SUB_EN_DIR_PATH = "C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en"
+# SERIES_SUB_EN_DIR_PATH = "C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en"
+SERIES_SUB_EN_DIR_PATH = "C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en_s06E1_and_2_blue_harvest_test__and_pilot"
 # SERIES_SUB_EN_DIR_PATH = "C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/Family_Guy__TBS__blue_harvest_and_pilot_test"
 # SERIES_SUB_EN_DIR_PATH = "C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en_blue_harvest_test__s6e1_and_s1e1"
 # SERIES_SUB_EN_DIR_PATH = "C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en_s06E1_and_2_blue_harvest_test"
@@ -177,6 +179,7 @@ def main():
     ssm = Series_Sub_map()
     ssm.load_lang(SERIES_SUB_EN_DIR_PATH, LANG)
     ssm.write_log_json(SSM_LOG_JSON_PATH)
+    ssm.write_stats_json(SSM_STATS_JSON_PATH)
     # min_real_sub_num_char, max_real_sub_num_char = ssm.get_min_and_max_episode_fuzz_str_len(LANG)
     
     if ssm.get_num_episodes_in_lang == 0:
@@ -219,7 +222,7 @@ def main():
         print(f"{ep_sub_data            =}")
         # print(f"{ep_sub_partial_fuzz_str=}")
         print(f"{ep_sub_data_find_time  =}")
-        exit()
+        # exit()
 
         if ep_sub_data == None:
             print("init_mkvs - After fuzzy-searching every episode's subs, did not find single episode with fuzz_ratio > 0, creating .mkv without subtitles...")
