@@ -20,6 +20,8 @@ FINAL_STATS_JSON_PATH = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "final_stat
 # SERIES_SUB_EN_DIR_PATH = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en"
 # SERIES_SUB_EN_DIR_PATH = "C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en_s4_16_and_17"
 SERIES_SUB_EN_DIR_PATH = "C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en"
+# SERIES_SUB_EN_DIR_PATH = "C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/Family_Guy__TBS__blue_harvest_and_pilot_test"
+# SERIES_SUB_EN_DIR_PATH = "C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en_blue_harvest_test__s6e1_and_s1e1"
 # SERIES_SUB_EN_DIR_PATH = "C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en_s06E1_and_2_blue_harvest_test"
 # SERIES_SUB_EN_DIR_PATH = "C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en_S10E20andS1E4__and__s15e14_and_s10_e5"
 # SERIES_SUB_EN_DIR_PATH = "C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en_s5_e17"
@@ -134,10 +136,27 @@ def write_final_stats(run_log_l, main_start_time):
     stats_d["fail_reason_d"] = fail_reason_d
     stats_d["process_time_l__AVG"] = statistics.mean(process_time_l)
     stats_d["process_time_l__MAX"] = max(process_time_l)
-    stats_d["trim_and_re_time_real_sub_time_l__AVG"] = statistics.mean(trim_and_re_time_real_sub_time_l)
-    stats_d["trim_and_re_time_real_sub_time_l__MAX"] = max(trim_and_re_time_real_sub_time_l)
-    stats_d["ep_sub_data_find_time_l__AVG"] = statistics.mean(ep_sub_data_find_time_l)
     stats_d["ep_sub_data_find_time_l__MAX"] = max(ep_sub_data_find_time_l)
+    if ep_sub_data_find_time_l != None and len(ep_sub_data_find_time_l) > 1:
+        stats_d["ep_sub_data_find_time_l__AVG"] = statistics.mean(ep_sub_data_find_time_l)
+    else:
+        stats_d["ep_sub_data_find_time_l__AVG"] = None
+
+
+    if trim_and_re_time_real_sub_time_l != None and len(trim_and_re_time_real_sub_time_l) > 1:
+        stats_d["trim_and_re_time_real_sub_time_l__AVG"] = statistics.mean(trim_and_re_time_real_sub_time_l)
+        stats_d["trim_and_re_time_real_sub_time_l__MAX"] = max(trim_and_re_time_real_sub_time_l)
+    else:
+        stats_d["trim_and_re_time_real_sub_time_l__AVG"] = None
+        stats_d["trim_and_re_time_real_sub_time_l__MAX"] = None
+
+
+    # if len(trim_and_re_time_real_sub_time_l) == 0:
+    #     stats_d["trim_and_re_time_real_sub_time_l__AVG"] = None
+    #     stats_d["trim_and_re_time_real_sub_time_l__MAX"] = None
+    # else:
+    #     stats_d["trim_and_re_time_real_sub_time_l__AVG"] = statistics.mean(trim_and_re_time_real_sub_time_l)
+    #     stats_d["trim_and_re_time_real_sub_time_l__MAX"] = max(trim_and_re_time_real_sub_time_l)
 
     json_logger.write(stats_d, FINAL_STATS_JSON_PATH)
 
@@ -167,7 +186,8 @@ def main():
     # TODO download yt playlist with youtube_utils.dl_yt_playlist__fix_sub_times_convert_to__mp4_srt()
     # Init std youtube playlist download data
     # yt_pl_dl_dir_path = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "Family_Guy___TBS")
-    yt_pl_dl_dir_path = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "Family_Guy__TBS__blue_harvest_test")
+    yt_pl_dl_dir_path = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "Family_Guy__TBS__blue_harvest_and_pilot_test")
+    # yt_pl_dl_dir_path = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "Family_Guy__TBS__blue_harvest_test")
     # yt_pl_dl_dir_path = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "Family_Guy___TBS__google_earth_test__and__pilot")
     # yt_pl_dl_dir_path = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "Family_Guy___TBS__google_earth_test")
     yt_pl_dl_dir_data = YT_PL_DL_Data(yt_pl_dl_dir_path)
@@ -192,17 +212,14 @@ def main():
         # ep_sub_data, fuzz_ratio, ep_sub_data_find_time = get_real_episode_sub_data_from_auto_sub(clip_dir_data.auto_sub_path, ssm, LANG, min_real_sub_total_fuzz_str_len)
         # ep_sub_data, fuzz_ratio, ep_sub_data_find_time = get_real_episode_sub_data_from_auto_sub(clip_dir_data.auto_sub_path, ssm, LANG)
         # fuzz_ratio, ep_sub_data, ep_sub_partial_fuzz_str, ep_sub_data_find_time 
-        out_tup = get_real_episode_sub_data_from_auto_sub(clip_dir_data.auto_sub_path, ssm, LANG)
-        fuzz_ratio              = out_tup[0]
-        ep_sub_data             = out_tup[1]
-        ep_sub_partial_fuzz_str = out_tup[2]
-        ep_sub_data_find_time   = out_tup[3]
+        # out_tup = get_real_episode_sub_data_from_auto_sub(clip_dir_data.auto_sub_path, ssm, LANG)
+        fuzz_ratio, ep_sub_data, ep_sub_data_find_time = get_real_episode_sub_data_from_auto_sub(clip_dir_data.auto_sub_path, ssm, LANG)
         print(f"{clip_dir_data.auto_sub_path=}")
         print(f"{fuzz_ratio             =}")
         print(f"{ep_sub_data            =}")
         # print(f"{ep_sub_partial_fuzz_str=}")
         print(f"{ep_sub_data_find_time  =}")
-        # exit()
+        exit()
 
         if ep_sub_data == None:
             print("init_mkvs - After fuzzy-searching every episode's subs, did not find single episode with fuzz_ratio > 0, creating .mkv without subtitles...")

@@ -45,6 +45,7 @@ class Episode_Sub_Data:
         else:
             raise Exception(f"ERROR: unknown {load_method_str=}")
 
+ 
     def get_partial_fuzz_str_l(self):
         partial_fuzz_str_l = json_logger.read(self.partial_fuzz_str_l_json_path)
         return partial_fuzz_str_l
@@ -223,9 +224,14 @@ class Episode_Sub_Data:
     def get_num_sub_files(self):
         return len(self.sub_file_path_l)
 
-    def __repr__(self):
+    def __str__(self):
         rs = f"EpSubData: S{self.season_num}E{self.episode_num}, {self.get_num_sub_files()} Subs, Main: {self.main_sub_file_path}"
         return rs
+
+    def __repr__(self):
+        # rs = f"EpSubData: S{self.season_num}E{self.episode_num}, {self.get_num_sub_files()} Subs, Main: {self.main_sub_file_path}"
+        # return rs
+        return self.__str__()
 
 
 
