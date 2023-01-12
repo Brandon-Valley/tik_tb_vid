@@ -123,6 +123,14 @@ install python-levenshtein
   - "C:\p\tik_tb_vid_big_data\ignore\subs\fg\og_bulk_sub_dl_by_season\en\s10\episode 20\Family.Guy.S10E20.720p.HDTV.X264-DIMENSION.srt"
   - == sync, corrected by <font color="#00ff00">elderman</font> ==
 - S5E17 - also got random modern family subs for some reason
+- S6E1 - Blue Harvest - Star wars
+  - long clip with lots of silence
+  - has labeled directors comment and hearing impaired and fps
+  - has UN LABELED wrong fps
+  - has UN LABELED extended edition
+      - In yt clip he just says "what if they come in a different door"?
+          - in extended edition they argue about running to a different door
+          - Was able to match right episode from extended edition subs, but messed up re-timing/syncing
 
 # Steps
 

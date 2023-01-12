@@ -61,7 +61,7 @@ def get_fuzz_str_from_sub_path(sub_path):
 
 # # TODO make more efficient
 # TODO pass offset to use in exact match?
-def get_partial_fuzz_str_l_from_total_fuzz_str(total_fuzz_str, min_partial_fuzz_str_num_char):
+def get_default_partial_fuzz_str_l_from_total_fuzz_str(total_fuzz_str, min_partial_fuzz_str_num_char):
 
     # TODO add extra % allowed?
     if len(total_fuzz_str) == min_partial_fuzz_str_num_char:

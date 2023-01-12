@@ -259,7 +259,7 @@ CLIPS_DATA_DIR_PATH = "C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/CLIPS_DATA
 #     return subs_fuzz_str
 
 
-def _get_best_ep_sub_partial_fuzz_ratio(ep_sub_data, auto_sub_fuzz_str):
+def _get_best_ep_sub_partial_fuzz_ratio(ep_sub_data, auto_sub_fuzz_str, method_key):
     print("in _get_best_ep_sub_partial_fuzz_ratio()")
     best_fuzz_ratio = 0
     best_real_sub_partial_fuzz_str = None
@@ -270,7 +270,14 @@ def _get_best_ep_sub_partial_fuzz_ratio(ep_sub_data, auto_sub_fuzz_str):
     # exit()
     # json_logger.write(ep_sub_data.partial_fuzz_str_l, "C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/tmp_partial.json")#TMP
 
-    partial_fuzz_str_l = ep_sub_data.get_partial_fuzz_str_l()
+    if method_key == SEARCH_METHOD_KEY__INIT_PARTIAL_FUZZ:
+        partial_fuzz_str_l = ep_sub_data.get_default_partial_fuzz_str_l()
+    elif method_key == SEARCH_METHOD_KEY__AUTO_SUB_FUZZ_LEN_BASED:
+        partial_fuzz_str_num_char = len(auto_sub_fuzz_str) * NUM_TIMES_BIGGER_MIN_FUZZ_LEN_CAN_BE_FOR_INIT_PARTIAL_FUZZ_SEARCH_METHOD # TMP THIS CAN CHANGE!
+        # partial_fuzz_str_l = ep_sub_data.get_custom_partial_fuzz_str_l(partial_fuzz_str_num_char, len(auto_sub_fuzz_str))
+        print("Hereeeeeeeeeeeeeeeee")
+        exit()
+    
     print(f"{len(partial_fuzz_str_l)=}")
 
     for real_sub_partial_fuzz_str in partial_fuzz_str_l:
@@ -321,7 +328,7 @@ def _write_fuzz_ratio_ep_sub_data_l_d_to_json(fuzz_ratio_ep_sub_data_l_d, json_p
     json_logger.write(json_ser_d, json_path)
 
 
-def _get_fuzz_ratio_ep_sub_data_l_d(auto_sub_fuzz_str, ssm, lang):
+def _get_fuzz_ratio_ep_sub_data_l_d(auto_sub_fuzz_str, ssm, lang, method_key):
     ep_sub_data_l = ssm.get_episode_sub_data_l_for_lang(lang)
 
     print(f"{len(ep_sub_data_l)=}")
@@ -331,7 +338,7 @@ def _get_fuzz_ratio_ep_sub_data_l_d(auto_sub_fuzz_str, ssm, lang):
     for ep_sub_data in ep_sub_data_l:
         print(f"  Checking {ep_sub_data.get_season_episode_str()}...")
 
-        ep_sub_fuzz_ratio, ep_sub_best_partial_fuzz_str = _get_best_ep_sub_partial_fuzz_ratio(ep_sub_data, auto_sub_fuzz_str)
+        ep_sub_fuzz_ratio, ep_sub_best_partial_fuzz_str = _get_best_ep_sub_partial_fuzz_ratio(ep_sub_data, auto_sub_fuzz_str, method_key)
         print(f"{ep_sub_fuzz_ratio=}")
 
         if ep_sub_fuzz_ratio in fuzz_ratio_ep_sub_data_l_d.keys():
@@ -341,11 +348,60 @@ def _get_fuzz_ratio_ep_sub_data_l_d(auto_sub_fuzz_str, ssm, lang):
     return fuzz_ratio_ep_sub_data_l_d
 
 
-def _search_method__init_partial_fuzz(auto_sub_path, auto_sub_fuzz_str, ssm, lang):
-    fuzz_ratio_ep_sub_data_l_d_json_path = os.path.join(CLIPS_DATA_DIR_PATH, Path(auto_sub_path).stem, Path(auto_sub_path).stem + "__fuzz_ratio_ep_sub_data_l_d.json" ) #TMP
+
+
+
+def _search_method__auto_sub_fuzz_len_based(auto_sub_path, auto_sub_fuzz_str, ssm, lang):
+    # partial_fuzz_str_num_char = len(auto_sub_fuzz_str) * NUM_TIMES_BIGGER_MIN_FUZZ_LEN_CAN_BE_FOR_INIT_PARTIAL_FUZZ_SEARCH_METHOD # TMP THIS CAN CHANGE!
+
+    fuzz_ratio_ep_sub_data_l_d_json_path = os.path.join(CLIPS_DATA_DIR_PATH, Path(auto_sub_path).stem, Path(auto_sub_path).stem + "__init_partial__fuzz_ratio_ep_sub_data_l_d.json" ) #TMP
 
     print(f"Getting fuzz_ratio_ep_sub_data_l_d for {auto_sub_path=}...")
-    fuzz_ratio_ep_sub_data_l_d = _get_fuzz_ratio_ep_sub_data_l_d(auto_sub_fuzz_str, ssm, lang)
+    fuzz_ratio_ep_sub_data_l_d = _get_fuzz_ratio_ep_sub_data_l_d(auto_sub_fuzz_str, ssm, lang, method_key = SEARCH_METHOD_KEY__AUTO_SUB_FUZZ_LEN_BASED)
+    _write_fuzz_ratio_ep_sub_data_l_d_to_json(fuzz_ratio_ep_sub_data_l_d, fuzz_ratio_ep_sub_data_l_d_json_path)
+
+    raise Exception("TMP 33")# FIXME
+    # # Evaluate fuzz_ratio_ep_sub_data_l_d
+
+    # if len(fuzz_ratio_ep_sub_data_l_d.keys()) == 0:
+    #     raise Exception(f"ERROR, {fuzz_ratio_ep_sub_data_l_d=}, no clue how this happened")
+
+    # # If all episode's real sub's partial_fuzz_strs' gave same fuzz ratio
+    # #   - Try diff search method
+    # if len(fuzz_ratio_ep_sub_data_l_d.keys()) == 1 and ssm.get_num_episodes_in_lang(lang) != 1:
+    #     raise Exception("TMP NOT IMPLEMENTED - " + fuzz_ratio_ep_sub_data_l_d_json_path)
+
+    # # max_fuzz_ratio = max(fuzz_ratio_ep_sub_data_l_d, key=fuzz_ratio_ep_sub_data_l_d.get)
+    # max_fuzz_ratio = max(fuzz_ratio_ep_sub_data_l_d.keys())
+    # max_fuzz_ratio_ep_sub_data_l = fuzz_ratio_ep_sub_data_l_d[max_fuzz_ratio]
+
+    # # Success
+    # if len(max_fuzz_ratio_ep_sub_data_l) == 1:
+    #     best_fuzz_ratio_ep_sub_data = max_fuzz_ratio_ep_sub_data_l[0]
+    #     print(f"Success - Single ep_sub_data for highest {max_fuzz_ratio=} - {best_fuzz_ratio_ep_sub_data.get_season_episode_str()}, returning...")
+    #     fail_reason = None
+    #     return max_fuzz_ratio, best_fuzz_ratio_ep_sub_data, fail_reason
+    
+    # # If all episode's real sub's partial_fuzz_strs' DID NOT give same fuzz ratio, but also no clear winner
+    # else:
+    #     raise Exception("TMP NOT IMPLEMENTED - " + fuzz_ratio_ep_sub_data_l_d_json_path)
+
+
+
+
+
+
+
+
+
+
+
+
+def _search_method__init_partial_fuzz(auto_sub_path, auto_sub_fuzz_str, ssm, lang):
+    fuzz_ratio_ep_sub_data_l_d_json_path = os.path.join(CLIPS_DATA_DIR_PATH, Path(auto_sub_path).stem, Path(auto_sub_path).stem + "__init_partial__fuzz_ratio_ep_sub_data_l_d.json" ) #TMP
+
+    print(f"Getting fuzz_ratio_ep_sub_data_l_d for {auto_sub_path=}...")
+    fuzz_ratio_ep_sub_data_l_d = _get_fuzz_ratio_ep_sub_data_l_d(auto_sub_fuzz_str, ssm, lang, method_key=SEARCH_METHOD_KEY__INIT_PARTIAL_FUZZ)
     _write_fuzz_ratio_ep_sub_data_l_d_to_json(fuzz_ratio_ep_sub_data_l_d, fuzz_ratio_ep_sub_data_l_d_json_path)
 
     # Evaluate fuzz_ratio_ep_sub_data_l_d
@@ -406,8 +462,14 @@ def get_real_episode_sub_data_from_auto_sub(auto_sub_path, ssm, lang):
     if search_method_key == SEARCH_METHOD_KEY__AUTO_SUB_FUZZ_LEN_BASED:
         # print("print")
         # raise Exception("TMP EXEP - Not imlemented yet")
-        print( ("!!!!!!!!!!!! TODO !!!!!!!!!!TMP EXEP - Not imlemented yet")) # TODO
-        best_fuzz_ratio, best_ep_sub_data = None, None # TODO
+        # print( ("!!!!!!!!!!!! TODO !!!!!!!!!!TMP EXEP - Not imlemented yet")) # TODO
+        # best_fuzz_ratio, best_ep_sub_data = None, None # TODO
+
+        fuzz_ratio, ep_sub_data, fail_reason = _search_method__auto_sub_fuzz_len_based(auto_sub_path, auto_sub_fuzz_str, ssm, lang)
+        print(f"{fuzz_ratio=}")
+        print(f"{ep_sub_data=}")
+        print(f"{fail_reason=}")
+        raise Exception("TMP HEEEEEERE") # FIXME
     else:
         raise Exception(f"ERROR: Invalid {search_method_key=}")
 
