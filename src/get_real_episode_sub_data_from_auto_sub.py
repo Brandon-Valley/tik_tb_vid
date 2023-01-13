@@ -19,6 +19,10 @@ NUM_TIMES_BIGGER_MIN_FUZZ_LEN_CAN_BE_FOR_INIT_PARTIAL_FUZZ_SEARCH_METHOD = 11 # 
 SEARCH_METHOD_KEY__INIT_PARTIAL_FUZZ = "init_partial_fuzz_search_method"
 SEARCH_METHOD_KEY__AUTO_SUB_FUZZ_LEN_BASED = "auto_sub_fuzz_len_based"
 
+EVAL_KEY__SUCCESS = "EVAL_KEY__SUCCESS"
+EVAL_KEY__NO_CLEAR_WINNER = "EVAL_KEY__NO_CLEAR_WINNER"
+EVAL_KEY__ALL_FR_SAME = "EVAL_KEY__ALL_FR_SAME"
+
 
 CLIPS_DATA_DIR_PATH = "C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/CLIPS_DATA/"
 
@@ -358,6 +362,39 @@ def _get_fuzz_ratio_ep_sub_data_l_d(auto_sub_fuzz_str, ssm, lang, method_key):
 
 
 
+
+
+def get_eval_of__fuzz_ratio_ep_sub_data_l_d(fuzz_ratio_ep_sub_data_l_d, ssm, lang, fuzz_ratio_ep_sub_data_l_d_json_path):
+
+    # Evaluate fuzz_ratio_ep_sub_data_l_d
+
+    if len(fuzz_ratio_ep_sub_data_l_d.keys()) == 0:
+        raise Exception(f"ERROR, {fuzz_ratio_ep_sub_data_l_d=}, no clue how this happened")
+
+    # If all episode's real sub's partial_fuzz_strs' gave same fuzz ratio
+    #   - Try diff search method
+    if len(fuzz_ratio_ep_sub_data_l_d.keys()) == 1 and ssm.get_num_episodes_in_lang(lang) != 1:
+        # raise Exception("TMP NOT IMPLEMENTED - " + fuzz_ratio_ep_sub_data_l_d_json_path)
+        return None, None, EVAL_KEY__ALL_FR_SAME
+
+    # max_fuzz_ratio = max(fuzz_ratio_ep_sub_data_l_d, key=fuzz_ratio_ep_sub_data_l_d.get)
+    max_fuzz_ratio = max(fuzz_ratio_ep_sub_data_l_d.keys())
+    max_fuzz_ratio_ep_sub_data_l = fuzz_ratio_ep_sub_data_l_d[max_fuzz_ratio]
+
+    # Success
+    if len(max_fuzz_ratio_ep_sub_data_l) == 1:
+        best_fuzz_ratio_ep_sub_data = max_fuzz_ratio_ep_sub_data_l[0]
+        print(f"Success - Single ep_sub_data for highest {max_fuzz_ratio=} - {best_fuzz_ratio_ep_sub_data.get_season_episode_str()}, returning...")
+        # fail_reason = None
+        return max_fuzz_ratio, best_fuzz_ratio_ep_sub_data, EVAL_KEY__SUCCESS
+    
+    # If all episode's real sub's partial_fuzz_strs' DID NOT give same fuzz ratio, but also no clear winner
+    else:
+        # raise Exception("TMP NOT IMPLEMENTED - " + fuzz_ratio_ep_sub_data_l_d_json_path)
+        return None, None, EVAL_KEY__NO_CLEAR_WINNER
+
+
+
 def _search_method__auto_sub_fuzz_len_based(auto_sub_path, auto_sub_fuzz_str, ssm, lang):
     # partial_fuzz_str_num_char = len(auto_sub_fuzz_str) * NUM_TIMES_BIGGER_MIN_FUZZ_LEN_CAN_BE_FOR_INIT_PARTIAL_FUZZ_SEARCH_METHOD # TMP THIS CAN CHANGE!
 
@@ -367,6 +404,11 @@ def _search_method__auto_sub_fuzz_len_based(auto_sub_path, auto_sub_fuzz_str, ss
     fuzz_ratio_ep_sub_data_l_d = _get_fuzz_ratio_ep_sub_data_l_d(auto_sub_fuzz_str, ssm, lang, method_key = SEARCH_METHOD_KEY__AUTO_SUB_FUZZ_LEN_BASED)
     _write_fuzz_ratio_ep_sub_data_l_d_to_json(fuzz_ratio_ep_sub_data_l_d, fuzz_ratio_ep_sub_data_l_d_json_path)
 
+
+    fuzz_ratio, ep_sub_data, eval_str = get_eval_of__fuzz_ratio_ep_sub_data_l_d(fuzz_ratio_ep_sub_data_l_d, ssm, lang, fuzz_ratio_ep_sub_data_l_d_json_path)
+    print(f"{fuzz_ratio=}")
+    print(f"{ep_sub_data=}")
+    print(f"{eval_str=}")
     raise Exception("TMP 33")# FIXME
     # # Evaluate fuzz_ratio_ep_sub_data_l_d
 
@@ -410,31 +452,33 @@ def _search_method__init_partial_fuzz(auto_sub_path, auto_sub_fuzz_str, ssm, lan
     print(f"Getting fuzz_ratio_ep_sub_data_l_d for {auto_sub_path=}...")
     fuzz_ratio_ep_sub_data_l_d = _get_fuzz_ratio_ep_sub_data_l_d(auto_sub_fuzz_str, ssm, lang, method_key=SEARCH_METHOD_KEY__INIT_PARTIAL_FUZZ)
     _write_fuzz_ratio_ep_sub_data_l_d_to_json(fuzz_ratio_ep_sub_data_l_d, fuzz_ratio_ep_sub_data_l_d_json_path)
+    fuzz_ratio, ep_sub_data, eval_str = get_eval_of__fuzz_ratio_ep_sub_data_l_d(fuzz_ratio_ep_sub_data_l_d, ssm, lang, fuzz_ratio_ep_sub_data_l_d_json_path)
 
-    # Evaluate fuzz_ratio_ep_sub_data_l_d
+    return fuzz_ratio, ep_sub_data, eval_str
+    # # Evaluate fuzz_ratio_ep_sub_data_l_d
 
-    if len(fuzz_ratio_ep_sub_data_l_d.keys()) == 0:
-        raise Exception(f"ERROR, {fuzz_ratio_ep_sub_data_l_d=}, no clue how this happened")
+    # if len(fuzz_ratio_ep_sub_data_l_d.keys()) == 0:
+    #     raise Exception(f"ERROR, {fuzz_ratio_ep_sub_data_l_d=}, no clue how this happened")
 
-    # If all episode's real sub's partial_fuzz_strs' gave same fuzz ratio
-    #   - Try diff search method
-    if len(fuzz_ratio_ep_sub_data_l_d.keys()) == 1 and ssm.get_num_episodes_in_lang(lang) != 1:
-        raise Exception("TMP NOT IMPLEMENTED - " + fuzz_ratio_ep_sub_data_l_d_json_path)
+    # # If all episode's real sub's partial_fuzz_strs' gave same fuzz ratio
+    # #   - Try diff search method
+    # if len(fuzz_ratio_ep_sub_data_l_d.keys()) == 1 and ssm.get_num_episodes_in_lang(lang) != 1:
+    #     raise Exception("TMP NOT IMPLEMENTED - " + fuzz_ratio_ep_sub_data_l_d_json_path)
 
-    # max_fuzz_ratio = max(fuzz_ratio_ep_sub_data_l_d, key=fuzz_ratio_ep_sub_data_l_d.get)
-    max_fuzz_ratio = max(fuzz_ratio_ep_sub_data_l_d.keys())
-    max_fuzz_ratio_ep_sub_data_l = fuzz_ratio_ep_sub_data_l_d[max_fuzz_ratio]
+    # # max_fuzz_ratio = max(fuzz_ratio_ep_sub_data_l_d, key=fuzz_ratio_ep_sub_data_l_d.get)
+    # max_fuzz_ratio = max(fuzz_ratio_ep_sub_data_l_d.keys())
+    # max_fuzz_ratio_ep_sub_data_l = fuzz_ratio_ep_sub_data_l_d[max_fuzz_ratio]
 
-    # Success
-    if len(max_fuzz_ratio_ep_sub_data_l) == 1:
-        best_fuzz_ratio_ep_sub_data = max_fuzz_ratio_ep_sub_data_l[0]
-        print(f"Success - Single ep_sub_data for highest {max_fuzz_ratio=} - {best_fuzz_ratio_ep_sub_data.get_season_episode_str()}, returning...")
-        fail_reason = None
-        return max_fuzz_ratio, best_fuzz_ratio_ep_sub_data, fail_reason
+    # # Success
+    # if len(max_fuzz_ratio_ep_sub_data_l) == 1:
+    #     best_fuzz_ratio_ep_sub_data = max_fuzz_ratio_ep_sub_data_l[0]
+    #     print(f"Success - Single ep_sub_data for highest {max_fuzz_ratio=} - {best_fuzz_ratio_ep_sub_data.get_season_episode_str()}, returning...")
+    #     fail_reason = None
+    #     return max_fuzz_ratio, best_fuzz_ratio_ep_sub_data, fail_reason
     
-    # If all episode's real sub's partial_fuzz_strs' DID NOT give same fuzz ratio, but also no clear winner
-    else:
-        raise Exception("TMP NOT IMPLEMENTED - " + fuzz_ratio_ep_sub_data_l_d_json_path)
+    # # If all episode's real sub's partial_fuzz_strs' DID NOT give same fuzz ratio, but also no clear winner
+    # else:
+    #     raise Exception("TMP NOT IMPLEMENTED - " + fuzz_ratio_ep_sub_data_l_d_json_path)
 
 
 
@@ -452,12 +496,12 @@ def get_real_episode_sub_data_from_auto_sub(auto_sub_path, ssm, lang):
     print(f"{search_method_key=}")
 
     if search_method_key == SEARCH_METHOD_KEY__INIT_PARTIAL_FUZZ:
-        fuzz_ratio, ep_sub_data, fail_reason = _search_method__init_partial_fuzz(auto_sub_path, auto_sub_fuzz_str, ssm, lang)
+        fuzz_ratio, ep_sub_data, eval_key = _search_method__init_partial_fuzz(auto_sub_path, auto_sub_fuzz_str, ssm, lang)
         print(f"{fuzz_ratio=}")
         print(f"{ep_sub_data=}")
-        print(f"{fail_reason=}")
+        print(f"{eval_key=}")
 
-        if fail_reason == None:
+        if eval_key == EVAL_KEY__SUCCESS:
             total_time = time.time() - start_time
             return fuzz_ratio, ep_sub_data, total_time
 
