@@ -98,7 +98,13 @@ def get_partial_fuzz_str_l_from_total_fuzz_str(total_fuzz_str, min_partial_fuzz_
             offset = min_offset
         else:
             # offset = min_offset # TODO
-            offset = offset + (min_partial_fuzz_str_num_char - min_overlap_char)
+            overlap_char_offset = offset + (min_partial_fuzz_str_num_char - min_overlap_char)
+
+            if overlap_char_offset >= min_offset:
+                offset = overlap_char_offset
+            else:
+                print(f"WARNING - {min_offset=} > {overlap_char_offset=} - using min offset")
+                offset = min_offset
 
 
 
