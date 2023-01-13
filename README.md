@@ -141,6 +141,8 @@ serted extra subs
     - Star wars special
     - has part1&2 subs even though they are different episodes
 
+- S15E13 - fuzz str 53 char long (max is 22922)
+
 # Steps
 
 1. dl real subs for whole series

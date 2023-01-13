@@ -96,7 +96,7 @@ def normal_successful_clip_w_subs_created__get_log_d(clip_dir_data, ep_sub_data,
             }
 
 def write_final_stats(run_log_l, main_start_time):
-    stats_d = {"Total Run Time": time.time() - main_start_time,
+    stats_d = {"Total Run Time": str(int(time.time() - main_start_time) / 60) + " minutes",
                 "Total Clips Processed": 0,
                 "Total Vids Made": 0,
                 "Total fuzz_ratio == None": 0,
@@ -142,11 +142,14 @@ def write_final_stats(run_log_l, main_start_time):
     stats_d["fail_reason_d"] = fail_reason_d
     stats_d["process_time_l__AVG"] = statistics.mean(process_time_l)
     stats_d["process_time_l__MAX"] = max(process_time_l)
-    stats_d["ep_sub_data_find_time_l__MAX"] = max(ep_sub_data_find_time_l)
     if ep_sub_data_find_time_l != None and len(ep_sub_data_find_time_l) > 1:
         stats_d["ep_sub_data_find_time_l__AVG"] = statistics.mean(ep_sub_data_find_time_l)
+        stats_d["ep_sub_data_find_time_l__MAX"] = max(ep_sub_data_find_time_l)
+
     else:
         stats_d["ep_sub_data_find_time_l__AVG"] = None
+        stats_d["ep_sub_data_find_time_l__MAX"] = None
+
 
 
     if trim_and_re_time_real_sub_time_l != None and len(trim_and_re_time_real_sub_time_l) > 1:

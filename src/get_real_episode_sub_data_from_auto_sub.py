@@ -264,7 +264,7 @@ CLIPS_DATA_DIR_PATH = "C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/CLIPS_DATA
 
 
 def _get_best_ep_sub_partial_fuzz_ratio(ep_sub_data, auto_sub_fuzz_str, method_key):
-    print("in _get_best_ep_sub_partial_fuzz_ratio()")
+    print(f"in _get_best_ep_sub_partial_fuzz_ratio() - {method_key=}")
     best_fuzz_ratio = 0
     best_real_sub_partial_fuzz_str = None
 
@@ -296,7 +296,7 @@ def _get_best_ep_sub_partial_fuzz_ratio(ep_sub_data, auto_sub_fuzz_str, method_k
         fuzz_ratio = fuzz.ratio(auto_sub_fuzz_str, real_sub_partial_fuzz_str)
         # print(f"{auto_sub_fuzz_str=}")
         # print(f"{real_sub_partial_fuzz_str=}")
-        print(f"{fuzz_ratio=}")
+        # print(f"{fuzz_ratio=}")
         # exit()
 
         if fuzz_ratio > best_fuzz_ratio:
@@ -350,7 +350,7 @@ def _get_fuzz_ratio_ep_sub_data_l_d(auto_sub_fuzz_str, ssm, lang, method_key):
         print(f"  Checking {ep_sub_data.get_season_episode_str()}...")
 
         ep_sub_fuzz_ratio, ep_sub_best_partial_fuzz_str = _get_best_ep_sub_partial_fuzz_ratio(ep_sub_data, auto_sub_fuzz_str, method_key)
-        print(f"{ep_sub_fuzz_ratio=}")
+        # print(f"{ep_sub_fuzz_ratio=}")
 
         if ep_sub_fuzz_ratio in fuzz_ratio_ep_sub_data_l_d.keys():
             fuzz_ratio_ep_sub_data_l_d[ep_sub_fuzz_ratio].append(ep_sub_data)

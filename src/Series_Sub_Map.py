@@ -10,6 +10,7 @@ import subtitle_utils as su
 import cfg
 
 SSM_DATA_DIR_PATH = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "SSM_DATA")
+MIN_EP_SUB_FILE_NUM_BYTES = 3000 # 3KB, "normal" subs are ~ 15-40KB
 
 # Examples:
 #  - Family Guy - S06E01 - Blue Harvest (english - directors comment - 25fps - UTF-8).srt
@@ -74,7 +75,7 @@ class Episode_Sub_Data:
         total_fuzz_str = json_logger.read(self.total_fuzz_str_json_path)
         partial_fuzz_str_l = fuzz_common.get_partial_fuzz_str_l_from_total_fuzz_str(total_fuzz_str, min_total_fuzz_str_len,
          min_overlap_char = None) # FIX make this max autosub size!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        print(f"    {self.get_season_episode_str()} - Got partial_fuzz_str_l to: {self.partial_fuzz_str_l_json_path}...")
+        print(f"      {self.get_season_episode_str()} - Writing partial_fuzz_str_l to: {self.partial_fuzz_str_l_json_path}...")
         json_logger.write(partial_fuzz_str_l, self.partial_fuzz_str_l_json_path)
 
 
@@ -119,6 +120,13 @@ class Episode_Sub_Data:
 
         for sub_file_path in self.sub_file_path_l:
 
+            # Remove files that are way too small
+            # LATER if still get problems with small files, maybe should compare file size against avg file size in dir/series?
+            if os.path.getsize(sub_file_path) < MIN_EP_SUB_FILE_NUM_BYTES:
+                print(f"Cleaning - Deleting sub file b/c it is too small: {sub_file_path} - {os.path.getsize(sub_file_path)=} bytes...")
+                fsu.delete_if_exists(sub_file_path)
+                continue
+
             # Delete anything that isn't a readable .srt file (no MicroDVD files allowed)
             # print(f"{sub_file_path=}")
             if not su.sub_file_readable_srt(sub_file_path):
@@ -132,10 +140,6 @@ class Episode_Sub_Data:
                 print(f"Cleaning - Deleting sub file b/c it is the wrong lang: {sub_file_path}...")
                 fsu.delete_if_exists(sub_file_path)
                 continue
-
-            # # LATER if too slow, try using list method?
-            # # Remove advertising from subs
-            # su.remove_advertising_from_sub_file(sub_file_path)
             
             remaining_sub_file_path_l.append(sub_file_path)
 
@@ -336,7 +340,7 @@ class Series_Sub_map():
         min_fuzz_str_len = self.get_min_fuzz_str_len_for_lang(lang)
 
         for ep_sub_data in self.ep_sub_data_ld[lang]:
-            print(f"    {ep_sub_data.get_season_episode_str()} - Creating/Writing partial_fuzz_str_l to json...")
+            # print(f"    {ep_sub_data.get_season_episode_str()} - Creating/Writing partial_fuzz_str_l to json...")
             ep_sub_data._create_and_write__partial_fuzz_str_l__to_json(min_fuzz_str_len)
 
 
