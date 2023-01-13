@@ -198,7 +198,21 @@ def trim_and_re_time_real_sub_file_from_auto_subs(vid_path, real_sub_file_path, 
     print(f"{tmp_ms_shifted_sub_path=}")
     real_subs.save(tmp_ms_shifted_sub_path)
 
-    # # TODO OG, put back if breaks
+    # TODO OG, put back if breaks - SYNC THEN CLEAN
+    # This will throw warning, this is normal:  WARNING: low quality of fit. Wrong subtitle file?
+    # This happens b/c did not trim out the first part of re-timed srt which is all set to 0 (like the theme) and did not trim end
+    su.sync_subs_with_vid(vid_path     = vid_path,
+                          in_sub_path  = tmp_ms_shifted_sub_path,
+                          out_sub_path = tmp_synced_ms_shifted_sub_path)
+    # rest of real subs still in final .srt, need to clean or it will mess with vid len once embedded to mkv
+    vid_num_ms = veu.get_vid_length(vid_path) * 1000
+    print(f"{vid_num_ms=}")
+    # tmp_ms_shifted_sub_path = "C:/p/tik_tb_vid_big_data/ignore/test/sub_match/Family_Guy__Back_To_The_Pilot_(Clip)___TBS.en__TMP_MS_SHIFTED.en.srt"
+    # tmp_cleaned_ms_shifted_sub_path = "C:/p/tik_tb_vid_big_data/ignore/test/sub_match/Family_Guy__Back_To_The_Pilot_(Clip)___TBS.en__TMP_MS_SHIFTED__CLEANED.en.srt"
+    # fsu.delete_if_exists(tmp_cleaned_ms_shifted_sub_path)
+    _clean_trimmed_subs(tmp_synced_ms_shifted_sub_path, out_sub_path, vid_num_ms)
+
+    # # TODO OG, put back if breaks - SYNC THEN CLEAN then SYNC AGAIN!!!!!!!!
     # # This will throw warning, this is normal:  WARNING: low quality of fit. Wrong subtitle file?
     # # This happens b/c did not trim out the first part of re-timed srt which is all set to 0 (like the theme) and did not trim end
     # su.sync_subs_with_vid(vid_path     = vid_path,
@@ -210,26 +224,37 @@ def trim_and_re_time_real_sub_file_from_auto_subs(vid_path, real_sub_file_path, 
     # # tmp_ms_shifted_sub_path = "C:/p/tik_tb_vid_big_data/ignore/test/sub_match/Family_Guy__Back_To_The_Pilot_(Clip)___TBS.en__TMP_MS_SHIFTED.en.srt"
     # # tmp_cleaned_ms_shifted_sub_path = "C:/p/tik_tb_vid_big_data/ignore/test/sub_match/Family_Guy__Back_To_The_Pilot_(Clip)___TBS.en__TMP_MS_SHIFTED__CLEANED.en.srt"
     # # fsu.delete_if_exists(tmp_cleaned_ms_shifted_sub_path)
-    # _clean_trimmed_subs(tmp_synced_ms_shifted_sub_path, out_sub_path, vid_num_ms)
+    # tmp_synced_ms_shifted_cleaned_sub_path = os.path.normpath(os.path.join(Path(out_sub_path).parent.__str__(), Path(out_sub_path).stem + "__TMP_MS_SHIFTED__SYNCED__CLEANED." + ''.join(Path(out_sub_path).suffixes)))
+    # _clean_trimmed_subs(tmp_synced_ms_shifted_sub_path, tmp_synced_ms_shifted_cleaned_sub_path, vid_num_ms)
+
+    # print("SYNCING SUBS AGAIN, IS THIS NEEDED??????????????????????????")
+    # su.sync_subs_with_vid(vid_path     = vid_path,
+    #                       in_sub_path  = tmp_synced_ms_shifted_cleaned_sub_path,
+    #                       out_sub_path = out_sub_path)
 
 
-    # rest of real subs still in final .srt, need to clean or it will mess with vid len once embedded to mkv
-    vid_num_ms = veu.get_vid_length(vid_path) * 1000
-    print(f"{vid_num_ms=}")
-    tmp_ms_shifted_cleaned_sub_path = os.path.normpath(os.path.join(Path(out_sub_path).parent.__str__(), Path(out_sub_path).stem + "__TMP_MS_SHIFTED__CLEANED." + ''.join(Path(out_sub_path).suffixes)))
 
-    _clean_trimmed_subs(tmp_ms_shifted_sub_path, tmp_ms_shifted_cleaned_sub_path, vid_num_ms)
 
-    # This will throw warning, this is normal:  WARNING: low quality of fit. Wrong subtitle file?
-    # This happens b/c did not trim out the first part of re-timed srt which is all set to 0 (like the theme) and did not trim end
-    su.sync_subs_with_vid(vid_path     = vid_path,
-                          in_sub_path  = tmp_ms_shifted_cleaned_sub_path,
-                          out_sub_path = out_sub_path)
+    # #TODO CLEAN THEN SYNC
+    # # rest of real subs still in final .srt, need to clean or it will mess with vid len once embedded to mkv
+    # vid_num_ms = veu.get_vid_length(vid_path) * 1000
+    # print(f"{vid_num_ms=}")
+    # tmp_ms_shifted_cleaned_sub_path = os.path.normpath(os.path.join(Path(out_sub_path).parent.__str__(), Path(out_sub_path).stem + "__TMP_MS_SHIFTED__CLEANED." + ''.join(Path(out_sub_path).suffixes)))
+
+    # _clean_trimmed_subs(in_sub_path = tmp_ms_shifted_sub_path,
+    #                     out_sub_path = tmp_ms_shifted_cleaned_sub_path,
+    #                     vid_num_ms = vid_num_ms)
+
+    # # This will throw warning, this is normal:  WARNING: low quality of fit. Wrong subtitle file?
+    # # This happens b/c did not trim out the first part of re-timed srt which is all set to 0 (like the theme) and did not trim end
+    # su.sync_subs_with_vid(vid_path     = vid_path,
+    #                       in_sub_path  = tmp_ms_shifted_cleaned_sub_path,
+    #                       out_sub_path = out_sub_path)
 
     # clean up
     fsu.delete_if_exists(tmp_ms_shifted_sub_path)
     fsu.delete_if_exists(tmp_synced_ms_shifted_sub_path)
-    fsu.delete_if_exists(tmp_ms_shifted_cleaned_sub_path)
+    # fsu.delete_if_exists(tmp_ms_shifted_cleaned_sub_path)
 
     total_time = time.time() - start_time
     return total_time

@@ -119,7 +119,8 @@ install python-levenshtein
 - Google earth
   - got wrong subs, should be C:\p\tik_tb_vid_big_data\ignore\subs\fg\og_bulk_sub_dl_by_season\en\s10\episode 20
   - S01E04__Family_Guy__Google_Earth__Clip____TBS.mkv
-- S10E20 - inserted extra subs
+- S10E20 - in
+serted extra subs
   - "C:\p\tik_tb_vid_big_data\ignore\subs\fg\og_bulk_sub_dl_by_season\en\s10\episode 20\Family.Guy.S10E20.720p.HDTV.X264-DIMENSION.srt"
   - == sync, corrected by <font color="#00ff00">elderman</font> ==
 - S5E17 - also got random modern family subs for some reason
@@ -142,4 +143,10 @@ install python-levenshtein
       1. This will make dir of mkvs ready for manual editing
 4. manual editing
    1. See *Manual vid edit with embedded subtitles* above
-   2. 
+
+
+
+
+
+
+https://superuser.com/questions/1734087/how-to-do-automatically-transfer-subtitles-from-one-video-to-another-based-on - It take a subtitle and related frame from movie A and search the best matching frame in movie B. Once it find it, it adjust subtitle timings accordingly (it proceed like that for every subtitle). The search is limited to a certains number of frames in forward and backward direction. it over to a 2:30 hours movie (which contains many small differences with reference movie and over 2000 subtitles) and it worked very well.

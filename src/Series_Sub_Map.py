@@ -14,7 +14,8 @@ SSM_DATA_DIR_PATH = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "SSM_DATA")
 # Examples:
 #  - Family Guy - S06E01 - Blue Harvest (english - directors comment - 25fps - UTF-8).srt
 #  - Family Guy - S06E01 - Blue Harvest (english for hearing impaired - 25fps - UTF-8).srt
-BAD_SUB_FILENAME_STR_L = ["directors", "comment", "fps", "UTF", "hearing", "impaired", "extended", "edition"]
+ # TODO should probably add separate "not great" list for .HI. which has stuff like "(cheering)", "(gasps)", etc.
+BAD_SUB_FILENAME_STR_L = ["directors", "comment", "fps", "UTF", "hearing", "impaired", "extended", "edition", ".HI."]
 
 class Episode_Sub_Data:
     extra_metadata_d = {}
