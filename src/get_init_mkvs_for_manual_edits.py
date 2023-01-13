@@ -115,7 +115,7 @@ def write_final_stats(run_log_l, main_start_time):
             process_time_l.append(run_log_d["process_time"])
         if trim_and_re_time_real_sub_time != None:
             trim_and_re_time_real_sub_time_l.append(trim_and_re_time_real_sub_time)
-        if ep_sub_data_find_time_l != None:
+        if run_log_d["ep_sub_data_find_time"] != None:
             ep_sub_data_find_time_l.append(run_log_d["ep_sub_data_find_time"])
 
         stats_d["Total Clips Processed"] += 1
