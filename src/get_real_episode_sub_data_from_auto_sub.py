@@ -414,7 +414,6 @@ def _search_method__auto_sub_fuzz_len_based(auto_sub_path, auto_sub_fuzz_str, ss
 
 
 def _search_method__init_partial_fuzz(auto_sub_path, auto_sub_fuzz_str, ssm, lang):
-    # fuzz_ratio_ep_sub_data_l_d_json_path = os.path.join(CLIPS_DATA_DIR_PATH, Path(auto_sub_path).stem, Path(auto_sub_path).stem + "__init_partial__fuzz_ratio_ep_sub_data_l_d.json" ) #TMP
     # fuzz_ratio_ep_sub_data_l_d_json_path = os.path.join(CLIPS_DATA_DIR_PATH, Path(auto_sub_path).name.split(".")[0], Path(auto_sub_path).stem + "__init_partial__fuzz_ratio_ep_sub_data_l_d.json" ) #TMP
     # fuzz_ratio_ep_sub_data_l_d_json_path = os.path.join(CLIPS_DATA_DIR_PATH, Path(auto_sub_path).name.split(".")[0], Path(auto_sub_path).name.split(".")[0] + "__init_partial__fuzz_ratio_ep_sub_data_l_d.json" ) #TMP
     fuzz_ratio_ep_sub_data_l_d_json_path = os.path.join(CLIPS_DATA_DIR_PATH, Path(auto_sub_path).name.split(".")[0][:70], Path(auto_sub_path).name.split(".")[0][:70] + "_lb_fresdl_d.json" ) #TMP
