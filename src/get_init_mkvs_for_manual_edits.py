@@ -51,7 +51,7 @@ def downloaded_yt_clip_has_no_subs__make_no_sub_mkv__and_get_log_d(clip_dir_data
                 "process_time" : get_clip_process_time(clip_process_start_time)
             }
 
-def no_episode_sub_fuzzy_match_found__make_no_sub_mkv__and_get_log_d(clip_dir_data, fuzz_ratio, clip_process_start_time):
+def no_episode_sub_fuzzy_match_found__make_no_sub_mkv__and_get_log_d(clip_dir_data, fuzz_ratio, clip_process_start_time, ep_sub_data_find_eval_key):
     make_no_subs_mkv(clip_dir_data)
     return {
                 "clip_name": clip_dir_data.clip_name,
@@ -62,10 +62,11 @@ def no_episode_sub_fuzzy_match_found__make_no_sub_mkv__and_get_log_d(clip_dir_da
                 "made_vid" : True,
                 "ep_sub_data_find_time": None,
                 "trim_and_re_time_real_sub_time": None,
+                "ep_sub_data_find_eval_key": ep_sub_data_find_eval_key,
                 "process_time" : get_clip_process_time(clip_process_start_time)
             }
 
-def fuzz_ratio_0__get_log_d(clip_dir_data, ep_sub_data, fuzz_ratio, clip_process_start_time, ep_sub_data_find_time):
+def fuzz_ratio_0__get_log_d(clip_dir_data, ep_sub_data, fuzz_ratio, clip_process_start_time, ep_sub_data_find_time, ep_sub_data_find_eval_key):
     return {
                 "clip_name": clip_dir_data.clip_name,
                 "clip_mp4_path": clip_dir_data.mp4_path,
@@ -75,10 +76,11 @@ def fuzz_ratio_0__get_log_d(clip_dir_data, ep_sub_data, fuzz_ratio, clip_process
                 "made_vid" : False,
                 "ep_sub_data_find_time": ep_sub_data_find_time,
                 "trim_and_re_time_real_sub_time": None,
+                "ep_sub_data_find_eval_key": ep_sub_data_find_eval_key,
                 "process_time" : get_clip_process_time(clip_process_start_time)
             }
 
-def normal_successful_clip_w_subs_created__get_log_d(clip_dir_data, ep_sub_data, fuzz_ratio, clip_process_start_time, ep_sub_data_find_time, trim_and_re_time_real_sub_time):
+def normal_successful_clip_w_subs_created__get_log_d(clip_dir_data, ep_sub_data, fuzz_ratio, clip_process_start_time, ep_sub_data_find_time, trim_and_re_time_real_sub_time, ep_sub_data_find_eval_key):
     return {
                 "clip_name": clip_dir_data.clip_name,
                 "clip_mp4_path": clip_dir_data.mp4_path,
@@ -88,6 +90,7 @@ def normal_successful_clip_w_subs_created__get_log_d(clip_dir_data, ep_sub_data,
                 "made_vid" : True,
                 "ep_sub_data_find_time": ep_sub_data_find_time,
                 "trim_and_re_time_real_sub_time": trim_and_re_time_real_sub_time,
+                "ep_sub_data_find_eval_key": ep_sub_data_find_eval_key,
                 "process_time" : get_clip_process_time(clip_process_start_time)
             }
 
@@ -228,7 +231,7 @@ def main():
 
         if ep_sub_data == None:
             print("init_mkvs - After fuzzy-searching every episode's subs, did not find single episode with fuzz_ratio > 0, creating .mkv without subtitles...")
-            log_d = no_episode_sub_fuzzy_match_found__make_no_sub_mkv__and_get_log_d(clip_dir_data, fuzz_ratio, clip_process_start_time)
+            log_d = no_episode_sub_fuzzy_match_found__make_no_sub_mkv__and_get_log_d(clip_dir_data, fuzz_ratio, clip_process_start_time, ep_sub_data_find_eval_key)
             run_log_l.append(log_d)
             json_logger.write(run_log_l, RUN_LOG_JSON_PATH)
             continue
@@ -238,7 +241,7 @@ def main():
 
         # if have non-series clips mixed in with playlist/just have very low fuzz_ratio for some reason, add to fail list and move on
         if fuzz_ratio == 0:
-            log_d = fuzz_ratio_0__get_log_d(clip_dir_data, ep_sub_data, fuzz_ratio, clip_process_start_time, ep_sub_data_find_time)
+            log_d = fuzz_ratio_0__get_log_d(clip_dir_data, ep_sub_data, fuzz_ratio, clip_process_start_time, ep_sub_data_find_time, ep_sub_data_find_eval_key)
             run_log_l.append(log_d)
             json_logger.write(run_log_l, RUN_LOG_JSON_PATH)
             continue
@@ -259,7 +262,7 @@ def main():
         fsu.delete_if_exists(tmp_srt_path)
 
         # print("before normal_successful_clip_w_subs_created__get_log_d()")
-        log_d = normal_successful_clip_w_subs_created__get_log_d(clip_dir_data, ep_sub_data, fuzz_ratio, clip_process_start_time, ep_sub_data_find_time, trim_and_re_time_real_sub_time)
+        log_d = normal_successful_clip_w_subs_created__get_log_d(clip_dir_data, ep_sub_data, fuzz_ratio, clip_process_start_time, ep_sub_data_find_time, trim_and_re_time_real_sub_time, ep_sub_data_find_eval_key)
         run_log_l.append(log_d)
         json_logger.write(run_log_l, RUN_LOG_JSON_PATH)
 
