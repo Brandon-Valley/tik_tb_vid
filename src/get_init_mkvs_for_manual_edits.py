@@ -218,11 +218,11 @@ def main():
         # ep_sub_data, fuzz_ratio, ep_sub_data_find_time = get_real_episode_sub_data_from_auto_sub(clip_dir_data.auto_sub_path, ssm, LANG)
         # fuzz_ratio, ep_sub_data, ep_sub_partial_fuzz_str, ep_sub_data_find_time 
         # out_tup = get_real_episode_sub_data_from_auto_sub(clip_dir_data.auto_sub_path, ssm, LANG)
-        fuzz_ratio, ep_sub_data, ep_sub_data_find_time = get_real_episode_sub_data_from_auto_sub(clip_dir_data.auto_sub_path, ssm, LANG)
+        fuzz_ratio, ep_sub_data, ep_sub_data_find_eval_key, ep_sub_data_find_time = get_real_episode_sub_data_from_auto_sub(clip_dir_data.auto_sub_path, ssm, LANG)
         print(f"{clip_dir_data.auto_sub_path=}")
         print(f"{fuzz_ratio             =}")
         print(f"{ep_sub_data            =}")
-        # print(f"{ep_sub_partial_fuzz_str=}")
+        print(f"{ep_sub_data_find_eval_key=}") # TODO log this
         print(f"{ep_sub_data_find_time  =}")
         # exit()
 

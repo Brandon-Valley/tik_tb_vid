@@ -406,9 +406,9 @@ def _search_method__auto_sub_fuzz_len_based(auto_sub_path, auto_sub_fuzz_str, ss
 
 
     fuzz_ratio, ep_sub_data, eval_str = get_eval_of__fuzz_ratio_ep_sub_data_l_d(fuzz_ratio_ep_sub_data_l_d, ssm, lang, fuzz_ratio_ep_sub_data_l_d_json_path)
-    print(f"{fuzz_ratio=}")
-    print(f"{ep_sub_data=}")
-    print(f"{eval_str=}")
+    # print(f"{fuzz_ratio=}")
+    # print(f"{ep_sub_data=}")
+    # print(f"{eval_str=}")
     return fuzz_ratio, ep_sub_data, eval_str
 
 
@@ -444,7 +444,7 @@ def get_real_episode_sub_data_from_auto_sub(auto_sub_path, ssm, lang):
 
         if eval_key == EVAL_KEY__SUCCESS:
             total_time = time.time() - start_time
-            return fuzz_ratio, ep_sub_data, total_time
+            return fuzz_ratio, ep_sub_data, eval_key, total_time
 
 
     print("hereeeeeee")
@@ -457,26 +457,22 @@ def get_real_episode_sub_data_from_auto_sub(auto_sub_path, ssm, lang):
         # print( ("!!!!!!!!!!!! TODO !!!!!!!!!!TMP EXEP - Not imlemented yet")) # TODO
         # best_fuzz_ratio, best_ep_sub_data = None, None # TODO
 
-        fuzz_ratio, ep_sub_data, fail_reason = _search_method__auto_sub_fuzz_len_based(auto_sub_path, auto_sub_fuzz_str, ssm, lang)
+        fuzz_ratio, ep_sub_data, eval_key = _search_method__auto_sub_fuzz_len_based(auto_sub_path, auto_sub_fuzz_str, ssm, lang)
         print(f"{fuzz_ratio=}")
         print(f"{ep_sub_data=}")
-        print(f"{fail_reason=}")
-        raise Exception("TMP HEEEEEERE") # FIXME
-    else:
-        raise Exception(f"ERROR: Invalid {search_method_key=}")
+        print(f"{eval_key=}")
 
-    if best_ep_sub_data == None:
-        print("After fuzzy-searching every episode's subs, did not find single episode with fuzz_ratio > 0, returning None")
+
+    if eval_key != EVAL_KEY__SUCCESS:
+        print(f"After fuzzy-searching every episode's subs, did not find a match for auto-sub, returning None: {eval_key=}...")
     else:
-        print(f"Found best real sub for auto-sub: {best_ep_sub_data}")
+        print(f"Found best real sub for auto-sub: {ep_sub_data}")
 
     total_time = time.time() - start_time
-    best_ep_sub_best_partial_fuzz_str = None # TODO
-    return best_fuzz_ratio, best_ep_sub_data, best_ep_sub_best_partial_fuzz_str, total_time
+    return fuzz_ratio, ep_sub_data, eval_key, total_time
 
 
 
-    # exit() # FIXME
 
     # ep_sub_data_l = ssm.get_episode_sub_data_l_for_lang(lang)
 
