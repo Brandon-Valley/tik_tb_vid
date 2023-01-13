@@ -20,7 +20,8 @@ SSM_STATS_JSON_PATH = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "SSM_stats.js
 FINAL_STATS_JSON_PATH = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "final_stats.json")
 # SERIES_SUB_EN_DIR_PATH = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en"
 # SERIES_SUB_EN_DIR_PATH = "C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en_s4_16_and_17"
-SERIES_SUB_EN_DIR_PATH = "C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en"
+# SERIES_SUB_EN_DIR_PATH = "C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en"
+SERIES_SUB_EN_DIR_PATH = "C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en__pilot__and__tea_party_max_min"
 # SERIES_SUB_EN_DIR_PATH = "C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en_s06E1_and_2_blue_harvest_test__and_pilot__and_max_min"
 # SERIES_SUB_EN_DIR_PATH = "C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en_s06E1_and_2_blue_harvest_test__and_pilot"
 # SERIES_SUB_EN_DIR_PATH = "C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en_blue_harvest_test__s6e1_and_s1e1"
@@ -191,7 +192,8 @@ def main():
 
     # TODO download yt playlist with youtube_utils.dl_yt_playlist__fix_sub_times_convert_to__mp4_srt()
     # Init std youtube playlist download data
-    yt_pl_dl_dir_path = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "Family_Guy___TBS")
+    # yt_pl_dl_dir_path = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "Family_Guy___TBS")
+    yt_pl_dl_dir_path = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "Family_Guy__TBS__pilot_and_tea_party")
     # yt_pl_dl_dir_path = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "Family_Guy__TBS__blue_harvest_and_pilot_test")
     # yt_pl_dl_dir_path = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "Family_Guy__TBS__blue_harvest_and_pilot_and_herbert_test")
     # yt_pl_dl_dir_path = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "Family_Guy__TBS__pilot_and_herbert_test")
