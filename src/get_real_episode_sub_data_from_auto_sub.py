@@ -398,7 +398,7 @@ def get_eval_of__fuzz_ratio_ep_sub_data_l_d(fuzz_ratio_ep_sub_data_l_d, ssm, lan
 def _search_method__auto_sub_fuzz_len_based(auto_sub_path, auto_sub_fuzz_str, ssm, lang):
     # partial_fuzz_str_num_char = len(auto_sub_fuzz_str) * NUM_TIMES_BIGGER_MIN_FUZZ_LEN_CAN_BE_FOR_INIT_PARTIAL_FUZZ_SEARCH_METHOD # TMP THIS CAN CHANGE!
 
-    fuzz_ratio_ep_sub_data_l_d_json_path = os.path.join(CLIPS_DATA_DIR_PATH, Path(auto_sub_path).stem, Path(auto_sub_path).stem + "__init_partial__fuzz_ratio_ep_sub_data_l_d.json" ) #TMP
+    fuzz_ratio_ep_sub_data_l_d_json_path = os.path.join(CLIPS_DATA_DIR_PATH, Path(auto_sub_path).name.split(".")[0], Path(auto_sub_path).stem + "__init_partial__fuzz_ratio_ep_sub_data_l_d.json" ) #TMP
 
     print(f"Getting fuzz_ratio_ep_sub_data_l_d for {auto_sub_path=}...")
     fuzz_ratio_ep_sub_data_l_d = _get_fuzz_ratio_ep_sub_data_l_d(auto_sub_fuzz_str, ssm, lang, method_key = SEARCH_METHOD_KEY__AUTO_SUB_FUZZ_LEN_BASED)
@@ -413,7 +413,8 @@ def _search_method__auto_sub_fuzz_len_based(auto_sub_path, auto_sub_fuzz_str, ss
 
 
 def _search_method__init_partial_fuzz(auto_sub_path, auto_sub_fuzz_str, ssm, lang):
-    fuzz_ratio_ep_sub_data_l_d_json_path = os.path.join(CLIPS_DATA_DIR_PATH, Path(auto_sub_path).stem, Path(auto_sub_path).stem + "__init_partial__fuzz_ratio_ep_sub_data_l_d.json" ) #TMP
+    # fuzz_ratio_ep_sub_data_l_d_json_path = os.path.join(CLIPS_DATA_DIR_PATH, Path(auto_sub_path).stem, Path(auto_sub_path).stem + "__init_partial__fuzz_ratio_ep_sub_data_l_d.json" ) #TMP
+    fuzz_ratio_ep_sub_data_l_d_json_path = os.path.join(CLIPS_DATA_DIR_PATH, Path(auto_sub_path).name.split(".")[0], Path(auto_sub_path).stem + "__init_partial__fuzz_ratio_ep_sub_data_l_d.json" ) #TMP
 
     print(f"Getting fuzz_ratio_ep_sub_data_l_d for {auto_sub_path=}...")
     fuzz_ratio_ep_sub_data_l_d = _get_fuzz_ratio_ep_sub_data_l_d(auto_sub_fuzz_str, ssm, lang, method_key=SEARCH_METHOD_KEY__INIT_PARTIAL_FUZZ)
