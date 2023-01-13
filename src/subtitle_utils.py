@@ -41,6 +41,7 @@ import subprocess
     # sync_subs_with_vid()
 
 def sync_subs_with_vid(vid_path, in_sub_path, out_sub_path):
+    """ Best to use sub files without "(cheering)", "(gasps)", etc. (.HI.srt and more) """
     print("in sync_subs_with_vid() --------------------------")
     fsu.delete_if_exists(out_sub_path)
     Path(out_sub_path).parent.mkdir(parents=True, exist_ok=True)

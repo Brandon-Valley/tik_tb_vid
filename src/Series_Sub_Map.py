@@ -15,7 +15,8 @@ SSM_DATA_DIR_PATH = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "SSM_DATA")
 #  - Family Guy - S06E01 - Blue Harvest (english - directors comment - 25fps - UTF-8).srt
 #  - Family Guy - S06E01 - Blue Harvest (english for hearing impaired - 25fps - UTF-8).srt
  # TODO should probably add separate "not great" list for .HI. which has stuff like "(cheering)", "(gasps)", etc.
-BAD_SUB_FILENAME_STR_L = ["directors", "comment", "fps", "UTF", "hearing", "impaired", "extended", "edition", ".HI."]
+BAD_SUB_FILENAME_STR_L = ["directors", "comment", "fps", "UTF", "hearing", "impaired", "extended", "edition", 
+" part ",".part.","_part_","-part-","part1","part2","part3"]
 
 class Episode_Sub_Data:
     extra_metadata_d = {}
@@ -168,8 +169,9 @@ class Episode_Sub_Data:
 
         # Default to picking sub with largest file size
         #  - # lines might be better but file size is WAY faster
-        sub_file_path_l_most_lines_first = sorted(self.sub_file_path_l,key=os.path.getsize, reverse=True)
-
+        # sub_file_path_l_most_lines_first = sorted(self.sub_file_path_l,key=os.path.getsize, reverse=True)
+        sub_file_path_l_most_lines_first = sorted(self.sub_file_path_l,key=os.path.getsize, reverse=False) # FIXME seems like keeping this, now picks smallest file, change doc !!!!!!!!!!!!!!!!
+        
         # Pick largest file that has the series name and no bad strings in its filename
         # - Don't want to be fooled by subs for wrong show getting mixed-in
         # - Also dont want hearing impaired or directors comment

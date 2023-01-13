@@ -132,6 +132,14 @@ serted extra subs
       - In yt clip he just says "what if they come in a different door"?
           - in extended edition they argue about running to a different door
           - Was able to match right episode from extended edition subs, but messed up re-timing/syncing
+- S10E20 - Peter joins the Tea Party
+    - has .hi. subs with "gasps", "cheers", etc. that if chosen, mess up autosubsync
+    - even the .LOL.srt is slightly off for some reason?
+    - choosing the smallest "nice" sub file makes it pick .DEMAND. which matches perfectly
+
+- S8E20 - Something, Something, Something Darkside
+    - Star wars special
+    - has part1&2 subs even though they are different episodes
 
 # Steps
 
