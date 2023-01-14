@@ -15,7 +15,8 @@ from sms.logger import json_logger
 import pysubs2
 
 FUZZ_STR_DELIM = "\r"
-NUM_TIMES_BIGGER_MIN_FUZZ_LEN_CAN_BE_FOR_INIT_PARTIAL_FUZZ_SEARCH_METHOD = 11 # TODO play with this?  11.95 minutes
+# NUM_TIMES_BIGGER_MIN_FUZZ_LEN_CAN_BE_FOR_INIT_PARTIAL_FUZZ_SEARCH_METHOD = 11 # TODO play with this?  11.95 minutes
+NUM_TIMES_BIGGER_MIN_FUZZ_LEN_CAN_BE_FOR_INIT_PARTIAL_FUZZ_SEARCH_METHOD = 10 # TODO play with this?  11.95 minutes
 MIN_TIMES_BIGGER_MIN_FUZZ_LEN_CAN_BE_UNTIL_GIVE_UP = 5 # TODO play with this?  11.95 minutes
 # NUM_TIMES_BIGGER_MIN_FUZZ_LEN_CAN_BE_FOR_INIT_PARTIAL_FUZZ_SEARCH_METHOD = 5 # TODO play with this? "16.55 minutes - 14 unknown
 # NUM_TIMES_BIGGER_MIN_FUZZ_LEN_CAN_BE_FOR_INIT_PARTIAL_FUZZ_SEARCH_METHOD = 2 # TODO play with this? ""20.95 minutes - 7 unknown
@@ -429,7 +430,8 @@ def _search_method__init_partial_fuzz(auto_sub_path, auto_sub_fuzz_str, ssm, lan
     _write_fuzz_ratio_ep_sub_data_l_d_to_json(fuzz_ratio_ep_sub_data_l_d, fuzz_ratio_ep_sub_data_l_d_json_path)
     fuzz_ratio, ep_sub_data, eval_str = get_eval_of__fuzz_ratio_ep_sub_data_l_d(fuzz_ratio_ep_sub_data_l_d, ssm, lang, fuzz_ratio_ep_sub_data_l_d_json_path)
 
-    return fuzz_ratio, ep_sub_data, eval_str
+    # return fuzz_ratio, ep_sub_data, eval_str
+    return fuzz_ratio, ep_sub_data, eval_str, fuzz_ratio_ep_sub_data_l_d
  
 
 
@@ -446,7 +448,8 @@ def get_real_episode_sub_data_from_auto_sub(auto_sub_path, ssm, lang):
     print(f"init predicted {search_method_key=}")
 
     if search_method_key == SEARCH_METHOD_KEY__INIT_PARTIAL_FUZZ:
-        fuzz_ratio, ep_sub_data, eval_key = _search_method__init_partial_fuzz(auto_sub_path, auto_sub_fuzz_str, ssm, lang)
+        # fuzz_ratio, ep_sub_data, eval_key = _search_method__init_partial_fuzz(auto_sub_path, auto_sub_fuzz_str, ssm, lang)
+        fuzz_ratio, ep_sub_data, eval_key, fuzz_ratio_ep_sub_data_l_d = _search_method__init_partial_fuzz(auto_sub_path, auto_sub_fuzz_str, ssm, lang)
         print(f"{fuzz_ratio=}")
         print(f"{ep_sub_data=}")
         print(f"{eval_key=}")
@@ -455,6 +458,13 @@ def get_real_episode_sub_data_from_auto_sub(auto_sub_path, ssm, lang):
             total_time = time.time() - start_time
             return fuzz_ratio, ep_sub_data, eval_key, total_time
         # TODO SHOULD ADD SOMETHING HERE FOR EVAL_KEY__NO_CLEAR_WINNER - like if its just down to 2 subs
+        elif eval_key == EVAL_KEY__NO_CLEAR_WINNER:
+            print(f"{eval_key=}")
+            pprint(fuzz_ratio_ep_sub_data_l_d)
+            # raise Exception("TMP TODO")
+            print(f"Init predicted {search_method_key=} was wrong, made it through every ep without finding clear winner, changing search_method_key to try len based...")
+            search_method_key = SEARCH_METHOD_KEY__AUTO_SUB_FUZZ_LEN_BASED
+
         else:
             print(f"Init predicted {search_method_key=} was wrong, made it through every ep without success, changing search_method_key to try len based...")
             search_method_key = SEARCH_METHOD_KEY__AUTO_SUB_FUZZ_LEN_BASED
