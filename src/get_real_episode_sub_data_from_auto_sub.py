@@ -15,7 +15,11 @@ from sms.logger import json_logger
 import pysubs2
 
 FUZZ_STR_DELIM = "\r"
-NUM_TIMES_BIGGER_MIN_FUZZ_LEN_CAN_BE_FOR_INIT_PARTIAL_FUZZ_SEARCH_METHOD = 11 # TODO play with this?
+NUM_TIMES_BIGGER_MIN_FUZZ_LEN_CAN_BE_FOR_INIT_PARTIAL_FUZZ_SEARCH_METHOD = 11 # TODO play with this?  11.95 minutes
+MIN_TIMES_BIGGER_MIN_FUZZ_LEN_CAN_BE_UNTIL_GIVE_UP = 5 # TODO play with this?  11.95 minutes
+# NUM_TIMES_BIGGER_MIN_FUZZ_LEN_CAN_BE_FOR_INIT_PARTIAL_FUZZ_SEARCH_METHOD = 5 # TODO play with this? "16.55 minutes - 14 unknown
+# NUM_TIMES_BIGGER_MIN_FUZZ_LEN_CAN_BE_FOR_INIT_PARTIAL_FUZZ_SEARCH_METHOD = 2 # TODO play with this? ""20.95 minutes - 7 unknown
+# NUM_TIMES_BIGGER_MIN_FUZZ_LEN_CAN_BE_FOR_INIT_PARTIAL_FUZZ_SEARCH_METHOD = 4 # TODO play with this? " "19.25 minutes"
 SEARCH_METHOD_KEY__INIT_PARTIAL_FUZZ = "init_partial_fuzz_search_method"
 SEARCH_METHOD_KEY__AUTO_SUB_FUZZ_LEN_BASED = "auto_sub_fuzz_len_based"
 
@@ -263,7 +267,7 @@ CLIPS_DATA_DIR_PATH = "C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/CLIPS_DATA
 #     return subs_fuzz_str
 
 
-def _get_best_ep_sub_partial_fuzz_ratio(ep_sub_data, auto_sub_fuzz_str, method_key):
+def _get_best_ep_sub_partial_fuzz_ratio(ep_sub_data, auto_sub_fuzz_str, method_key, partial_fuzz_str_len=None):
     print(f"in _get_best_ep_sub_partial_fuzz_ratio() - {method_key=}")
     best_fuzz_ratio = 0
     best_real_sub_partial_fuzz_str = None
@@ -278,10 +282,12 @@ def _get_best_ep_sub_partial_fuzz_ratio(ep_sub_data, auto_sub_fuzz_str, method_k
         partial_fuzz_str_l = ep_sub_data.get_default_partial_fuzz_str_l()
     elif method_key == SEARCH_METHOD_KEY__AUTO_SUB_FUZZ_LEN_BASED:
         partial_fuzz_str_num_char = len(auto_sub_fuzz_str) * NUM_TIMES_BIGGER_MIN_FUZZ_LEN_CAN_BE_FOR_INIT_PARTIAL_FUZZ_SEARCH_METHOD # TMP THIS CAN CHANGE!
+        # partial_fuzz_str_num_char = partial_fuzz_str_len # TMP THIS CAN CHANGE!
         ep_sub_total_fuzz_str = json_logger.read(ep_sub_data.total_fuzz_str_json_path)
         # partial_fuzz_str_l = ep_sub_data.get_custom_partial_fuzz_str_l(partial_fuzz_str_num_char, len(auto_sub_fuzz_str))
         partial_fuzz_str_l = fc.get_partial_fuzz_str_l_from_total_fuzz_str(total_fuzz_str = ep_sub_total_fuzz_str,
-                                                                                    min_partial_fuzz_str_num_char = partial_fuzz_str_num_char,
+                                                                                    # min_partial_fuzz_str_num_char = partial_fuzz_str_num_char,
+                                                                                    min_partial_fuzz_str_num_char = partial_fuzz_str_len,
                                                                                     min_overlap_char = len(auto_sub_fuzz_str))
         # partial_fuzz_str_l = fc.get_partial_fuzz_str_l_from_total_fuzz_str(partial_fuzz_str_num_char, len(auto_sub_fuzz_str))
         # print(f"{partial_fuzz_str_l=}")
@@ -339,7 +345,7 @@ def _write_fuzz_ratio_ep_sub_data_l_d_to_json(fuzz_ratio_ep_sub_data_l_d, json_p
     json_logger.write(json_ser_d, json_path)
 
 
-def _get_fuzz_ratio_ep_sub_data_l_d(auto_sub_fuzz_str, ssm, lang, method_key):
+def _get_fuzz_ratio_ep_sub_data_l_d(auto_sub_fuzz_str, ssm, lang, method_key, partial_fuzz_str_len = None):
     ep_sub_data_l = ssm.get_episode_sub_data_l_for_lang(lang)
 
     print(f"{len(ep_sub_data_l)=}")
@@ -349,7 +355,8 @@ def _get_fuzz_ratio_ep_sub_data_l_d(auto_sub_fuzz_str, ssm, lang, method_key):
     for ep_sub_data in ep_sub_data_l:
         print(f"  Checking {ep_sub_data.get_season_episode_str()}...")
 
-        ep_sub_fuzz_ratio, ep_sub_best_partial_fuzz_str = _get_best_ep_sub_partial_fuzz_ratio(ep_sub_data, auto_sub_fuzz_str, method_key)
+        # ep_sub_fuzz_ratio, ep_sub_best_partial_fuzz_str = _get_best_ep_sub_partial_fuzz_ratio(ep_sub_data, auto_sub_fuzz_str, method_key)
+        ep_sub_fuzz_ratio, ep_sub_best_partial_fuzz_str = _get_best_ep_sub_partial_fuzz_ratio(ep_sub_data, auto_sub_fuzz_str, method_key, partial_fuzz_str_len)
         # print(f"{ep_sub_fuzz_ratio=}")
 
         if ep_sub_fuzz_ratio in fuzz_ratio_ep_sub_data_l_d.keys():
@@ -394,12 +401,12 @@ def get_eval_of__fuzz_ratio_ep_sub_data_l_d(fuzz_ratio_ep_sub_data_l_d, ssm, lan
 
 
 
-def _search_method__auto_sub_fuzz_len_based(auto_sub_path, auto_sub_fuzz_str, ssm, lang):
+def _search_method__auto_sub_fuzz_len_based(auto_sub_path, auto_sub_fuzz_str, ssm, lang, partial_fuzz_str_len = None):
 
     fuzz_ratio_ep_sub_data_l_d_json_path = os.path.join(CLIPS_DATA_DIR_PATH, Path(auto_sub_path).name.split(".")[0][:70], Path(auto_sub_path).name.split(".")[0][:70] + "_ip_fresdl_d.json" ) #TMP
 
     print(f"Getting fuzz_ratio_ep_sub_data_l_d for {auto_sub_path=}...")
-    fuzz_ratio_ep_sub_data_l_d = _get_fuzz_ratio_ep_sub_data_l_d(auto_sub_fuzz_str, ssm, lang, method_key = SEARCH_METHOD_KEY__AUTO_SUB_FUZZ_LEN_BASED)
+    fuzz_ratio_ep_sub_data_l_d = _get_fuzz_ratio_ep_sub_data_l_d(auto_sub_fuzz_str, ssm, lang, method_key = SEARCH_METHOD_KEY__AUTO_SUB_FUZZ_LEN_BASED, partial_fuzz_str_len=partial_fuzz_str_len)
     _write_fuzz_ratio_ep_sub_data_l_d_to_json(fuzz_ratio_ep_sub_data_l_d, fuzz_ratio_ep_sub_data_l_d_json_path)
 
 
@@ -455,10 +462,18 @@ def get_real_episode_sub_data_from_auto_sub(auto_sub_path, ssm, lang):
         # print( ("!!!!!!!!!!!! TODO !!!!!!!!!!TMP EXEP - Not imlemented yet")) # TODO
         # best_fuzz_ratio, best_ep_sub_data = None, None # TODO
 
-        fuzz_ratio, ep_sub_data, eval_key = _search_method__auto_sub_fuzz_len_based(auto_sub_path, auto_sub_fuzz_str, ssm, lang)
-        print(f"{fuzz_ratio=}")
-        print(f"{ep_sub_data=}")
-        print(f"{eval_key=}")
+        partial_fuzz_str_len = len(auto_sub_fuzz_str) * NUM_TIMES_BIGGER_MIN_FUZZ_LEN_CAN_BE_FOR_INIT_PARTIAL_FUZZ_SEARCH_METHOD
+
+        while (partial_fuzz_str_len <= MIN_TIMES_BIGGER_MIN_FUZZ_LEN_CAN_BE_UNTIL_GIVE_UP):
+
+            fuzz_ratio, ep_sub_data, eval_key = _search_method__auto_sub_fuzz_len_based(auto_sub_path, auto_sub_fuzz_str, ssm, lang, partial_fuzz_str_len)
+            print(f"{fuzz_ratio=}")
+            print(f"{ep_sub_data=}")
+            print(f"{eval_key=}")
+            if eval_key == EVAL_KEY__SUCCESS:
+                break
+            else:
+                partial_fuzz_str_len = int(partial_fuzz_str_len / 2)
 
 
     if eval_key != EVAL_KEY__SUCCESS:
