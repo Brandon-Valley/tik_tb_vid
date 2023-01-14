@@ -504,7 +504,8 @@ def get_real_episode_sub_data_from_auto_sub(auto_sub_path, ssm, lang):
             if eval_key == EVAL_KEY__SUCCESS:
                 break
             else:
-                partial_fuzz_str_len = int(partial_fuzz_str_len / 2)
+                # partial_fuzz_str_len = int(partial_fuzz_str_len / 2)
+                partial_fuzz_str_len = int(partial_fuzz_str_len * 0.7)
 
 
         if eval_key != EVAL_KEY__SUCCESS:
