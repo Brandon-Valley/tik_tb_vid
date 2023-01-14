@@ -70,7 +70,7 @@ def get_partial_fuzz_str_l_from_total_fuzz_str(total_fuzz_str, min_partial_fuzz_
         print(f"Given total_fuzz_str is exact same len as {min_partial_fuzz_str_num_char=}, so just returning [total_fuzz_str]...")
         return [total_fuzz_str]
     elif len(total_fuzz_str) < min_partial_fuzz_str_num_char:
-        raise Exception(f"ERROR: {total_fuzz_str=} can never be less than {min_partial_fuzz_str_num_char=}")
+        raise Exception(f"ERROR: {len(total_fuzz_str)=} can never be less than {min_partial_fuzz_str_num_char=}")
 
 
     # print("----------------------------------------------------------")

@@ -278,13 +278,18 @@ def _get_best_ep_sub_partial_fuzz_ratio(ep_sub_data, auto_sub_fuzz_str, method_k
     # exit()
     # json_logger.write(ep_sub_data.partial_fuzz_str_l, "C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/tmp_partial.json")#TMP
 
+    # get partial_fuzz_str_l based on method_key
     if method_key == SEARCH_METHOD_KEY__INIT_PARTIAL_FUZZ:
         partial_fuzz_str_l = ep_sub_data.get_default_partial_fuzz_str_l()
     elif method_key == SEARCH_METHOD_KEY__AUTO_SUB_FUZZ_LEN_BASED:
-        partial_fuzz_str_num_char = len(auto_sub_fuzz_str) * NUM_TIMES_BIGGER_MIN_FUZZ_LEN_CAN_BE_FOR_INIT_PARTIAL_FUZZ_SEARCH_METHOD # TMP THIS CAN CHANGE!
+        OLD_partial_fuzz_str_num_char = len(auto_sub_fuzz_str) * NUM_TIMES_BIGGER_MIN_FUZZ_LEN_CAN_BE_FOR_INIT_PARTIAL_FUZZ_SEARCH_METHOD # TMP THIS CAN CHANGE!
+        print(f"{OLD_partial_fuzz_str_num_char=}")#TMP REMOVE
         # partial_fuzz_str_num_char = partial_fuzz_str_len # TMP THIS CAN CHANGE!
         ep_sub_total_fuzz_str = json_logger.read(ep_sub_data.total_fuzz_str_json_path)
         # partial_fuzz_str_l = ep_sub_data.get_custom_partial_fuzz_str_l(partial_fuzz_str_num_char, len(auto_sub_fuzz_str))
+        print(f"{len(ep_sub_total_fuzz_str)=}")
+        print(f"{partial_fuzz_str_len=}")
+        print(f"{len(auto_sub_fuzz_str)=}")
         partial_fuzz_str_l = fc.get_partial_fuzz_str_l_from_total_fuzz_str(total_fuzz_str = ep_sub_total_fuzz_str,
                                                                                     # min_partial_fuzz_str_num_char = partial_fuzz_str_num_char,
                                                                                     min_partial_fuzz_str_num_char = partial_fuzz_str_len,
@@ -355,7 +360,6 @@ def _get_fuzz_ratio_ep_sub_data_l_d(auto_sub_fuzz_str, ssm, lang, method_key, pa
     for ep_sub_data in ep_sub_data_l:
         print(f"  Checking {ep_sub_data.get_season_episode_str()}...")
 
-        # ep_sub_fuzz_ratio, ep_sub_best_partial_fuzz_str = _get_best_ep_sub_partial_fuzz_ratio(ep_sub_data, auto_sub_fuzz_str, method_key)
         ep_sub_fuzz_ratio, ep_sub_best_partial_fuzz_str = _get_best_ep_sub_partial_fuzz_ratio(ep_sub_data, auto_sub_fuzz_str, method_key, partial_fuzz_str_len)
         # print(f"{ep_sub_fuzz_ratio=}")
 
@@ -450,11 +454,11 @@ def get_real_episode_sub_data_from_auto_sub(auto_sub_path, ssm, lang):
         if eval_key == EVAL_KEY__SUCCESS:
             total_time = time.time() - start_time
             return fuzz_ratio, ep_sub_data, eval_key, total_time
+        search_method_key = SEARCH_METHOD_KEY__AUTO_SUB_FUZZ_LEN_BASED
 
 
     print("hereeeeeee")
 
-    # if fail_reason != None     
 
     if search_method_key == SEARCH_METHOD_KEY__AUTO_SUB_FUZZ_LEN_BASED:
         # print("print")
@@ -463,8 +467,12 @@ def get_real_episode_sub_data_from_auto_sub(auto_sub_path, ssm, lang):
         # best_fuzz_ratio, best_ep_sub_data = None, None # TODO
 
         partial_fuzz_str_len = len(auto_sub_fuzz_str) * NUM_TIMES_BIGGER_MIN_FUZZ_LEN_CAN_BE_FOR_INIT_PARTIAL_FUZZ_SEARCH_METHOD
+        print(f"{partial_fuzz_str_len=}")
 
-        while (partial_fuzz_str_len <= MIN_TIMES_BIGGER_MIN_FUZZ_LEN_CAN_BE_UNTIL_GIVE_UP):
+        while (partial_fuzz_str_len >= len(auto_sub_fuzz_str) * MIN_TIMES_BIGGER_MIN_FUZZ_LEN_CAN_BE_UNTIL_GIVE_UP):
+
+            if ssm.get_min_fuzz_str_len_for_lang(lang) < partial_fuzz_str_len:
+                raise Exception(f"ERROR: {ssm.get_min_fuzz_str_len_for_lang(lang)} (from episode sub {ssm.get_min_fuzz_str_len_ep_sub_data_lang(lang)}) can never be less than {partial_fuzz_str_len=}")
 
             fuzz_ratio, ep_sub_data, eval_key = _search_method__auto_sub_fuzz_len_based(auto_sub_path, auto_sub_fuzz_str, ssm, lang, partial_fuzz_str_len)
             print(f"{fuzz_ratio=}")
@@ -476,13 +484,17 @@ def get_real_episode_sub_data_from_auto_sub(auto_sub_path, ssm, lang):
                 partial_fuzz_str_len = int(partial_fuzz_str_len / 2)
 
 
-    if eval_key != EVAL_KEY__SUCCESS:
-        print(f"After fuzzy-searching every episode's subs, did not find a match for auto-sub, returning None: {eval_key=}...")
-    else:
-        print(f"Found best real sub for auto-sub: {ep_sub_data}")
+        if eval_key != EVAL_KEY__SUCCESS:
+            print(f"After fuzzy-searching every episode's subs, did not find a match for auto-sub, returning None: {eval_key=}...")
+        else:
+            print(f"Found best real sub for auto-sub: {ep_sub_data}")
 
-    total_time = time.time() - start_time
-    return fuzz_ratio, ep_sub_data, eval_key, total_time
+        total_time = time.time() - start_time
+        return fuzz_ratio, ep_sub_data, eval_key, total_time
+
+    print(f"{search_method_key=}")
+    print(f"{partial_fuzz_str_len=}")
+    raise Exception("SHOULD NEVER GET HERE")
 
 
 
@@ -509,7 +521,7 @@ def get_real_episode_sub_data_from_auto_sub(auto_sub_path, ssm, lang):
     # for ep_sub_data in ep_sub_data_l:
     #     print(f"  Checking {ep_sub_data.get_season_episode_str()}...")
 
-    #     ep_sub_fuzz_ratio, ep_sub_best_partial_fuzz_str = _get_best_ep_sub_partial_fuzz_ratio(ep_sub_data, auto_sub_fuzz_str)
+    #     ep_sub_fuzz_ratio, ep_sub_best_partial_fuzz_str = _get_best_ep_sub_partial_fuzz_raaaaaaaaaaaaatio(ep_sub_data, auto_sub_fuzz_str)
     #     print(f"{ep_sub_fuzz_ratio=}")
 
     #     se_str_real_sub_path_d = {"se_str": ep_sub_data.get_season_episode_str(),
