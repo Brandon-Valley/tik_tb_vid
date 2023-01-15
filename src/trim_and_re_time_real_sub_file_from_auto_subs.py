@@ -152,6 +152,11 @@ def _clean_trimmed_subs(in_sub_path, out_sub_path, vid_num_ms):
     # # TODO REMOVE
     # su.write_manual_sub_line_l(clean_sub_line_l, "C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/mkvs/TODO_REMOVE_TTMP_CLEANED_SUBS_COPY.srt")
 
+
+def trim_and_re_time_real_sub_files_from_auto_subs(vid_path, real_sub_file_path, auto_sub_file_path, out_sub_path):
+    pass
+
+
 def trim_and_re_time_real_sub_file_from_auto_subs(vid_path, real_sub_file_path, auto_sub_file_path, out_sub_path):
     """ 
         - After finding correct real sub file with faster get_real_episode_sub_data_from_auto_sub(), 

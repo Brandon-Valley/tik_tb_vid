@@ -262,6 +262,11 @@ def main():
                                                                                         real_sub_file_path = ep_sub_data.main_sub_file_path,
                                                                                         auto_sub_file_path = clip_dir_data.auto_sub_path,
                                                                                         out_sub_path = tmp_srt_path)
+
+        # trim_and_re_time_real_sub_time = trim_and_re_time_real_sub_files_from_auto_subs(vid_path = clip_dir_data.mp4_path,
+        #                                                                                 real_sub_file_path = ep_sub_data.main_sub_file_path,
+        #                                                                                 auto_sub_file_path = clip_dir_data.auto_sub_path,
+        #                                                                                 out_sub_path = tmp_srt_path)
         print(f"{trim_and_re_time_real_sub_time=}")
         
         subtitle_utils.combine_mp4_and_sub_into_mkv(in_mp4_path = clip_dir_data.mp4_path,
