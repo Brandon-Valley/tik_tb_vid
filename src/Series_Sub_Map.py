@@ -74,18 +74,18 @@ class Episode_Sub_Data:
     def _create_and_write__partial_fuzz_str_l__to_json(self, min_total_fuzz_str_len):
         total_fuzz_str = json_logger.read(self.total_fuzz_str_json_path)
         partial_fuzz_str_l = fuzz_common.get_partial_fuzz_str_l_from_total_fuzz_str(total_fuzz_str, min_total_fuzz_str_len,
-         min_overlap_char = None) # FIX make this max autosub size!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        min_overlap_char = None) # FIX make this max autosub size!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         print(f"      {self.get_season_episode_str()} - Writing partial_fuzz_str_l to: {self.partial_fuzz_str_l_json_path}...")
         json_logger.write(partial_fuzz_str_l, self.partial_fuzz_str_l_json_path)
 
 
 
-    # LATER save inicies if takes too much mem
+    # LATER save indices if takes too much mem
     def _set_partial_fuzz_str_l(self, main_sub_fuzz_str, min_partial_fuzz_str_len):
         # self.partial_fuzz_str_l = fuzz_common.get_default_partial_fuzz_str_l_from_total_fuzz_str(self.main_sub_fuzz_str, min_partial_fuzz_str_len)
         # self.partial_fuzz_str_l = fuzz_common.get_default_partial_fuzz_str_l_from_total_fuzz_str(self.main_sub_fuzz_str, min_partial_fuzz_str_len)
 
-        #TMP paging file (mem) too small to hold all these big strings, so just save indicies to cut
+        #TMP paging file (mem) too small to hold all these big strings, so just save indices to cut
         self.partial_fuzz_str_l = fuzz_common.get_partial_fuzz_str_cut_tup_l_from_total_fuzz_str(self.main_sub_fuzz_str, min_partial_fuzz_str_len)
         print(f"{self.partial_fuzz_str_l=}")
         pass

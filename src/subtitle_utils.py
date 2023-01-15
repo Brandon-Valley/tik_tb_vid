@@ -61,6 +61,46 @@ def combine_mp4_and_sub_into_mkv(in_mp4_path, in_sub_path, out_mkv_path):
     subprocess.call(cmd, shell=True)
 
 
+def combine__mp4__and__sub_path_lang_dl__into_mkv(in_mp4_path, sub_path_lang_dl, out_mkv_path):
+    """ 
+        First sub in sub_path_lang_dl will be default
+        - Subs MAY need to be .srt
+        - EXAMPLE:
+            sub_path_lang_dl = [
+                                    {
+                                        "path": "<ABS_PATH_TO_SUB_FILE_1>",
+                                        "lang": "en"
+                                    },
+                                    {
+                                        "path": "<ABS_PATH_TO_SUB_FILE_2>",
+                                        "lang": "en2"
+                                    },
+                                ]
+    """
+    if len(sub_path_lang_dl) == 0:
+        raise Exception(f"ERROR: {sub_path_lang_dl=} Must have at least 1 element - {len(sub_path_lang_dl)=}")
+
+    cmd = f'ffmpeg -i "{in_mp4_path}"'
+    
+    for sub_path_lang_d in sub_path_lang_dl:
+        cmd += f' -i "{sub_path_lang_d["path"]}"'
+
+    cmd += " -map 0"
+
+    for i in range(len(sub_path_lang_dl)):
+        cmd += f" -map {i + 1}"
+
+    cmd += " -c copy"
+
+    for sub_path_lang_d_num, sub_path_lang_d in enumerate(sub_path_lang_dl):
+        cmd += f' -metadata:s:s:{sub_path_lang_d_num} language={sub_path_lang_d["lang"]}'
+
+    cmd += f' "{out_mkv_path}"'
+    
+    print(f"Running {cmd=}...\n")
+    subprocess.call(cmd, shell=True)
+
+
 def make_single_embedded_mkv_sub_show_by_default(mkv_path):
     """ UNTESTED!!!!!! """
     mp_path = "C:/Program Files (x86)/MKVToolNix/mkvpropedit.exe" # TODO
@@ -170,8 +210,32 @@ if __name__ == "__main__":
     #  in_sub_path = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/test/sub_match/init_shift.en.srt",
     #   out_sub_path = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/test/sub_match/Family_Guy__Back_To_The_Pilot_(Clip)___TBS.en.srt")
 
+    in_vid_path = "C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/Family_Guy__TBS__alcho_and_pilot__SUB_SET_TEST/Family_Guy__Back_To_The_Pilot__Clip____TBS/Family_Guy__Back_To_The_Pilot__Clip____TBS.mp4"
+    # sub_file_l = ["C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en_s1_e1and2/s10/episode 5/Family.Guy.S10E05.HDTV.XviD-LOL.srt",
+    # "C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en_s1_e1and2/s10/episode 5/Family.Guy.S10E05.HDTV.XviD-LOL.HI.srt"]
+    sub_file_l = ["C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en_s1_e1and2/s10/episode 5/Family.Guy.S10E05.HDTV.XviD-LOL.srt",
+    "C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en_s1_e1and2/s10/episode 5/Family.Guy.S10E05.HDTV.XviD-LOL.HI.srt"]
+
+    sub_path_lang_dl = [
+                            {
+                                "path": "C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en_s1_e1and2/s10/episode 5/Family.Guy.S10E05.HDTV.XviD-LOL.srt",
+                                "lang": "en"
+                            },
+                            {
+                                "path": "C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en_s1_e1and2/s10/episode 5/Family.Guy.S10E05.HDTV.XviD-LOL.HI.srt",
+                                "lang": "en2"
+                            },
+                        ]
+
+
+
+    out_mkv_path = "C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/Family_Guy__TBS__alcho_and_pilot__SUB_SET_TEST/Family_Guy__Back_To_The_Pilot__Clip____TBS/Family_Guy__Back_To_The_Pilot__Clip____TBS.mkv"
+
+    combine__mp4__and__sub_path_lang_dl__into_mkv(in_vid_path, sub_path_lang_dl, out_mkv_path)
+
+
     # remove_advertising_from_sub_file("C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en_s5_e17/s05/episode 17/Modern.Family.S05E17.720p.WEB-DL.DD5.1.H.264-HWD.en.srt")
-    make_single_embedded_mkv_sub_show_by_default("C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/mkvs/S04E16__Family_Guy__Google_Earth__Clip____TBS.mkv")
+    # make_single_embedded_mkv_sub_show_by_default("C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/mkvs/S04E16__Family_Guy__Google_Earth__Clip____TBS.mkv")
     # remove_advertising_from_sub_file_path_l(["C:/p/tik_tb_vid_big_data/ignore/test/sub_adv_remove_test/Family.Guy.S10E20.720p.HDTV.X264-DIMENSION - Copy.srt",
     # "C:/p/tik_tb_vid_big_data/ignore/test/sub_adv_remove_test/Family.Guy.S10E20.720p.HDTV.X264-DIMENSION - Copy - Copy.srt"])
     print("End of Main")
