@@ -135,14 +135,8 @@ def _get_fuzz_ratio_ep_sub_data_l_d(auto_sub_fuzz_str, ssm, lang, method_key, pa
     return fuzz_ratio_ep_sub_data_l_d
 
 
-
-
-
-
-
 def get_eval_of__fuzz_ratio_ep_sub_data_l_d(fuzz_ratio_ep_sub_data_l_d, ssm, lang, fuzz_ratio_ep_sub_data_l_d_json_path):
-
-    # Evaluate fuzz_ratio_ep_sub_data_l_d
+    """ Evaluate fuzz_ratio_ep_sub_data_l_d, set EVAL_KEY based on fuzz_ratio_ep_sub_data_l_d"""
 
     if len(fuzz_ratio_ep_sub_data_l_d.keys()) == 0:
         raise Exception(f"ERROR, {fuzz_ratio_ep_sub_data_l_d=}, no clue how this happened")
@@ -150,10 +144,8 @@ def get_eval_of__fuzz_ratio_ep_sub_data_l_d(fuzz_ratio_ep_sub_data_l_d, ssm, lan
     # If all episode's real sub's partial_fuzz_strs' gave same fuzz ratio
     #   - Try diff search method
     if len(fuzz_ratio_ep_sub_data_l_d.keys()) == 1 and ssm.get_num_episodes_in_lang(lang) != 1:
-        # raise Exception("TMP NOT IMPLEMENTED - " + fuzz_ratio_ep_sub_data_l_d_json_path)
         return None, None, EVAL_KEY__ALL_FR_SAME
 
-    # max_fuzz_ratio = max(fuzz_ratio_ep_sub_data_l_d, key=fuzz_ratio_ep_sub_data_l_d.get)
     max_fuzz_ratio = max(fuzz_ratio_ep_sub_data_l_d.keys())
     max_fuzz_ratio_ep_sub_data_l = fuzz_ratio_ep_sub_data_l_d[max_fuzz_ratio]
 
@@ -161,7 +153,6 @@ def get_eval_of__fuzz_ratio_ep_sub_data_l_d(fuzz_ratio_ep_sub_data_l_d, ssm, lan
     if len(max_fuzz_ratio_ep_sub_data_l) == 1:
         best_fuzz_ratio_ep_sub_data = max_fuzz_ratio_ep_sub_data_l[0]
         print(f"Success - Single ep_sub_data for highest {max_fuzz_ratio=} - {best_fuzz_ratio_ep_sub_data.get_season_episode_str()}, returning...")
-        # fail_reason = None
         return max_fuzz_ratio, best_fuzz_ratio_ep_sub_data, EVAL_KEY__SUCCESS
     
     # If all episode's real sub's partial_fuzz_strs' DID NOT give same fuzz ratio, but also no clear winner
@@ -170,6 +161,9 @@ def get_eval_of__fuzz_ratio_ep_sub_data_l_d(fuzz_ratio_ep_sub_data_l_d, ssm, lan
 
 
 def _search_and_log(auto_sub_path, auto_sub_fuzz_str, ssm, lang, method_key, partial_fuzz_str_len = None):
+
+    # LATER vv awful way of doing things
+    # LATER also CLIPS_DATA is never cleared, should make this better
     fuzz_ratio_ep_sub_data_l_d_json_path = os.path.join(CLIPS_DATA_DIR_PATH, Path(auto_sub_path).name.split(".")[0][:70], Path(auto_sub_path).name.split(".")[0][:70] + "_lb_fresdl_d.json" ) #TMP
 
     print(f"Getting fuzz_ratio_ep_sub_data_l_d for {auto_sub_path=}...")
@@ -177,7 +171,6 @@ def _search_and_log(auto_sub_path, auto_sub_fuzz_str, ssm, lang, method_key, par
     _write_fuzz_ratio_ep_sub_data_l_d_to_json(fuzz_ratio_ep_sub_data_l_d, fuzz_ratio_ep_sub_data_l_d_json_path)
     fuzz_ratio, ep_sub_data, eval_str = get_eval_of__fuzz_ratio_ep_sub_data_l_d(fuzz_ratio_ep_sub_data_l_d, ssm, lang, fuzz_ratio_ep_sub_data_l_d_json_path)
 
-    # return fuzz_ratio, ep_sub_data, eval_str
     return fuzz_ratio, ep_sub_data, eval_str, fuzz_ratio_ep_sub_data_l_d
  
 
