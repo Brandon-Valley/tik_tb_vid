@@ -170,20 +170,20 @@ def get_eval_of__fuzz_ratio_ep_sub_data_l_d(fuzz_ratio_ep_sub_data_l_d, ssm, lan
 
 
 
-def _search_method__auto_sub_fuzz_len_based(auto_sub_path, auto_sub_fuzz_str, ssm, lang, partial_fuzz_str_len = None):
+# def _search_method__auto_sub_fuzz_len_based(auto_sub_path, auto_sub_fuzz_str, ssm, lang, partial_fuzz_str_len = None):
 
-    fuzz_ratio_ep_sub_data_l_d_json_path = os.path.join(CLIPS_DATA_DIR_PATH, Path(auto_sub_path).name.split(".")[0][:70], Path(auto_sub_path).name.split(".")[0][:70] + "_ip_fresdl_d.json" ) #TMP
+#     fuzz_ratio_ep_sub_data_l_d_json_path = os.path.join(CLIPS_DATA_DIR_PATH, Path(auto_sub_path).name.split(".")[0][:70], Path(auto_sub_path).name.split(".")[0][:70] + "_ip_fresdl_d.json" ) #TMP
 
-    print(f"Getting fuzz_ratio_ep_sub_data_l_d for {auto_sub_path=}...")
-    fuzz_ratio_ep_sub_data_l_d = _get_fuzz_ratio_ep_sub_data_l_d(auto_sub_fuzz_str, ssm, lang, method_key = SEARCH_METHOD_KEY__AUTO_SUB_FUZZ_LEN_BASED, partial_fuzz_str_len=partial_fuzz_str_len)
-    _write_fuzz_ratio_ep_sub_data_l_d_to_json(fuzz_ratio_ep_sub_data_l_d, fuzz_ratio_ep_sub_data_l_d_json_path)
+#     print(f"Getting fuzz_ratio_ep_sub_data_l_d for {auto_sub_path=}...")
+#     fuzz_ratio_ep_sub_data_l_d = _get_fuzz_ratio_ep_sub_data_l_d(auto_sub_fuzz_str, ssm, lang, method_key = SEARCH_METHOD_KEY__AUTO_SUB_FUZZ_LEN_BASED, partial_fuzz_str_len=partial_fuzz_str_len)
+#     _write_fuzz_ratio_ep_sub_data_l_d_to_json(fuzz_ratio_ep_sub_data_l_d, fuzz_ratio_ep_sub_data_l_d_json_path)
 
 
-    fuzz_ratio, ep_sub_data, eval_str = get_eval_of__fuzz_ratio_ep_sub_data_l_d(fuzz_ratio_ep_sub_data_l_d, ssm, lang, fuzz_ratio_ep_sub_data_l_d_json_path)
-    # print(f"{fuzz_ratio=}")
-    # print(f"{ep_sub_data=}")
-    # print(f"{eval_str=}")
-    return fuzz_ratio, ep_sub_data, eval_str
+#     fuzz_ratio, ep_sub_data, eval_str = get_eval_of__fuzz_ratio_ep_sub_data_l_d(fuzz_ratio_ep_sub_data_l_d, ssm, lang, fuzz_ratio_ep_sub_data_l_d_json_path)
+#     # print(f"{fuzz_ratio=}")
+#     # print(f"{ep_sub_data=}")
+#     # print(f"{eval_str=}")
+#     return fuzz_ratio, ep_sub_data, eval_str
 
 
 # def _search_method__init_partial_fuzz(auto_sub_path, auto_sub_fuzz_str, ssm, lang):
@@ -199,11 +199,11 @@ def _search_method__auto_sub_fuzz_len_based(auto_sub_path, auto_sub_fuzz_str, ss
  
 
 
-def _search_and_log(auto_sub_path, auto_sub_fuzz_str, ssm, lang, method_key):
+def _search_and_log(auto_sub_path, auto_sub_fuzz_str, ssm, lang, method_key, partial_fuzz_str_len = None):
     fuzz_ratio_ep_sub_data_l_d_json_path = os.path.join(CLIPS_DATA_DIR_PATH, Path(auto_sub_path).name.split(".")[0][:70], Path(auto_sub_path).name.split(".")[0][:70] + "_lb_fresdl_d.json" ) #TMP
 
     print(f"Getting fuzz_ratio_ep_sub_data_l_d for {auto_sub_path=}...")
-    fuzz_ratio_ep_sub_data_l_d = _get_fuzz_ratio_ep_sub_data_l_d(auto_sub_fuzz_str, ssm, lang, method_key)
+    fuzz_ratio_ep_sub_data_l_d = _get_fuzz_ratio_ep_sub_data_l_d(auto_sub_fuzz_str, ssm, lang, method_key, partial_fuzz_str_len)
     _write_fuzz_ratio_ep_sub_data_l_d_to_json(fuzz_ratio_ep_sub_data_l_d, fuzz_ratio_ep_sub_data_l_d_json_path)
     fuzz_ratio, ep_sub_data, eval_str = get_eval_of__fuzz_ratio_ep_sub_data_l_d(fuzz_ratio_ep_sub_data_l_d, ssm, lang, fuzz_ratio_ep_sub_data_l_d_json_path)
 
@@ -276,7 +276,8 @@ def get_real_episode_sub_data_from_auto_sub(auto_sub_path, ssm, lang):
             if ssm.get_min_fuzz_str_len_for_lang(lang) < partial_fuzz_str_len:
                 raise Exception(f"ERROR: {ssm.get_min_fuzz_str_len_for_lang(lang)=} (from episode sub {ssm.get_min_fuzz_str_len_ep_sub_data_lang(lang)}) can never be less than {partial_fuzz_str_len=}")
 
-            fuzz_ratio, ep_sub_data, eval_key = _search_method__auto_sub_fuzz_len_based(auto_sub_path, auto_sub_fuzz_str, ssm, lang, partial_fuzz_str_len)
+            # fuzz_ratio, ep_sub_data, eval_key = _search_and_log(auto_sub_path, auto_sub_fuzz_str, ssm, lang, partial_fuzz_str_len, method_key=SEARCH_METHOD_KEY__AUTO_SUB_FUZZ_LEN_BASED)
+            fuzz_ratio, ep_sub_data, eval_key, fuzz_ratio_ep_sub_data_l_d = _search_and_log(auto_sub_path, auto_sub_fuzz_str, ssm, lang, method_key=SEARCH_METHOD_KEY__AUTO_SUB_FUZZ_LEN_BASED, partial_fuzz_str_len=partial_fuzz_str_len)
             print(f"{fuzz_ratio=}")
             print(f"{ep_sub_data=}")
             print(f"{eval_key=}")
