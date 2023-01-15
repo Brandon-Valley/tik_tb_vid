@@ -205,61 +205,50 @@ def get_real_episode_sub_data_from_auto_sub(auto_sub_path, ssm, lang):
         print(f"{ep_sub_data=}")
         print(f"{eval_key=}")
 
+        # Evaluate results of search
         if eval_key == EVAL_KEY__SUCCESS:
             total_time = time.time() - start_time
             return fuzz_ratio, ep_sub_data, eval_key, total_time
-            
         # TODO SHOULD ADD SOMETHING HERE FOR EVAL_KEY__NO_CLEAR_WINNER - like if its just down to 2 subs
         elif eval_key == EVAL_KEY__NO_CLEAR_WINNER:
-            print(f"{eval_key=}")
-            pprint(fuzz_ratio_ep_sub_data_l_d)
-            # raise Exception("TMP TODO")
             print(f"Init predicted {search_method_key=} was wrong, made it through every ep without finding clear winner, changing search_method_key to try len based...")
             search_method_key = SEARCH_METHOD_KEY__AUTO_SUB_FUZZ_LEN_BASED
-
         else:
             print(f"Init predicted {search_method_key=} was wrong, made it through every ep without success, changing search_method_key to try len based...")
             search_method_key = SEARCH_METHOD_KEY__AUTO_SUB_FUZZ_LEN_BASED
 
-
-    print("hereeeeeee")
-
-
+    # For ^^ fails and shorter clips/auto_subs, chop up episode's total fuzz str into custom smaller chunks based on 
+    # (fuzz_str_len) num auto_sub chars, start with standard # times bigger than auto_sub's fuzz_str to chop things up
+    # with, if fail, keep reducing this until success or until chop sizes hit a constant min size and give up
     if search_method_key == SEARCH_METHOD_KEY__AUTO_SUB_FUZZ_LEN_BASED:
-        # print("print")
-        # raise Exception("TMP EXEP - Not imlemented yet")
-        # print( ("!!!!!!!!!!!! TODO !!!!!!!!!!TMP EXEP - Not imlemented yet")) # TODO
-        # best_fuzz_ratio, best_ep_sub_data = None, None # TODO
 
         init_partial_fuzz_str_len = len(auto_sub_fuzz_str) * NUM_TIMES_BIGGER_MIN_FUZZ_LEN_CAN_BE_FOR_INIT_PARTIAL_FUZZ_SEARCH_METHOD
-        print(f"{init_partial_fuzz_str_len=}")
 
         # for if got here from failed SEARCH_METHOD_KEY__INIT_PARTIAL_FUZZ and auto_sub_fuzz_str is very large
         if ssm.get_min_fuzz_str_len_for_lang(lang) < init_partial_fuzz_str_len:
             partial_fuzz_str_len = len(auto_sub_fuzz_str)
         else:
             partial_fuzz_str_len = init_partial_fuzz_str_len
-
-
         print(f"{partial_fuzz_str_len=}")
 
+        # keep reducing partial_fuzz_str_len until success or until chop sizes hit a constant min size and give up
         while (partial_fuzz_str_len >= len(auto_sub_fuzz_str) * MIN_TIMES_BIGGER_MIN_FUZZ_LEN_CAN_BE_UNTIL_GIVE_UP):
-
             if ssm.get_min_fuzz_str_len_for_lang(lang) < partial_fuzz_str_len:
                 raise Exception(f"ERROR: {ssm.get_min_fuzz_str_len_for_lang(lang)=} (from episode sub {ssm.get_min_fuzz_str_len_ep_sub_data_lang(lang)}) can never be less than {partial_fuzz_str_len=}")
 
-            # fuzz_ratio, ep_sub_data, eval_key = _search_and_log(auto_sub_path, auto_sub_fuzz_str, ssm, lang, partial_fuzz_str_len, method_key=SEARCH_METHOD_KEY__AUTO_SUB_FUZZ_LEN_BASED)
             fuzz_ratio, ep_sub_data, eval_key, fuzz_ratio_ep_sub_data_l_d = _search_and_log(auto_sub_path, auto_sub_fuzz_str, ssm, lang,
-                                                                                            method_key=SEARCH_METHOD_KEY__AUTO_SUB_FUZZ_LEN_BASED,
-                                                                                            partial_fuzz_str_len=partial_fuzz_str_len)
+                                                                                            method_key = SEARCH_METHOD_KEY__AUTO_SUB_FUZZ_LEN_BASED,
+                                                                                            partial_fuzz_str_len = partial_fuzz_str_len)
             print(f"{fuzz_ratio=}")
             print(f"{ep_sub_data=}")
             print(f"{eval_key=}")
+
             if eval_key == EVAL_KEY__SUCCESS:
                 break
             else:
                 partial_fuzz_str_len = int(partial_fuzz_str_len / 2)
 
+        # Evaluate results of search
         if eval_key != EVAL_KEY__SUCCESS:
             print(f"After fuzzy-searching every episode's subs, did not find a match for auto-sub, returning None: {eval_key=}...")
         else:
@@ -268,9 +257,7 @@ def get_real_episode_sub_data_from_auto_sub(auto_sub_path, ssm, lang):
         total_time = time.time() - start_time
         return fuzz_ratio, ep_sub_data, eval_key, total_time
 
-    print(f"{search_method_key=}")
-    print(f"{partial_fuzz_str_len=}")
-    raise Exception("SHOULD NEVER GET HERE")
+    raise Exception(f"SHOULD NEVER GET HERE - {search_method_key=}, {partial_fuzz_str_len=}")
 
 
 
