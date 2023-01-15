@@ -16,7 +16,7 @@ import pysubs2
 FUZZ_STR_DELIM = "\r"
 
 # LATER Could make things more efficient if found truly idea values for these
-NUM_TIMES_BIGGER_MIN_FUZZ_LEN_CAN_BE_FOR_INIT_PARTIAL_FUZZ_SEARCH_METHOD = 9 # Can change, picked this from lazy manual testing, 
+NUM_TIMES_BIGGER_MIN_FUZZ_LEN_CAN_BE_FOR_INIT_PARTIAL_FUZZ_SEARCH_METHOD = 9 # Can change, picked this from lazy manual testing,
 MIN_TIMES_BIGGER_MIN_FUZZ_LEN_CAN_BE_UNTIL_GIVE_UP = 4 # Can change, picked this from lazy manual testing
 
 SEARCH_METHOD_KEY__INIT_PARTIAL_FUZZ = "init_partial_fuzz_search_method"
@@ -45,11 +45,11 @@ def _get_best_ep_sub_partial_fuzz_ratio(ep_sub_data, auto_sub_fuzz_str, method_k
                                                                                     min_partial_fuzz_str_num_char = partial_fuzz_str_len,
                                                                                     min_overlap_char = len(auto_sub_fuzz_str))
         print(f"{len(partial_fuzz_str_l)=}")
-    
+
     print(f"{len(partial_fuzz_str_l)=}")
 
     for real_sub_partial_fuzz_str in partial_fuzz_str_l:
-        
+
         fuzz_ratio = fuzz.ratio(auto_sub_fuzz_str, real_sub_partial_fuzz_str)
 
         if fuzz_ratio > best_fuzz_ratio:
@@ -74,8 +74,8 @@ def _write_fuzz_ratio_ep_sub_data_l_d_to_json(fuzz_ratio_ep_sub_data_l_d, json_p
 
 
 def _get_fuzz_ratio_ep_sub_data_l_d(auto_sub_fuzz_str, ssm, lang, method_key, partial_fuzz_str_len = None):
-    """ 
-        For the given auto_sub_fuzz_str, go through every episode (in ssm), get fuzz_ratio, make dict of all these 
+    """
+        For the given auto_sub_fuzz_str, go through every episode (in ssm), get fuzz_ratio, make dict of all these
         fuzz_ratios as keys w/ value == list of all ep_sub_data objects that returned that fuzz ratio
           - This fuzz_ratio_ep_sub_data_l_d will be evaluated to find next step/best-match/etc.
     """
@@ -116,7 +116,7 @@ def get_eval_of__fuzz_ratio_ep_sub_data_l_d(fuzz_ratio_ep_sub_data_l_d, ssm, lan
         best_fuzz_ratio_ep_sub_data = max_fuzz_ratio_ep_sub_data_l[0]
         print(f"Success - Single ep_sub_data for highest {max_fuzz_ratio=} - {best_fuzz_ratio_ep_sub_data.get_season_episode_str()}, returning...")
         return max_fuzz_ratio, best_fuzz_ratio_ep_sub_data, EVAL_KEY__SUCCESS
-    
+
     # If all episode's real sub's partial_fuzz_strs' DID NOT give same fuzz ratio, but also no clear winner
     else:
         return None, None, EVAL_KEY__NO_CLEAR_WINNER
@@ -134,7 +134,7 @@ def _search_and_log(auto_sub_path, auto_sub_fuzz_str, ssm, lang, method_key, par
     fuzz_ratio, ep_sub_data, eval_str = get_eval_of__fuzz_ratio_ep_sub_data_l_d(fuzz_ratio_ep_sub_data_l_d, ssm, lang, fuzz_ratio_ep_sub_data_l_d_json_path)
 
     return fuzz_ratio, ep_sub_data, eval_str, fuzz_ratio_ep_sub_data_l_d
- 
+
 
 
 def _predict_search_method(auto_sub_fuzz_str, ssm, lang):
@@ -185,7 +185,7 @@ def get_real_episode_sub_data_from_auto_sub(auto_sub_path, ssm, lang):
             print(f"Init predicted {search_method_key=} was wrong, made it through every ep without success, changing search_method_key to try len based...")
             search_method_key = SEARCH_METHOD_KEY__AUTO_SUB_FUZZ_LEN_BASED
 
-    # For ^^ fails and shorter clips/auto_subs, chop up episode's total fuzz str into custom smaller chunks based on 
+    # For ^^ fails and shorter clips/auto_subs, chop up episode's total fuzz str into custom smaller chunks based on
     # (fuzz_str_len) num auto_sub chars, start with standard # times bigger than auto_sub's fuzz_str to chop things up
     # with, if fail, keep reducing this until success or until chop sizes hit a constant min size and give up
     if search_method_key == SEARCH_METHOD_KEY__AUTO_SUB_FUZZ_LEN_BASED:
@@ -247,6 +247,6 @@ if __name__ == "__main__":
 
     import get_init_mkvs_for_manual_edits
     get_init_mkvs_for_manual_edits.main()
-    print("End of Main") 
+    print("End of Main")
 
 
