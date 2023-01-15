@@ -2,7 +2,6 @@ from pprint import pprint
 import fuzz_common as fc
 import os
 from pathlib import Path
-import regex
 
 import re
 import time
@@ -15,13 +14,11 @@ from sms.logger import json_logger
 import pysubs2
 
 FUZZ_STR_DELIM = "\r"
-# NUM_TIMES_BIGGER_MIN_FUZZ_LEN_CAN_BE_FOR_INIT_PARTIAL_FUZZ_SEARCH_METHOD = 11 # TODO play with this?  11.95 minutes
-# NUM_TIMES_BIGGER_MIN_FUZZ_LEN_CAN_BE_FOR_INIT_PARTIAL_FUZZ_SEARCH_METHOD = 10 # TODO play with this?  11.95 minutes
-NUM_TIMES_BIGGER_MIN_FUZZ_LEN_CAN_BE_FOR_INIT_PARTIAL_FUZZ_SEARCH_METHOD = 9 # TODO play with this?  11.95 minutes
-MIN_TIMES_BIGGER_MIN_FUZZ_LEN_CAN_BE_UNTIL_GIVE_UP = 4 # TODO play with this?  11.95 minutes
-# NUM_TIMES_BIGGER_MIN_FUZZ_LEN_CAN_BE_FOR_INIT_PARTIAL_FUZZ_SEARCH_METHOD = 5 # TODO play with this? "16.55 minutes - 14 unknown
-# NUM_TIMES_BIGGER_MIN_FUZZ_LEN_CAN_BE_FOR_INIT_PARTIAL_FUZZ_SEARCH_METHOD = 2 # TODO play with this? ""20.95 minutes - 7 unknown
-# NUM_TIMES_BIGGER_MIN_FUZZ_LEN_CAN_BE_FOR_INIT_PARTIAL_FUZZ_SEARCH_METHOD = 4 # TODO play with this? " "19.25 minutes"
+
+# LATER Could make things more efficient if found truly idea values for these
+NUM_TIMES_BIGGER_MIN_FUZZ_LEN_CAN_BE_FOR_INIT_PARTIAL_FUZZ_SEARCH_METHOD = 9 # Can change, picked this from lazy manual testing, 
+MIN_TIMES_BIGGER_MIN_FUZZ_LEN_CAN_BE_UNTIL_GIVE_UP = 4 # Can change, picked this from lazy manual testing
+
 SEARCH_METHOD_KEY__INIT_PARTIAL_FUZZ = "init_partial_fuzz_search_method"
 SEARCH_METHOD_KEY__AUTO_SUB_FUZZ_LEN_BASED = "auto_sub_fuzz_len_based"
 
@@ -40,9 +37,6 @@ def _get_best_ep_sub_partial_fuzz_ratio(ep_sub_data, auto_sub_fuzz_str, method_k
     if method_key == SEARCH_METHOD_KEY__INIT_PARTIAL_FUZZ:
         partial_fuzz_str_l = ep_sub_data.get_default_partial_fuzz_str_l()
     elif method_key == SEARCH_METHOD_KEY__AUTO_SUB_FUZZ_LEN_BASED:
-        # OLD_partial_fuzz_str_num_char = len(auto_sub_fuzz_str) * NUM_TIMES_BIGGER_MIN_FUZZ_LEN_CAN_BE_FOR_INIT_PARTIAL_FUZZ_SEARCH_METHOD # TMP THIS CAN CHANGE!
-        # print(f"{OLD_partial_fuzz_str_num_char=}")#TMP REMOVE
-        # partial_fuzz_str_num_char = partial_fuzz_str_len # TMP THIS CAN CHANGE!
         ep_sub_total_fuzz_str = json_logger.read(ep_sub_data.total_fuzz_str_json_path)
         print(f"{len(ep_sub_total_fuzz_str)=}")
         print(f"{partial_fuzz_str_len=}")
@@ -132,7 +126,7 @@ def _search_and_log(auto_sub_path, auto_sub_fuzz_str, ssm, lang, method_key, par
 
     # LATER vv awful way of doing things
     # LATER also CLIPS_DATA is never cleared, should make this better
-    fuzz_ratio_ep_sub_data_l_d_json_path = os.path.join(CLIPS_DATA_DIR_PATH, Path(auto_sub_path).name.split(".")[0][:70], Path(auto_sub_path).name.split(".")[0][:70] + "_lb_fresdl_d.json" ) #TMP
+    fuzz_ratio_ep_sub_data_l_d_json_path = os.path.join(CLIPS_DATA_DIR_PATH, Path(auto_sub_path).name.split(".")[0][:70], Path(auto_sub_path).name.split(".")[0][:70] + "_lb_fresdl_d.json" )
 
     print(f"Getting fuzz_ratio_ep_sub_data_l_d for {auto_sub_path=}...")
     fuzz_ratio_ep_sub_data_l_d = _get_fuzz_ratio_ep_sub_data_l_d(auto_sub_fuzz_str, ssm, lang, method_key, partial_fuzz_str_len)
@@ -183,7 +177,7 @@ def get_real_episode_sub_data_from_auto_sub(auto_sub_path, ssm, lang):
         if eval_key == EVAL_KEY__SUCCESS:
             total_time = time.time() - start_time
             return fuzz_ratio, ep_sub_data, eval_key, total_time
-        # TODO SHOULD ADD SOMETHING HERE FOR EVAL_KEY__NO_CLEAR_WINNER - like if its just down to 2 subs
+        # LATER SHOULD ADD SOMETHING HERE FOR EVAL_KEY__NO_CLEAR_WINNER - like if its just down to 2 subs
         elif eval_key == EVAL_KEY__NO_CLEAR_WINNER:
             print(f"Init predicted {search_method_key=} was wrong, made it through every ep without finding clear winner, changing search_method_key to try len based...")
             search_method_key = SEARCH_METHOD_KEY__AUTO_SUB_FUZZ_LEN_BASED
