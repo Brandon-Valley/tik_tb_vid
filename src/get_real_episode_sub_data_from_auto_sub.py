@@ -29,11 +29,11 @@ EVAL_KEY__SUCCESS = "EVAL_KEY__SUCCESS"
 EVAL_KEY__NO_CLEAR_WINNER = "EVAL_KEY__NO_CLEAR_WINNER"
 EVAL_KEY__ALL_FR_SAME = "EVAL_KEY__ALL_FR_SAME"
 
-
 CLIPS_DATA_DIR_PATH = "C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/CLIPS_DATA/"
 
+
 def _get_best_ep_sub_partial_fuzz_ratio(ep_sub_data, auto_sub_fuzz_str, method_key, partial_fuzz_str_len=None):
-    print(f"in _get_best_ep_sub_partial_fuzz_ratio() - {method_key=}")
+    # print(f"in _get_best_ep_sub_partial_fuzz_ratio() - {method_key=}")
     best_fuzz_ratio = 0
     best_real_sub_partial_fuzz_str = None
 
@@ -81,29 +81,10 @@ def _get_best_ep_sub_partial_fuzz_ratio(ep_sub_data, auto_sub_fuzz_str, method_k
 
     return best_fuzz_ratio, best_real_sub_partial_fuzz_str
 
-    
-
-def _predict_search_method(auto_sub_fuzz_str, ssm, lang):
-    print("in _predict_search_method()")
-    min_fuzz_str_len = ssm.get_min_fuzz_str_len_for_lang(lang)
-    print(f"$$$ {len(auto_sub_fuzz_str)=}")
-    print(f"$$$ {min_fuzz_str_len=}")
-    print(f"$$$ {min_fuzz_str_len / len(auto_sub_fuzz_str)=}")
-    print(f"$$$ {int(min_fuzz_str_len / len(auto_sub_fuzz_str))=}")
-    print(f"$$$ {min_fuzz_str_len - len(auto_sub_fuzz_str)=}")
-
-    min_fuzz_len_to_auto_sub_fuzz_len_ratio = min_fuzz_str_len / len(auto_sub_fuzz_str)
-
-    if min_fuzz_len_to_auto_sub_fuzz_len_ratio < NUM_TIMES_BIGGER_MIN_FUZZ_LEN_CAN_BE_FOR_INIT_PARTIAL_FUZZ_SEARCH_METHOD:
-        return SEARCH_METHOD_KEY__INIT_PARTIAL_FUZZ
-    else:
-        return SEARCH_METHOD_KEY__AUTO_SUB_FUZZ_LEN_BASED
-
-
-
 
 def _write_fuzz_ratio_ep_sub_data_l_d_to_json(fuzz_ratio_ep_sub_data_l_d, json_path):
-    fsu.delete_if_exists(json_path)#TMP
+    # LATER need to init here b/c not deleting CLIPS_DATA ever, should fix this
+    fsu.delete_if_exists(json_path)
     Path(json_path).parent.mkdir(parents=True, exist_ok=True)
 
     json_ser_d = {}
@@ -116,6 +97,11 @@ def _write_fuzz_ratio_ep_sub_data_l_d_to_json(fuzz_ratio_ep_sub_data_l_d, json_p
 
 
 def _get_fuzz_ratio_ep_sub_data_l_d(auto_sub_fuzz_str, ssm, lang, method_key, partial_fuzz_str_len = None):
+    """ 
+        For the given auto_sub_fuzz_str, go through every episode (in ssm), get fuzz_ratio, make dict of all these 
+        fuzz_ratios as keys w/ value == list of all ep_sub_data objects that returned that fuzz ratio
+          - This fuzz_ratio_ep_sub_data_l_d will be evaluated to find next step/best-match/etc.
+    """
     ep_sub_data_l = ssm.get_episode_sub_data_l_for_lang(lang)
 
     print(f"{len(ep_sub_data_l)=}")
@@ -126,7 +112,6 @@ def _get_fuzz_ratio_ep_sub_data_l_d(auto_sub_fuzz_str, ssm, lang, method_key, pa
         print(f"  Checking {ep_sub_data.get_season_episode_str()}...")
 
         ep_sub_fuzz_ratio, ep_sub_best_partial_fuzz_str = _get_best_ep_sub_partial_fuzz_ratio(ep_sub_data, auto_sub_fuzz_str, method_key, partial_fuzz_str_len)
-        # print(f"{ep_sub_fuzz_ratio=}")
 
         if ep_sub_fuzz_ratio in fuzz_ratio_ep_sub_data_l_d.keys():
             fuzz_ratio_ep_sub_data_l_d[ep_sub_fuzz_ratio].append(ep_sub_data)
@@ -173,6 +158,19 @@ def _search_and_log(auto_sub_path, auto_sub_fuzz_str, ssm, lang, method_key, par
 
     return fuzz_ratio, ep_sub_data, eval_str, fuzz_ratio_ep_sub_data_l_d
  
+
+
+def _predict_search_method(auto_sub_fuzz_str, ssm, lang):
+    print("in _predict_search_method()")
+    min_fuzz_str_len = ssm.get_min_fuzz_str_len_for_lang(lang)
+
+    min_fuzz_len_to_auto_sub_fuzz_len_ratio = min_fuzz_str_len / len(auto_sub_fuzz_str)
+
+    if min_fuzz_len_to_auto_sub_fuzz_len_ratio < NUM_TIMES_BIGGER_MIN_FUZZ_LEN_CAN_BE_FOR_INIT_PARTIAL_FUZZ_SEARCH_METHOD:
+        return SEARCH_METHOD_KEY__INIT_PARTIAL_FUZZ
+    else:
+        return SEARCH_METHOD_KEY__AUTO_SUB_FUZZ_LEN_BASED
+
 
 
 # def get_real_episode_sub_data_from_auto_sub(auto_sub_path, ssm, lang, min_real_sub_total_fuzz_str_len):
