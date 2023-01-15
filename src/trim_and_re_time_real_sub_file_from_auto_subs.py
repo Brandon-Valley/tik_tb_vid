@@ -14,7 +14,6 @@ from sms.logger import txt_logger
 import vid_edit_utils as veu
 import subtitle_utils as su
 from pathlib import Path
-# from fuzzysearch import find_near_matches
 
 from fuzzywuzzy import fuzz
 
@@ -23,22 +22,8 @@ import time
 
 FUZZ_STR_DELIM = ' '
 
-# def _subs_to_subs_fuzz_str(in_subs):
-#     subs_fuzz_str = ""
-#     for line in in_subs:
-#         subs_fuzz_str = subs_fuzz_str + line.text + FUZZ_STR_DELIM
-#     return subs_fuzz_str
-
-# def _get_fuzzy_search_match_from_fuzz_strs(real_subs_fuzz_str, auto_subs_fuzz_str):
-#     # search for 'PATTERN' with a maximum Levenshtein Distance of 1
-#     # match = find_near_matches('PATTERN', '---PATERN---', max_l_dist=1)
-#     match = find_near_matches(auto_subs_fuzz_str, real_subs_fuzz_str, max_l_dist=1)
-#     print(f"{match=}")
-#     # [Match(start=3, end=9, dist=1, matched="PATERN")]
-#     return match
 
 def _get_and_check_real_and_auto_subs(real_sub_file_path, auto_sub_file_path):
-    # real_subs = pysubs2.load(real_sub_file_path, encoding="utf-8")
     real_subs = pysubs2.load(real_sub_file_path, encoding="latin1")
     auto_subs = pysubs2.load(auto_sub_file_path, encoding="latin1")
 
