@@ -33,47 +33,30 @@ CLIPS_DATA_DIR_PATH = "C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/CLIPS_DATA
 
 
 def _get_best_ep_sub_partial_fuzz_ratio(ep_sub_data, auto_sub_fuzz_str, method_key, partial_fuzz_str_len=None):
-    # print(f"in _get_best_ep_sub_partial_fuzz_ratio() - {method_key=}")
     best_fuzz_ratio = 0
     best_real_sub_partial_fuzz_str = None
-
-    # print(f"{ep_sub_data=}")
-    # pprint(ep_sub_data.partial_fuzz_str_l) #TMP
-
-    # exit()
-    # json_logger.write(ep_sub_data.partial_fuzz_str_l, "C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/tmp_partial.json")#TMP
 
     # get partial_fuzz_str_l based on method_key
     if method_key == SEARCH_METHOD_KEY__INIT_PARTIAL_FUZZ:
         partial_fuzz_str_l = ep_sub_data.get_default_partial_fuzz_str_l()
     elif method_key == SEARCH_METHOD_KEY__AUTO_SUB_FUZZ_LEN_BASED:
-        OLD_partial_fuzz_str_num_char = len(auto_sub_fuzz_str) * NUM_TIMES_BIGGER_MIN_FUZZ_LEN_CAN_BE_FOR_INIT_PARTIAL_FUZZ_SEARCH_METHOD # TMP THIS CAN CHANGE!
-        print(f"{OLD_partial_fuzz_str_num_char=}")#TMP REMOVE
+        # OLD_partial_fuzz_str_num_char = len(auto_sub_fuzz_str) * NUM_TIMES_BIGGER_MIN_FUZZ_LEN_CAN_BE_FOR_INIT_PARTIAL_FUZZ_SEARCH_METHOD # TMP THIS CAN CHANGE!
+        # print(f"{OLD_partial_fuzz_str_num_char=}")#TMP REMOVE
         # partial_fuzz_str_num_char = partial_fuzz_str_len # TMP THIS CAN CHANGE!
         ep_sub_total_fuzz_str = json_logger.read(ep_sub_data.total_fuzz_str_json_path)
-        # partial_fuzz_str_l = ep_sub_data.get_custom_partial_fuzz_str_l(partial_fuzz_str_num_char, len(auto_sub_fuzz_str))
         print(f"{len(ep_sub_total_fuzz_str)=}")
         print(f"{partial_fuzz_str_len=}")
         print(f"{len(auto_sub_fuzz_str)=}")
         partial_fuzz_str_l = fc.get_partial_fuzz_str_l_from_total_fuzz_str(total_fuzz_str = ep_sub_total_fuzz_str,
-                                                                                    # min_partial_fuzz_str_num_char = partial_fuzz_str_num_char,
                                                                                     min_partial_fuzz_str_num_char = partial_fuzz_str_len,
                                                                                     min_overlap_char = len(auto_sub_fuzz_str))
-        # partial_fuzz_str_l = fc.get_partial_fuzz_str_l_from_total_fuzz_str(partial_fuzz_str_num_char, len(auto_sub_fuzz_str))
-        # print(f"{partial_fuzz_str_l=}")
         print(f"{len(partial_fuzz_str_l)=}")
-        # print("Hereeeeeeeeeeeeeeeee")
-        # exit()
     
     print(f"{len(partial_fuzz_str_l)=}")
 
     for real_sub_partial_fuzz_str in partial_fuzz_str_l:
         
         fuzz_ratio = fuzz.ratio(auto_sub_fuzz_str, real_sub_partial_fuzz_str)
-        # print(f"{auto_sub_fuzz_str=}")
-        # print(f"{real_sub_partial_fuzz_str=}")
-        # print(f"{fuzz_ratio=}")
-        # exit()
 
         if fuzz_ratio > best_fuzz_ratio:
             best_fuzz_ratio = fuzz_ratio
