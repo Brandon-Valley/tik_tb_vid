@@ -1,4 +1,5 @@
 # TODO make submodule and combine with my_movie_tools and Youtube_utils, thats probably it but check for more
+from pprint import pprint
 from langdetect import detect
 
 
@@ -99,6 +100,21 @@ def combine__mp4__and__sub_path_lang_dl__into_mkv(in_mp4_path, sub_path_lang_dl,
     
     print(f"Running {cmd=}...\n")
     subprocess.call(cmd, shell=True)
+
+
+def combine__mp4__and__sub_path_l__into_mkv__set_file_name_as_lang(in_mp4_path, sub_path_l, out_mkv_path):
+    sub_path_lang_dl = []
+
+    for sub_path in sub_path_l:
+        sub_file_name = Path(sub_path).name
+
+        sub_path_lang_dl.append({
+            "path" : sub_path,
+            "lang" : sub_file_name.replace(".", "_") # if this is too long might show up as [Fam] in player
+        })
+
+    # pprint(sub_path_lang_dl)
+    combine__mp4__and__sub_path_lang_dl__into_mkv(in_mp4_path, sub_path_lang_dl, out_mkv_path)
 
 
 def make_single_embedded_mkv_sub_show_by_default(mkv_path):
@@ -216,22 +232,25 @@ if __name__ == "__main__":
     sub_file_l = ["C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en_s1_e1and2/s10/episode 5/Family.Guy.S10E05.HDTV.XviD-LOL.srt",
     "C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en_s1_e1and2/s10/episode 5/Family.Guy.S10E05.HDTV.XviD-LOL.HI.srt"]
 
-    sub_path_lang_dl = [
-                            {
-                                "path": "C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en_s1_e1and2/s10/episode 5/Family.Guy.S10E05.HDTV.XviD-LOL.srt",
-                                "lang": "en"
-                            },
-                            {
-                                "path": "C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en_s1_e1and2/s10/episode 5/Family.Guy.S10E05.HDTV.XviD-LOL.HI.srt",
-                                "lang": "en2"
-                            },
-                        ]
+    # sub_path_lang_dl = [
+    #                         {
+    #                             "path": "C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en_s1_e1and2/s10/episode 5/Family.Guy.S10E05.HDTV.XviD-LOL.srt",
+    #                             "lang": "en"
+    #                         },
+    #                         {
+    #                             "path": "C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en_s1_e1and2/s10/episode 5/Family.Guy.S10E05.HDTV.XviD-LOL.HI.srt",
+    #                             "lang": "en2"
+    #                         },
+    #                     ]
 
 
 
     out_mkv_path = "C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/Family_Guy__TBS__alcho_and_pilot__SUB_SET_TEST/Family_Guy__Back_To_The_Pilot__Clip____TBS/Family_Guy__Back_To_The_Pilot__Clip____TBS.mkv"
 
-    combine__mp4__and__sub_path_lang_dl__into_mkv(in_vid_path, sub_path_lang_dl, out_mkv_path)
+    # combine__mp4__and__sub_path_lang_dl__into_mkv(in_vid_path, sub_path_lang_dl, out_mkv_path)
+
+
+    combine__mp4__and__sub_path_l__into_mkv__set_file_name_as_lang(in_vid_path, sub_file_l, out_mkv_path)
 
 
     # remove_advertising_from_sub_file("C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en_s5_e17/s05/episode 17/Modern.Family.S05E17.720p.WEB-DL.DD5.1.H.264-HWD.en.srt")
