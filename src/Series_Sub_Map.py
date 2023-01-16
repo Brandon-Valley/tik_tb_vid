@@ -42,7 +42,9 @@ class Episode_Sub_Data:
         self._set_series_name_match_l()
 
         if load_method_str == "many_of_one_lang":
-            self.sub_file_path_l = fsu.get_dir_content_l(self.episode_subs_dir_path, "file")
+            # self.sub_file_path_l = fsu.get_dir_content_l(self.episode_subs_dir_path, "file")
+            self.sub_file_path_l = self._get_sorted_sub_file_path_l()
+            pprint(self.sub_file_path_l)
             self.main_sub_file_path = self._get_main_sub_file_path()
 
             if self.main_sub_file_path != None:
@@ -162,8 +164,8 @@ class Episode_Sub_Data:
         # su.sub_file_readable_srt(sub_file_path)
 
 
-    def _get_main_sub_file_path(self):
-        print(f"{self.get_season_episode_str()} - Getting main_sub_file_path...")
+    def _get_sorted_sub_file_path_l(self):
+        print(f"{self.get_season_episode_str()} - in _get_sorted_sub_file_path_l()...")
 
         def _file_name_contains_series_name(file_path):
             for series_name_match_str in self.series_name_match_str_set:
@@ -177,38 +179,92 @@ class Episode_Sub_Data:
                     return True
             return False
 
-        # Default to picking sub with largest file size
+        sorted_sub_file_path_l = []
+        unsorted_sub_file_path_l = fsu.get_dir_content_l(self.episode_subs_dir_path, "file")
+
+        # Default to picking sub with smallest file size
         #  - # lines might be better but file size is WAY faster
-        # sub_file_path_l_most_lines_first = sorted(self.sub_file_path_l,key=os.path.getsize, reverse=True)
-        sub_file_path_l_most_lines_first = sorted(self.sub_file_path_l,key=os.path.getsize, reverse=False) # FIXME seems like keeping this, now picks smallest file, change doc !!!!!!!!!!!!!!!!
+        sub_file_path_l_smallest_file_first = sorted(unsorted_sub_file_path_l,key=os.path.getsize, reverse=False)
         
-        # Pick largest file that has the series name and no bad strings in its filename
+        # Pick smallest file that has the series name and no bad strings in its filename
         # - Don't want to be fooled by subs for wrong show getting mixed-in
         # - Also dont want hearing impaired or directors comment
-        for sub_file_path in sub_file_path_l_most_lines_first:
+        for sub_file_path in sub_file_path_l_smallest_file_first[:]:
             if _file_name_contains_series_name(sub_file_path) and not _file_name_contains_any_bad_str(sub_file_path):
-                return sub_file_path
+                sorted_sub_file_path_l.append(sub_file_path)
+                sub_file_path_l_smallest_file_first.remove(sub_file_path)
 
-        # If none of above exist, pick the largest sub_file with the series name in its filename
+        # If none of above exist, pick the smallest sub_file with the series name in its filename
         # - Don't want to be fooled by subs for wrong show getting mixed-in
         # - Choose having series name over not having any bad strings b/c while bad strings are bad,
         #   they are very uncommon and might produce a match but anything without series name in 
         #   file name might be a sub for wrong series that got mixed-in.
-        for sub_file_path in sub_file_path_l_most_lines_first:
+        for sub_file_path in sub_file_path_l_smallest_file_first[:]:
             if _file_name_contains_series_name(sub_file_path):
-                return sub_file_path
+                sorted_sub_file_path_l.append(sub_file_path)
+                sub_file_path_l_smallest_file_first.remove(sub_file_path)
 
-        # If none of above exist, pick the largest sub_file without any bad strings in filename
-        for sub_file_path in sub_file_path_l_most_lines_first:
+        # If none of above exist, pick the smallest sub_file without any bad strings in filename
+        for sub_file_path in sub_file_path_l_smallest_file_first[:]:
             if not _file_name_contains_any_bad_str(sub_file_path):
-                return sub_file_path
+                sorted_sub_file_path_l.append(sub_file_path)
+                sub_file_path_l_smallest_file_first.remove(sub_file_path)
 
-        # If none of above exist, just just pick largest file (if any exist)
-        if len(sub_file_path_l_most_lines_first) > 0:
-            return sub_file_path_l_most_lines_first[0]
+        # If none of above exist, just just pick smallest file (if any exist)
+        for sub_file_path in sub_file_path_l_smallest_file_first[:]:
+            sorted_sub_file_path_l.append(sub_file_path)
+            sub_file_path_l_smallest_file_first.remove(sub_file_path)
 
-        # if self.sub_file_path_l is empty, return None
-        return None
+        return sorted_sub_file_path_l
+
+
+    # def _get_main_sub_file_path(self):
+    #     print(f"{self.get_season_episode_str()} - Getting main_sub_file_path...")
+
+    #     def _file_name_contains_series_name(file_path):
+    #         for series_name_match_str in self.series_name_match_str_set:
+    #             if Path(file_path).name.__contains__(series_name_match_str):
+    #                 return True
+    #         return False
+
+    #     def _file_name_contains_any_bad_str(file_path):
+    #         for bad_str in BAD_SUB_FILENAME_STR_L:
+    #             if str(file_path).lower().__contains__(bad_str.lower()):
+    #                 return True
+    #         return False
+
+    #     # Default to picking sub with largest file size
+    #     #  - # lines might be better but file size is WAY faster
+    #     # sub_file_path_l_most_lines_first = sorted(self.sub_file_path_l,key=os.path.getsize, reverse=True)
+    #     sub_file_path_l_most_lines_first = sorted(self.sub_file_path_l,key=os.path.getsize, reverse=False) # FIXME seems like keeping this, now picks smallest file, change doc !!!!!!!!!!!!!!!!
+        
+    #     # Pick largest file that has the series name and no bad strings in its filename
+    #     # - Don't want to be fooled by subs for wrong show getting mixed-in
+    #     # - Also dont want hearing impaired or directors comment
+    #     for sub_file_path in sub_file_path_l_most_lines_first:
+    #         if _file_name_contains_series_name(sub_file_path) and not _file_name_contains_any_bad_str(sub_file_path):
+    #             return sub_file_path
+
+    #     # If none of above exist, pick the largest sub_file with the series name in its filename
+    #     # - Don't want to be fooled by subs for wrong show getting mixed-in
+    #     # - Choose having series name over not having any bad strings b/c while bad strings are bad,
+    #     #   they are very uncommon and might produce a match but anything without series name in 
+    #     #   file name might be a sub for wrong series that got mixed-in.
+    #     for sub_file_path in sub_file_path_l_most_lines_first:
+    #         if _file_name_contains_series_name(sub_file_path):
+    #             return sub_file_path
+
+    #     # If none of above exist, pick the largest sub_file without any bad strings in filename
+    #     for sub_file_path in sub_file_path_l_most_lines_first:
+    #         if not _file_name_contains_any_bad_str(sub_file_path):
+    #             return sub_file_path
+
+    #     # If none of above exist, just just pick largest file (if any exist)
+    #     if len(sub_file_path_l_most_lines_first) > 0:
+    #         return sub_file_path_l_most_lines_first[0]
+
+    #     # if self.sub_file_path_l is empty, return None
+    #     return None
 
 
     def _set_series_name_match_l(self):
