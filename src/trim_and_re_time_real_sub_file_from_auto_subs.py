@@ -145,7 +145,6 @@ def _make_final_vid_trimmed_re_timed_sub_from_real_sub(out_sub_path, clip_dir_da
 
     # This will throw warning, this is normal:  WARNING: low quality of fit. Wrong subtitle file?
     # This happens b/c did not trim out the first part of re-timed srt which is all set to 0 (like the theme) and did not trim end
-    print(f">>Syncing subs for {real_sub_path=}...")
     su.sync_subs_with_vid(vid_path     = clip_dir_data.mp4_path,
                           in_sub_path  = tmp_ms_shifted_sub_path,
                           out_sub_path = tmp_synced_ms_shifted_sub_path)

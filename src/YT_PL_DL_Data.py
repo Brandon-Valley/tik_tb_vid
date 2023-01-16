@@ -1,15 +1,19 @@
+
 import os
 from pathlib import Path
 from sms.file_system_utils import file_system_utils as fsu
-
+from sms.logger import json_logger
+import fuzz_common
 class Clip_Dir_Data:
     mp4_path = False
     auto_sub_path = False
+    fuzz_str_len = False
 
     def __init__(self, clip_dir_path, pl_data_dir_path):
         self.clip_dir_path = clip_dir_path
         self.clip_name = Path(clip_dir_path).name
         self.data_dir_path = os.path.join(pl_data_dir_path, self.clip_name)
+        self.fuzz_str_json_path = os.path.join(self.data_dir_path, "fuzz_str.json")
 
         fsu.delete_if_exists(self.data_dir_path)
         Path(self.data_dir_path).mkdir(parents=True, exist_ok=True)
@@ -17,6 +21,17 @@ class Clip_Dir_Data:
         self._set_mp4_and_auto_sub_paths()
 
         # print("end of init")
+
+
+    def get_auto_sub_fuzz_str(self):
+        return json_logger.read(self.fuzz_str_json_path)
+
+    def write_auto_sub_fuzz_str_to_json_if_needed(self):
+        if self.auto_sub_path != None:
+            fuzz_str = fuzz_common.get_fuzz_str_from_sub_path(self.auto_sub_path)
+            self.fuzz_str_len = len(fuzz_str)
+            json_logger.write(fuzz_str, self.fuzz_str_json_path)
+
 
     def get_final_vid_sub_path(self, sub_path, sub_num):
         return os.path.join(self.data_dir_path, f"f{sub_num}_{Path(sub_path).name}")
@@ -67,9 +82,18 @@ class YT_PL_DL_Data:
         fsu.delete_if_exists(pl_data_dir_path)
         Path(pl_data_dir_path).mkdir(parents=True, exist_ok=True)
 
+        self.max_fuzz_str_len = 0
+
         clip_dir_path_l = fsu.get_dir_content_l(in_dir_path, "dir")
         for clip_dir_path in clip_dir_path_l:
             new_clip_dir_data = Clip_Dir_Data(clip_dir_path, self.pl_data_dir_path)
+
+            # self.max_fuzz_str_len
+            new_clip_dir_data.write_auto_sub_fuzz_str_to_json_if_needed()
+            if new_clip_dir_data.fuzz_str_len > self.max_fuzz_str_len:
+                self.max_fuzz_str_len = new_clip_dir_data.fuzz_str_len
+
+
             self.clip_dir_data_l.append(new_clip_dir_data)
 
 

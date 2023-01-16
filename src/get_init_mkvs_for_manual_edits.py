@@ -184,17 +184,7 @@ def main():
     # tmp_ssm_for_cleaning.load_lang(SERIES_SUB_EN_DIR_PATH, LANG)
     # tmp_ssm_for_cleaning.clean_subs_after_fresh_download(LANG)
     # exit()
- 
-    # Init std subtitles for whole series data
-    ssm = Series_Sub_map()
-    ssm.load_lang(SERIES_SUB_EN_DIR_PATH, LANG)
-    ssm.write_log_json(SSM_LOG_JSON_PATH)
-    ssm.write_stats_json(SSM_STATS_JSON_PATH)
-    # min_real_sub_num_char, max_real_sub_num_char = ssm.get_min_and_max_episode_fuzz_str_len(LANG)
-    
-    if ssm.get_num_episodes_in_lang == 0:
-        raise Exception(f"ERROR: ssm.get_num_episodes_in_lang == 0, this means something is wrong with loading ssm from {SERIES_SUB_EN_DIR_PATH=} in {LANG=}")
-    print(f"{ssm.get_num_episodes_in_lang=}") 
+
 
     # TODO download yt playlist with youtube_utils.dl_yt_playlist__fix_sub_times_convert_to__mp4_srt()
     # Init std youtube playlist download data
@@ -209,6 +199,20 @@ def main():
     # yt_pl_dl_dir_path = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "Family_Guy___TBS__google_earth_test__and__pilot")
     # yt_pl_dl_dir_path = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "Family_Guy___TBS__google_earth_test")
     yt_pl_dl_dir_data = YT_PL_DL_Data(yt_pl_dl_dir_path, PL_DATA_DIR_PATH)
+    print(f"{yt_pl_dl_dir_data.max_fuzz_str_len=}")
+ 
+    # Init std subtitles for whole series data
+    ssm = Series_Sub_map()
+    ssm.load_lang(SERIES_SUB_EN_DIR_PATH, LANG, yt_pl_dl_dir_data.max_fuzz_str_len)
+    ssm.write_log_json(SSM_LOG_JSON_PATH)
+    ssm.write_stats_json(SSM_STATS_JSON_PATH)
+    # min_real_sub_num_char, max_real_sub_num_char = ssm.get_min_and_max_episode_fuzz_str_len(LANG)
+    
+    if ssm.get_num_episodes_in_lang == 0:
+        raise Exception(f"ERROR: ssm.get_num_episodes_in_lang == 0, this means something is wrong with loading ssm from {SERIES_SUB_EN_DIR_PATH=} in {LANG=}")
+    print(f"{ssm.get_num_episodes_in_lang=}") 
+
+
     run_log_l = []
 
     for clip_dir_data in yt_pl_dl_dir_data.clip_dir_data_l:
