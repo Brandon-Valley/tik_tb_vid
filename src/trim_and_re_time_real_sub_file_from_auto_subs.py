@@ -1,4 +1,5 @@
-
+from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import wait
 from collections import namedtuple
 from pprint import pprint
 import re
@@ -174,18 +175,15 @@ def _get_best_match_non_main_subs_line(best_match_auto_sub_line, non_main_subs):
 
 
 def _make_non_main_final_vid_subs__and__get_final_vid_sub_path_l(main_final_vid_sub_path, clip_dir_data, ep_sub_data, best_match_auto_sub_line):
-    final_vid_sub_path_l = [main_final_vid_sub_path]
-
-    print(f"{len(ep_sub_data.non_main_sub_file_path_l)=}")
-
-    for non_main_sub_num, non_main_sub_path in enumerate(ep_sub_data.non_main_sub_file_path_l):
+    def _single_thread_non_main_final_vid_subs(non_main_final_vid_sub_path, non_main_sub_path, best_match_auto_sub_line, clip_dir_data):
+        print(f"in _single_thread_non_main_final_vid_subs() - {non_main_final_vid_sub_path=}")
         # get best_match_non_main_subs_line
         non_main_subs = pysubs2.load(non_main_sub_path, encoding="latin1")
         best_match_non_main_subs_line = _get_best_match_non_main_subs_line(best_match_auto_sub_line, non_main_subs)
         print(best_match_non_main_subs_line.text)
 
 
-        non_main_final_vid_sub_path = clip_dir_data.get_final_vid_sub_path(non_main_sub_path, non_main_sub_num + 1)
+        # non_main_final_vid_sub_path = clip_dir_data.get_final_vid_sub_path(non_main_sub_path, non_main_sub_num + 1)
         print(f"{non_main_final_vid_sub_path=}")
 
         # LATER thread this? syncing tipples runtime
@@ -195,8 +193,29 @@ def _make_non_main_final_vid_subs__and__get_final_vid_sub_path_l(main_final_vid_
                                                            real_subs                = non_main_subs,
                                                            best_match_auto_sub_line = best_match_auto_sub_line,
                                                            best_match_real_sub_line = best_match_non_main_subs_line)
-        final_vid_sub_path_l.append(non_main_final_vid_sub_path)
+        # final_vid_sub_path_l.append(non_main_final_vid_sub_path)
 
+
+
+    final_vid_sub_path_l = [main_final_vid_sub_path]
+
+    print(f"{len(ep_sub_data.non_main_sub_file_path_l)=}")
+    
+    # start the thread pool
+    with ThreadPoolExecutor(4) as executor:
+        futures = []
+        for non_main_sub_num, non_main_sub_path in enumerate(ep_sub_data.non_main_sub_file_path_l):
+            non_main_final_vid_sub_path = clip_dir_data.get_final_vid_sub_path(non_main_sub_path, non_main_sub_num + 1)
+            final_vid_sub_path_l.append(non_main_final_vid_sub_path)
+            # submit tasks and collect futures
+            futures = [executor.submit(_single_thread_non_main_final_vid_subs, non_main_final_vid_sub_path, non_main_sub_path, best_match_auto_sub_line, clip_dir_data)]
+
+        # wait for all tasks to complete
+        print('Waiting for tasks to complete...')
+        wait(futures)
+        print('All tasks are done!')
+
+    print(f"{final_vid_sub_path_l=}")
     return final_vid_sub_path_l
 
 
