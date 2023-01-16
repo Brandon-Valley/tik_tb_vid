@@ -79,7 +79,7 @@ class Episode_Sub_Data:
     def _create_and_write__partial_fuzz_str_l__to_json(self, min_total_fuzz_str_len, max_clip_fuzz_str_len):
         total_fuzz_str = json_logger.read(self.total_fuzz_str_json_path)
         partial_fuzz_str_l = fuzz_common.get_partial_fuzz_str_l_from_total_fuzz_str(total_fuzz_str, min_total_fuzz_str_len,
-        min_overlap_char = max_clip_fuzz_str_len) # FIX make this max autosub size!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        min_overlap_char = max_clip_fuzz_str_len)
         print(f"      {self.get_season_episode_str()} - Writing partial_fuzz_str_l to: {self.partial_fuzz_str_l_json_path}...")
         json_logger.write(partial_fuzz_str_l, self.partial_fuzz_str_l_json_path)
 
