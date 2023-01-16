@@ -45,9 +45,6 @@ class Episode_Sub_Data:
             self.sub_file_path_l = fsu.get_dir_content_l(self.episode_subs_dir_path, "file")
             self.main_sub_file_path = self._get_main_sub_file_path()
 
-            print(f"%%%%%%%%%%%%%%{self.sub_file_path_l=}")
-            print(f"%%%%%%%%%%%%%%{len(self.sub_file_path_l)=}")
-
             if self.main_sub_file_path != None:
                 self.non_main_sub_file_path_l = self.sub_file_path_l
                 self.non_main_sub_file_path_l.remove(self.main_sub_file_path)
