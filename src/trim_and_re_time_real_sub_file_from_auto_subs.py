@@ -219,11 +219,17 @@ def _make_non_main_final_vid_subs__and__get_final_vid_sub_path_l(main_final_vid_
         print(best_match_non_main_subs_line.text)
         
 
-        non_main_final_vid_sub_path = clip_dir_data.get_final_vid_sub_path(ep_sub_data.main_sub_file_path, 0)
+        non_main_final_vid_sub_path = clip_dir_data.get_final_vid_sub_path(non_main_sub_path, non_main_sub_num)
         print(f"{non_main_final_vid_sub_path=}")
         
-        # _make_final_vid_trimmed_re_timed_sub_from_real_sub(main_final_vid_sub_path, clip_dir_data, ep_sub_data.main_sub_file_path, real_subs, best_match_auto_sub_line, best_match_real_sub_line)
-
+        # _make_final_vid_trimmed_re_timed_sub_from_real_sub(non_main_final_vid_sub_path, clip_dir_data, ep_sub_data.main_sub_file_path, real_subs, best_match_auto_sub_line, best_match_real_sub_line)
+        _make_final_vid_trimmed_re_timed_sub_from_real_sub(out_sub_path             = non_main_final_vid_sub_path,
+                                                           clip_dir_data            = clip_dir_data,
+                                                           real_sub_path            = non_main_sub_path,
+                                                           real_subs                = non_main_subs,
+                                                           best_match_auto_sub_line = best_match_auto_sub_line,
+                                                           best_match_real_sub_line = best_match_non_main_subs_line)
+        final_vid_sub_path_l.append(non_main_final_vid_sub_path)
 
     return final_vid_sub_path_l
 
@@ -296,6 +302,7 @@ def trim_and_re_time_real_sub_file_from_auto_subs(clip_dir_data, ep_sub_data):
     final_vid_sub_path_l = _make_non_main_final_vid_subs__and__get_final_vid_sub_path_l(main_final_vid_sub_path, clip_dir_data, ep_sub_data, best_match_auto_sub_line)
 
     print(f"{final_vid_sub_path_l=}")
+    print("here")
     
 
 
