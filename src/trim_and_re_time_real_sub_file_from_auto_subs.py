@@ -219,7 +219,7 @@ def _make_non_main_final_vid_subs__and__get_final_vid_sub_path_l(main_final_vid_
         print(best_match_non_main_subs_line.text)
         
 
-        non_main_final_vid_sub_path = clip_dir_data.get_final_vid_sub_path(non_main_sub_path, non_main_sub_num)
+        non_main_final_vid_sub_path = clip_dir_data.get_final_vid_sub_path(non_main_sub_path, non_main_sub_num + 1)
         print(f"{non_main_final_vid_sub_path=}")
         
         # _make_final_vid_trimmed_re_timed_sub_from_real_sub(non_main_final_vid_sub_path, clip_dir_data, ep_sub_data.main_sub_file_path, real_subs, best_match_auto_sub_line, best_match_real_sub_line)
@@ -248,6 +248,9 @@ def trim_and_re_time_real_sub_file_from_auto_subs(clip_dir_data, ep_sub_data):
             - This is needed b/c otherwise it messes with vid length of final vid once embedded as
               single mkv. # TODO for all
     """
+
+    print(f"&&&&&&&&&&&&&&&&&&&&&&&& {len(ep_sub_data.non_main_sub_file_path_l)=}")
+
     print(f"in trim_and_re_time_real_sub_file_from_auto_subs()")
     print(f"{clip_dir_data.mp4_path=}")
     print(f"{ep_sub_data.main_sub_file_path=}")
@@ -299,10 +302,12 @@ def trim_and_re_time_real_sub_file_from_auto_subs(clip_dir_data, ep_sub_data):
     print("here")
     # _make_non_main_final_vid_subs__and__get_final_vid_sub_path_l(main_final_vid_sub_path, clip_dir_data, ep_sub_data, best_match_auto_sub_line)
 
+    # Make final sub file for every non-main-sub as well
+    print(f"&&&&&&&&&&&&&&&&&&&&&&&& {len(ep_sub_data.non_main_sub_file_path_l)=}")
     final_vid_sub_path_l = _make_non_main_final_vid_subs__and__get_final_vid_sub_path_l(main_final_vid_sub_path, clip_dir_data, ep_sub_data, best_match_auto_sub_line)
 
     print(f"{final_vid_sub_path_l=}")
-    print("here")
+    # print("here")
     
 
 

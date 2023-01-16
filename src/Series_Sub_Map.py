@@ -21,8 +21,8 @@ BAD_SUB_FILENAME_STR_L = ["directors", "comment", "fps", "UTF", "hearing", "impa
 
 class Episode_Sub_Data:
     extra_metadata_d = {}
-    sub_file_path_l = []
-    non_main_sub_file_path_l = []
+    sub_file_path_l = None
+    non_main_sub_file_path_l = None
     main_sub_file_path = None
     series_name_match_str_set = set()
     # partial_fuzz_str_l = []
@@ -45,9 +45,28 @@ class Episode_Sub_Data:
             self.sub_file_path_l = fsu.get_dir_content_l(self.episode_subs_dir_path, "file")
             self.main_sub_file_path = self._get_main_sub_file_path()
 
-            for sub_path in self.sub_file_path_l:
-                if sub_path != self.main_sub_file_path:
-                    self.non_main_sub_file_path_l.append(sub_path)
+            print(f"%%%%%%%%%%%%%%{self.sub_file_path_l=}")
+            print(f"%%%%%%%%%%%%%%{len(self.sub_file_path_l)=}")
+
+            if self.main_sub_file_path != None:
+                # self.non_main_sub_file_path_l = fsu.get_dir_content_l(self.episode_subs_dir_path, "file").remove(str(self.main_sub_file_path))
+                # self.non_main_sub_file_path_l = fsu.get_dir_content_l(self.episode_subs_dir_path, "file")
+                self.non_main_sub_file_path_l = self.sub_file_path_l
+                # print(self.non_main_sub_file_path_l)
+                # self.non_main_sub_file_path_l.remove(str(self.main_sub_file_path))
+                self.non_main_sub_file_path_l.remove(self.main_sub_file_path)
+                # print(self.non_main_sub_file_path_l)
+
+            # # TMP
+            # if self.season_num == 10:
+            #     pprint(self.sub_file_path_l)
+
+            # self.non_main_sub_file_path_l = []
+
+            # for sub_path in self.sub_file_path_l:
+            #     if sub_path != self.main_sub_file_path:
+            #         print(f"%%%{sub_path=}")
+            #         self.non_main_sub_file_path_l.append(sub_path)
 
             self._get_total_fuzz_str___then___set_len___then___write_total_fuzz_str_to_json()
         else:
@@ -101,6 +120,7 @@ class Episode_Sub_Data:
             "episode_subs_dir_path" : self.episode_subs_dir_path,
             "main_sub_file_path" : self.main_sub_file_path,
             "sub_file_path_l" : self.sub_file_path_l,
+            "non_main_sub_file_path" : self.non_main_sub_file_path_l,
             "load_method_str" : self.load_method_str,
             "lang" : self.lang,
             "season_num" : self.season_num,
