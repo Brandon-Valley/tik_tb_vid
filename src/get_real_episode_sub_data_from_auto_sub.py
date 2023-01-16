@@ -122,13 +122,11 @@ def get_eval_of__fuzz_ratio_ep_sub_data_l_d(fuzz_ratio_ep_sub_data_l_d, ssm, lan
         return None, None, EVAL_KEY__NO_CLEAR_WINNER
 
 
-def _search_and_log(auto_sub_path, auto_sub_fuzz_str, ssm, lang, method_key, partial_fuzz_str_len = None):
+def _search_and_log(clip_dir_data, auto_sub_fuzz_str, ssm, lang, method_key, partial_fuzz_str_len = None):
 
-    # LATER vv awful way of doing things
-    # LATER also CLIPS_DATA is never cleared, should make this better
-    fuzz_ratio_ep_sub_data_l_d_json_path = os.path.join(CLIPS_DATA_DIR_PATH, Path(auto_sub_path).name.split(".")[0][:70], Path(auto_sub_path).name.split(".")[0][:70] + "_lb_fresdl_d.json" )
+    fuzz_ratio_ep_sub_data_l_d_json_path = os.path.join(clip_dir_data.data_dir_path, f"fuzz_ratio_ep_sub_data_l_d.json")
 
-    print(f"Getting fuzz_ratio_ep_sub_data_l_d for {auto_sub_path=}...")
+    print(f"Getting fuzz_ratio_ep_sub_data_l_d for {clip_dir_data.auto_sub_path=}...")
     fuzz_ratio_ep_sub_data_l_d = _get_fuzz_ratio_ep_sub_data_l_d(auto_sub_fuzz_str, ssm, lang, method_key, partial_fuzz_str_len)
     _write_fuzz_ratio_ep_sub_data_l_d_to_json(fuzz_ratio_ep_sub_data_l_d, fuzz_ratio_ep_sub_data_l_d_json_path)
     fuzz_ratio, ep_sub_data, eval_str = get_eval_of__fuzz_ratio_ep_sub_data_l_d(fuzz_ratio_ep_sub_data_l_d, ssm, lang, fuzz_ratio_ep_sub_data_l_d_json_path)
@@ -150,14 +148,13 @@ def _predict_search_method(auto_sub_fuzz_str, ssm, lang):
 
 
 
-# def get_real_episode_sub_data_from_auto_sub(auto_sub_path, ssm, lang, min_real_sub_total_fuzz_str_len):
-def get_real_episode_sub_data_from_auto_sub(auto_sub_path, ssm, lang):
-    print(f"Searching for best real sub file from auto sub file:{auto_sub_path}...")
+def get_real_episode_sub_data_from_auto_sub(clip_dir_data, ssm, lang):
+    print(f"Searching for best real sub file from auto sub file:{clip_dir_data.auto_sub_path}...")
     start_time = time.time()
-    print(f"in get_real_episode_sub_data_from_auto_sub() - {auto_sub_path=}")
+    print(f"in get_real_episode_sub_data_from_auto_sub() - {clip_dir_data.auto_sub_path=}")
     print(f"{ssm.get_num_episodes_in_lang(lang)=}")
 
-    auto_sub_fuzz_str = fc.get_fuzz_str_from_sub_path(auto_sub_path)
+    auto_sub_fuzz_str = clip_dir_data.get_auto_sub_fuzz_str()
 
     # Try to predict method that will find match fastest
     # LATER for SEARCH_METHOD_KEY__AUTO_SUB_FUZZ_LEN_BASED, make it also give partial_fuzz_str_len
@@ -166,7 +163,7 @@ def get_real_episode_sub_data_from_auto_sub(auto_sub_path, ssm, lang):
 
     # Default - Use the largest possible equal partial_fuzz_strs created for each episode during SSM.load_lang()
     if search_method_key == SEARCH_METHOD_KEY__INIT_PARTIAL_FUZZ:
-        fuzz_ratio, ep_sub_data, eval_key, fuzz_ratio_ep_sub_data_l_d = _search_and_log(auto_sub_path, auto_sub_fuzz_str, ssm, lang,
+        fuzz_ratio, ep_sub_data, eval_key, fuzz_ratio_ep_sub_data_l_d = _search_and_log(clip_dir_data,auto_sub_fuzz_str, ssm, lang,
                                                                                         method_key = SEARCH_METHOD_KEY__INIT_PARTIAL_FUZZ,
                                                                                         partial_fuzz_str_len = None)
         print(f"{fuzz_ratio=}")
@@ -204,7 +201,7 @@ def get_real_episode_sub_data_from_auto_sub(auto_sub_path, ssm, lang):
             if ssm.get_min_fuzz_str_len_for_lang(lang) < partial_fuzz_str_len:
                 raise Exception(f"ERROR: {ssm.get_min_fuzz_str_len_for_lang(lang)=} (from episode sub {ssm.get_min_fuzz_str_len_ep_sub_data_lang(lang)}) can never be less than {partial_fuzz_str_len=}")
 
-            fuzz_ratio, ep_sub_data, eval_key, fuzz_ratio_ep_sub_data_l_d = _search_and_log(auto_sub_path, auto_sub_fuzz_str, ssm, lang,
+            fuzz_ratio, ep_sub_data, eval_key, fuzz_ratio_ep_sub_data_l_d = _search_and_log(clip_dir_data, auto_sub_fuzz_str, ssm, lang,
                                                                                             method_key = SEARCH_METHOD_KEY__AUTO_SUB_FUZZ_LEN_BASED,
                                                                                             partial_fuzz_str_len = partial_fuzz_str_len)
             print(f"{fuzz_ratio=}")
