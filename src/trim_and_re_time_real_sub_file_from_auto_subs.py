@@ -188,6 +188,7 @@ def _make_non_main_final_vid_subs__and__get_final_vid_sub_path_l(main_final_vid_
         non_main_final_vid_sub_path = clip_dir_data.get_final_vid_sub_path(non_main_sub_path, non_main_sub_num + 1)
         print(f"{non_main_final_vid_sub_path=}")
 
+        # LATER thread this? syncing tipples runtime
         _make_final_vid_trimmed_re_timed_sub_from_real_sub(out_sub_path             = non_main_final_vid_sub_path,
                                                            clip_dir_data            = clip_dir_data,
                                                            real_sub_path            = non_main_sub_path,
