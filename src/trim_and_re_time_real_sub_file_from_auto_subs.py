@@ -183,11 +183,11 @@ def _make_non_main_final_vid_subs__and__get_final_vid_sub_path_l(main_final_vid_
         non_main_subs = pysubs2.load(non_main_sub_path, encoding="latin1")
         best_match_non_main_subs_line = _get_best_match_non_main_subs_line(best_match_auto_sub_line, non_main_subs)
         print(best_match_non_main_subs_line.text)
-        
+
 
         non_main_final_vid_sub_path = clip_dir_data.get_final_vid_sub_path(non_main_sub_path, non_main_sub_num + 1)
         print(f"{non_main_final_vid_sub_path=}")
-        
+
         _make_final_vid_trimmed_re_timed_sub_from_real_sub(out_sub_path             = non_main_final_vid_sub_path,
                                                            clip_dir_data            = clip_dir_data,
                                                            real_sub_path            = non_main_sub_path,
@@ -222,11 +222,11 @@ def get_sub_path_lang_dl__from__final_vid_sub_path_l(final_vid_sub_path_l, lang)
 
 
 def trim_and_re_time_real_sub_file_from_auto_subs(clip_dir_data, ep_sub_data, lang):
-    """ 
-        - After finding correct real sub file with faster get_real_episode_sub_data_from_auto_sub(), 
+    """
+        - After finding correct real sub file with faster get_real_episode_sub_data_from_auto_sub(),
           go through real_sub_file and find exact amount to shift real_sub_file by to align to clip.
             - This is done by finding real_sub_shift_num_ms
-        - Then use this real_sub_shift_num_ms to shift real sub path to align with clip 
+        - Then use this real_sub_shift_num_ms to shift real sub path to align with clip
             - This will get things close but not perfect yet
         - Then sub sync to make sure everything aligns perfectly
         - Finally, trim out the unused sub lines from the new re-timed real_sub_file
@@ -238,7 +238,7 @@ def trim_and_re_time_real_sub_file_from_auto_subs(clip_dir_data, ep_sub_data, la
     print(f"{clip_dir_data.mp4_path=}")
     print(f"{ep_sub_data.main_sub_file_path=}")
     print(f"{clip_dir_data.auto_sub_path=}")
-    
+
     # init
     start_time = time.time()
 
