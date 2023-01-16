@@ -208,7 +208,6 @@ def main():
     # yt_pl_dl_dir_path = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "Family_Guy___TBS__google_earth_test__and__pilot")
     # yt_pl_dl_dir_path = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "Family_Guy___TBS__google_earth_test")
     yt_pl_dl_dir_data = YT_PL_DL_Data(yt_pl_dl_dir_path, PL_DATA_DIR_PATH)
-    exit()
     run_log_l = []
 
     for clip_dir_data in yt_pl_dl_dir_data.clip_dir_data_l:
@@ -259,11 +258,7 @@ def main():
         tmp_srt_path = new_srt_mkv_file_path_no_ext + f"{LANG}.srt"
         new_mkv_path = new_srt_mkv_file_path_no_ext + f".mkv"
 
-        trim_and_re_time_real_sub_time = trim_and_re_time_real_sub_file_from_auto_subs(vid_path = clip_dir_data.mp4_path,
-                                                                                        # real_sub_file_path = ep_sub_data.main_sub_file_path,
-                                                                                        ep_sub_data = ep_sub_data,
-                                                                                        auto_sub_file_path = clip_dir_data.auto_sub_path,
-                                                                                        out_sub_path = tmp_srt_path)
+        trim_and_re_time_real_sub_time = trim_and_re_time_real_sub_file_from_auto_subs(clip_dir_data, ep_sub_data)
 
         # trim_and_re_time_real_sub_time = trim_and_re_time_real_sub_files_from_auto_subs(vid_path = clip_dir_data.mp4_path,
         #                                                                                 real_sub_file_path = ep_sub_data.main_sub_file_path,
