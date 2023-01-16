@@ -194,7 +194,7 @@ def get_real_episode_sub_data_from_auto_sub(clip_dir_data, ssm, lang):
             partial_fuzz_str_len = len(auto_sub_fuzz_str)
         else:
             partial_fuzz_str_len = init_partial_fuzz_str_len
-        print(f"{partial_fuzz_str_len=}")
+        # print(f"{partial_fuzz_str_len=}")
 
         # keep reducing partial_fuzz_str_len until success or until chop sizes hit a constant min size and give up
         while (partial_fuzz_str_len >= len(auto_sub_fuzz_str) * MIN_TIMES_BIGGER_MIN_FUZZ_LEN_CAN_BE_UNTIL_GIVE_UP):
