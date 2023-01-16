@@ -96,14 +96,14 @@ def _get_best_sub_slot_offset_and_best_line_match_index(real_subs, auto_subs):
     return best_sub_slot_offset, best_auto_sub_line_match_index_for_best_sub_slot_offset
 
 
-def _get_real_sub_shift_num_ms(real_subs, auto_subs, best_sub_slot_offset, best_auto_sub_line_match_index_for_best_sub_slot_offset):
+def _get_real_sub_shift_num_ms(best_match_real_sub_line, best_match_auto_sub_line):
     print("in _get_real_sub_shift_num_ms()")
-    best_match_auto_sub_line = auto_subs[best_auto_sub_line_match_index_for_best_sub_slot_offset]
-    best_match_real_sub_line = real_subs[best_sub_slot_offset + best_auto_sub_line_match_index_for_best_sub_slot_offset]
-    print(f"--{best_match_auto_sub_line.text=}")
-    print(f"--{best_match_real_sub_line.text=}")
-    print(f"--{best_match_auto_sub_line.start=}")
-    print(f"--{best_match_real_sub_line.start=}")
+    # best_match_auto_sub_line = auto_subs[best_auto_sub_line_match_index_for_best_sub_slot_offset]
+    # best_match_real_sub_line = real_subs[best_sub_slot_offset + best_auto_sub_line_match_index_for_best_sub_slot_offset]
+    # print(f"--{best_match_auto_sub_line.text=}")
+    # print(f"--{best_match_real_sub_line.text=}")
+    # print(f"--{best_match_auto_sub_line.start=}")
+    # print(f"--{best_match_real_sub_line.start=}")
 
     if best_match_auto_sub_line.start > best_match_real_sub_line.start:
         raise Exception(f"ERROR: {best_match_auto_sub_line.start=} > {best_match_real_sub_line.start=} - This should never be possible. Last time this happened it was caused by picking wrong real subs episode.")
@@ -148,7 +148,12 @@ def _clean_trimmed_subs(in_sub_path, out_sub_path, vid_num_ms):
 
 
 def _make_final_vid_trimmed_re_timed_sub_from_real_sub(out_sub_path, clip_dir_data, real_sub_path, real_subs, auto_subs, best_sub_slot_offset, best_auto_sub_line_match_index_for_best_sub_slot_offset):
-    real_sub_shift_num_ms = _get_real_sub_shift_num_ms(real_subs, auto_subs, best_sub_slot_offset, best_auto_sub_line_match_index_for_best_sub_slot_offset)
+
+    best_match_auto_sub_line = auto_subs[best_auto_sub_line_match_index_for_best_sub_slot_offset]
+    best_match_real_sub_line = real_subs[best_sub_slot_offset + best_auto_sub_line_match_index_for_best_sub_slot_offset]
+
+    # real_sub_shift_num_ms = _get_real_sub_shift_num_ms(real_subs, auto_subs, best_sub_slot_offset, best_auto_sub_line_match_index_for_best_sub_slot_offset)
+    real_sub_shift_num_ms = _get_real_sub_shift_num_ms(best_match_real_sub_line, best_match_auto_sub_line)
     print(f"{real_sub_shift_num_ms=}")
     neg_real_sub_shift_num_ms = real_sub_shift_num_ms * -1
 
@@ -206,10 +211,13 @@ def _make_non_main_final_vid_subs__and__get_final_vid_sub_path_l(main_final_vid_
     print(f"{len(ep_sub_data.non_main_sub_file_path_l)=}")
 
     for non_main_sub_path in ep_sub_data.non_main_sub_file_path_l:
+        # get best_match_non_main_subs_line
         non_main_subs = pysubs2.load(non_main_sub_path, encoding="latin1")
         best_match_auto_sub_line = auto_subs[best_auto_sub_line_match_index_for_best_sub_slot_offset]
         best_match_non_main_subs_line = _get_best_match_non_main_subs_line(best_match_auto_sub_line, non_main_subs)
         print(best_match_non_main_subs_line.text)
+
+
 
     return final_vid_sub_path_l
 
