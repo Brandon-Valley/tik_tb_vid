@@ -13,6 +13,8 @@ from pprint import pprint
 import vid_edit_utils as veu
 import cfg
 
+SERIES_NAME = "Family Guy"
+
 FINAL_MKVS_DIR_PATH = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "mkvs")
 RUN_LOG_JSON_PATH = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "run_log_l.json")
 SSM_LOG_JSON_PATH = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "SSM_log.json")
@@ -203,7 +205,7 @@ def main():
  
     # Init std subtitles for whole series data
     ssm = Series_Sub_map()
-    ssm.load_lang(SERIES_SUB_EN_DIR_PATH, LANG, yt_pl_dl_dir_data.max_fuzz_str_len)
+    ssm.load_lang(SERIES_SUB_EN_DIR_PATH, LANG, SERIES_NAME, yt_pl_dl_dir_data.max_fuzz_str_len)
     ssm.write_log_json(SSM_LOG_JSON_PATH)
     ssm.write_stats_json(SSM_STATS_JSON_PATH)
     # min_real_sub_num_char, max_real_sub_num_char = ssm.get_min_and_max_episode_fuzz_str_len(LANG)

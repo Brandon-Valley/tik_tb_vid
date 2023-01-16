@@ -76,10 +76,10 @@ class Episode_Sub_Data:
         return dir_path
 
     # LATER Can mem hold total fuzz str an partial at same time?
-    def _create_and_write__partial_fuzz_str_l__to_json(self, min_total_fuzz_str_len):
+    def _create_and_write__partial_fuzz_str_l__to_json(self, min_total_fuzz_str_len, max_clip_fuzz_str_len):
         total_fuzz_str = json_logger.read(self.total_fuzz_str_json_path)
         partial_fuzz_str_l = fuzz_common.get_partial_fuzz_str_l_from_total_fuzz_str(total_fuzz_str, min_total_fuzz_str_len,
-        min_overlap_char = None) # FIX make this max autosub size!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        min_overlap_char = max_clip_fuzz_str_len) # FIX make this max autosub size!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         print(f"      {self.get_season_episode_str()} - Writing partial_fuzz_str_l to: {self.partial_fuzz_str_l_json_path}...")
         json_logger.write(partial_fuzz_str_l, self.partial_fuzz_str_l_json_path)
 
@@ -258,8 +258,6 @@ class Series_Sub_map():
         Path(SSM_DATA_DIR_PATH).mkdir(parents=True, exist_ok=True)
         pass
 
-
-
     def get_num_episodes_in_lang(self, lang):
         return len(self.ep_sub_data_ld[lang])
 
@@ -341,16 +339,16 @@ class Series_Sub_map():
         print(f"Done Loading {lang=}")
 
 
-    def _create_and_write__partial_fuzz_str_l__to_json__for_each__ep__for_lang(self, lang):
+    def _create_and_write__partial_fuzz_str_l__to_json__for_each__ep__for_lang(self, lang, max_clip_fuzz_str_len):
         print("  Creating/Writing partial_fuzz_str_l to json for each episode...")
         min_fuzz_str_len = self.get_min_fuzz_str_len_for_lang(lang)
 
         for ep_sub_data in self.ep_sub_data_ld[lang]:
             # print(f"    {ep_sub_data.get_season_episode_str()} - Creating/Writing partial_fuzz_str_l to json...")
-            ep_sub_data._create_and_write__partial_fuzz_str_l__to_json(min_fuzz_str_len)
+            ep_sub_data._create_and_write__partial_fuzz_str_l__to_json(min_fuzz_str_len, max_clip_fuzz_str_len)
 
 
-    def load_lang(self, in_dir_path, lang, series_name = "Family Guy", load_style_str = "open_sub_lang_by_season_fg"):
+    def load_lang(self, in_dir_path, lang, series_name = "Family Guy", max_clip_fuzz_str_len = None, load_style_str = "open_sub_lang_by_season_fg"):
         # Init all Episode_Sub_Data objects in lang
         if load_style_str == "open_sub_lang_by_season_fg":
             self._load_lang__open_sub_lang_by_season_fg(in_dir_path, lang, series_name)
@@ -362,7 +360,7 @@ class Series_Sub_map():
 
         # Now that we know the min_fuzz_str_len, Go through all episodes again and create/write out
         # the partial_fuzz_str_l (from each episode's chosen main sub file) to json
-        self._create_and_write__partial_fuzz_str_l__to_json__for_each__ep__for_lang(lang)
+        self._create_and_write__partial_fuzz_str_l__to_json__for_each__ep__for_lang(lang, max_clip_fuzz_str_len)
 
 
     def get_min_fuzz_str_len_for_lang(self, lang):
