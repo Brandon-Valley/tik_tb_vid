@@ -267,9 +267,13 @@ def main():
         #                                                                                 out_sub_path = tmp_srt_path)
         print(f"{trim_and_re_time_real_sub_time=}")
         
-        subtitle_utils.combine_mp4_and_sub_into_mkv(in_mp4_path = clip_dir_data.mp4_path,
-                                                    in_sub_path = tmp_srt_path,
-                                                    out_mkv_path = new_mkv_path)
+        # subtitle_utils.combine_mp4_and_sub_into_mkv(in_mp4_path = clip_dir_data.mp4_path,
+        #                                             in_sub_path = tmp_srt_path,
+        #                                             out_mkv_path = new_mkv_path)
+        # combine__mp4__and__sub_path_lang_dl__into_mkv(in_mp4_path, sub_path_lang_dl, out_mkv_path)
+        subtitle_utils.combine__mp4__and__sub_path_lang_dl__into_mkv(in_mp4_path      = clip_dir_data.mp4_path,
+                                                                     sub_path_lang_dl = sub_path_lang_dl,
+                                                                     out_mkv_path     = new_mkv_path)
         fsu.delete_if_exists(tmp_srt_path)
 
         # print("before normal_successful_clip_w_subs_created__get_log_d()")

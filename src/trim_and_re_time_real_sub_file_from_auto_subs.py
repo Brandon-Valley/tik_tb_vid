@@ -251,7 +251,7 @@ def get_sub_path_lang_dl__from__final_vid_sub_path_l(final_vid_sub_path_l, lang)
     for final_vid_sub_num, final_vid_sub_path in enumerate(final_vid_sub_path_l):
         sub_path_lang_dl.append({
             "path": final_vid_sub_path,
-            "lang": f"{lang}_{final_vid_sub_num}"
+            "lang": f"{lang}{final_vid_sub_num}"
         })
     return sub_path_lang_dl
 
@@ -295,17 +295,6 @@ def trim_and_re_time_real_sub_file_from_auto_subs(clip_dir_data, ep_sub_data, la
     print(f"  {main_best_sub_slot_offset=}")
     print(f"  {best_auto_sub_line_match_index_for_best_sub_slot_offset=}")
 
-    # TODO find best_sub_slot_offset for all other subs!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    # sub_path_lang_dl = [
-    #                     {
-    #                         "path": "<ABS_PATH_TO_SUB_FILE_1>",
-    #                         "lang": "en"
-    #                     },
-    #                     {
-    #                         "path": "<ABS_PATH_TO_SUB_FILE_2>",
-    #                         "lang": "en2"
-    #                     },
-    #                 ]
     sub_path_lang_dl = []
     # best_match_auto_sub_line = auto_subs[best_auto_sub_line_match_index_for_best_sub_slot_offset]
     # best_match_real_sub_line = real_subs[main_best_sub_slot_offset + best_auto_sub_line_match_index_for_best_sub_slot_offset]
