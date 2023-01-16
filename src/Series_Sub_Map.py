@@ -12,6 +12,7 @@ import cfg
 SSM_DATA_DIR_PATH = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "SSM_DATA")
 MIN_EP_SUB_FILE_NUM_BYTES = 3000 # 3KB, "normal" subs are ~ 15-40KB
 
+SERIES_NAME_SEP_CHAR_L = [" ", ".", "_", "-"]
 # Examples:
 #  - Family Guy - S06E01 - Blue Harvest (english - directors comment - 25fps - UTF-8).srt
 #  - Family Guy - S06E01 - Blue Harvest (english for hearing impaired - 25fps - UTF-8).srt
@@ -33,7 +34,7 @@ class Episode_Sub_Data:
         self.episode_num = episode_num
         self.load_method_str = load_method_str
         self.lang = lang
-        self.series_name = series_name
+        self.series_name_lower  = series_name.lower()
 
         self.ssm_data_ep_dir_path = self._get_and_init_ssm_data_ep_dir_path()
         self.total_fuzz_str_json_path     = os.path.join(self.ssm_data_ep_dir_path, f"{self.get_season_episode_str()}_total_fuzz_str.json")
@@ -169,7 +170,7 @@ class Episode_Sub_Data:
 
         def _file_name_contains_series_name(file_path):
             for series_name_match_str in self.series_name_match_str_set:
-                if Path(file_path).name.__contains__(series_name_match_str):
+                if Path(file_path).name.lower().__contains__(series_name_match_str):
                     return True
             return False
 
@@ -271,19 +272,13 @@ class Episode_Sub_Data:
 
 
     def _set_series_name_match_l(self):
-        self.series_name_match_str_set.add(self.series_name)
-        self.series_name_match_str_set.add(self.series_name.replace(" ", "."))
-        self.series_name_match_str_set.add(self.series_name.replace(" ", "_"))
-        self.series_name_match_str_set.add(self.series_name.replace(" ", "-"))
-        self.series_name_match_str_set.add(self.series_name.replace("_", " "))
-        self.series_name_match_str_set.add(self.series_name.replace("_", "."))
-        self.series_name_match_str_set.add(self.series_name.replace("_", "-"))
-        self.series_name_match_str_set.add(self.series_name.replace(".", "-"))
-        self.series_name_match_str_set.add(self.series_name.replace(".", " "))
-        self.series_name_match_str_set.add(self.series_name.replace(".", "_"))
-        self.series_name_match_str_set.add(self.series_name.replace("-", " "))
-        self.series_name_match_str_set.add(self.series_name.replace("-", "."))
-        self.series_name_match_str_set.add(self.series_name.replace("-", "_"))
+        self.series_name_match_str_set = set()
+        self.series_name_match_str_set.add(self.series_name_lower)
+
+        for char_1 in SERIES_NAME_SEP_CHAR_L:
+            for char_2 in SERIES_NAME_SEP_CHAR_L:
+                if char_1 != char_2:
+                    self.series_name_match_str_set.add(self.series_name_lower.replace(char_1, char_2))
 
 
     # def _load_dir__many_of_one_lang(self):
