@@ -234,9 +234,31 @@ def _make_non_main_final_vid_subs__and__get_final_vid_sub_path_l(main_final_vid_
     return final_vid_sub_path_l
 
 
+def get_sub_path_lang_dl__from__final_vid_sub_path_l(final_vid_sub_path_l, lang):
+    """
+        sub_path_lang_dl = [
+                            {
+                                "path": "<ABS_PATH_TO_SUB_FILE_1>",
+                                "lang": "en"
+                            },
+                            {
+                                "path": "<ABS_PATH_TO_SUB_FILE_2>",
+                                "lang": "en2"
+                            },
+                        ]
+    """
+    sub_path_lang_dl = []
+    for final_vid_sub_num, final_vid_sub_path in enumerate(final_vid_sub_path_l):
+        sub_path_lang_dl.append({
+            "path": final_vid_sub_path,
+            "lang": f"{lang}_{final_vid_sub_num}"
+        })
+    return sub_path_lang_dl
+
+
 # def trim_and_re_time_real_sub_files_from_auto_subs(vid_path, real_sub_file_path, auto_sub_file_path, out_sub_path):
 # def trim_and_re_time_real_sub_file_from_auto_subs(vid_path, ep_sub_data, auto_sub_file_path, out_subs_dir_path):
-def trim_and_re_time_real_sub_file_from_auto_subs(clip_dir_data, ep_sub_data):
+def trim_and_re_time_real_sub_file_from_auto_subs(clip_dir_data, ep_sub_data, lang):
     """ 
         - After finding correct real sub file with faster get_real_episode_sub_data_from_auto_sub(), 
           go through real_sub_file and find exact amount to shift real_sub_file by to align to clip.
@@ -308,7 +330,12 @@ def trim_and_re_time_real_sub_file_from_auto_subs(clip_dir_data, ep_sub_data):
 
     print(f"{final_vid_sub_path_l=}")
     # print("here")
-    
+
+    sub_path_lang_dl = get_sub_path_lang_dl__from__final_vid_sub_path_l(final_vid_sub_path_l, lang)
+    print(f"{sub_path_lang_dl=}")
+
+    total_time = time.time() - start_time
+    return sub_path_lang_dl, total_time
 
 
     # # LATER could maybe make faster by passing main_best_sub_slot_offset and/or find avg winning fuzz_ratio for line match to stop when found?
@@ -347,8 +374,8 @@ def trim_and_re_time_real_sub_file_from_auto_subs(clip_dir_data, ep_sub_data):
     # fsu.delete_if_exists(tmp_ms_shifted_sub_path)
     # fsu.delete_if_exists(tmp_synced_ms_shifted_sub_path)
 
-    total_time = time.time() - start_time
-    return total_time
+    # total_time = time.time() - start_time
+    # return total_time
 
 
 

@@ -259,7 +259,7 @@ def main():
         tmp_srt_path = new_srt_mkv_file_path_no_ext + f"{LANG}.srt"
         new_mkv_path = new_srt_mkv_file_path_no_ext + f".mkv"
 
-        trim_and_re_time_real_sub_time = trim_and_re_time_real_sub_file_from_auto_subs(clip_dir_data, ep_sub_data)
+        sub_path_lang_dl, trim_and_re_time_real_sub_time = trim_and_re_time_real_sub_file_from_auto_subs(clip_dir_data, ep_sub_data, LANG)
 
         # trim_and_re_time_real_sub_time = trim_and_re_time_real_sub_files_from_auto_subs(vid_path = clip_dir_data.mp4_path,
         #                                                                                 real_sub_file_path = ep_sub_data.main_sub_file_path,
