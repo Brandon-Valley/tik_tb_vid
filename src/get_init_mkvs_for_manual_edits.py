@@ -236,7 +236,6 @@ def main():
         print(f"{ep_sub_data_find_eval_key=}") # TODO log this
         print(f"{ep_sub_data_find_time  =}")
         # exit()
-        print(f"&&&&&&&&&&&&&&&&&&&&&&&& {len(ep_sub_data.non_main_sub_file_path_l)=}")
 
         if ep_sub_data == None:
             print("init_mkvs - After fuzzy-searching every episode's subs, did not find single episode with fuzz_ratio > 0, creating .mkv without subtitles...")
