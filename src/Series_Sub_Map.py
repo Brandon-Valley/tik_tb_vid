@@ -24,7 +24,7 @@ class Episode_Sub_Data:
     sub_file_path_l = None
     non_main_sub_file_path_l = None
     main_sub_file_path = None
-    series_name_match_str_set = set()
+    series_name_match_str_set = set() # TODO None default?
     # partial_fuzz_str_l = []
 
     def __init__(self, episode_subs_dir_path, season_num, episode_num, lang = None, series_name = "Family Guy", load_method_str = "many_of_one_lang"):
@@ -44,10 +44,10 @@ class Episode_Sub_Data:
         if load_method_str == "many_of_one_lang":
             # self.sub_file_path_l = fsu.get_dir_content_l(self.episode_subs_dir_path, "file")
             self.sub_file_path_l = self._get_sorted_sub_file_path_l()
-            pprint(self.sub_file_path_l)
-            self.main_sub_file_path = self._get_main_sub_file_path()
 
-            if self.main_sub_file_path != None:
+            if self.sub_file_path_l != None:
+                self.main_sub_file_path = self.sub_file_path_l[0]
+
                 self.non_main_sub_file_path_l = self.sub_file_path_l
                 self.non_main_sub_file_path_l.remove(self.main_sub_file_path)
 
@@ -214,6 +214,9 @@ class Episode_Sub_Data:
         for sub_file_path in sub_file_path_l_smallest_file_first[:]:
             sorted_sub_file_path_l.append(sub_file_path)
             sub_file_path_l_smallest_file_first.remove(sub_file_path)
+
+        if sorted_sub_file_path_l == []:
+            sorted_sub_file_path_l = None
 
         return sorted_sub_file_path_l
 
