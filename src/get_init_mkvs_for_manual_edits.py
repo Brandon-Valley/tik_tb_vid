@@ -198,8 +198,8 @@ def main():
     # TODO download yt playlist with youtube_utils.dl_yt_playlist__fix_sub_times_convert_to__mp4_srt()
     # Init std youtube playlist download data
     # yt_pl_dl_dir_path = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "Family_Guy___TBS")
-    # yt_pl_dl_dir_path = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "Family_Guy__TBS__alcho")
     yt_pl_dl_dir_path = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "Family_Guy__TBS__alcho_and_pilot")
+    # yt_pl_dl_dir_path = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "Family_Guy__TBS__alcho")
     # yt_pl_dl_dir_path = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "Family_Guy__TBS__pilot_and_tea_party")
     # yt_pl_dl_dir_path = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "Family_Guy__TBS__blue_harvest_and_pilot_test")
     # yt_pl_dl_dir_path = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "Family_Guy__TBS__blue_harvest_and_pilot_and_herbert_test")
@@ -261,16 +261,8 @@ def main():
 
         sub_path_lang_dl, trim_and_re_time_real_sub_time = trim_and_re_time_real_sub_file_from_auto_subs(clip_dir_data, ep_sub_data, LANG)
 
-        # trim_and_re_time_real_sub_time = trim_and_re_time_real_sub_files_from_auto_subs(vid_path = clip_dir_data.mp4_path,
-        #                                                                                 real_sub_file_path = ep_sub_data.main_sub_file_path,
-        #                                                                                 auto_sub_file_path = clip_dir_data.auto_sub_path,
-        #                                                                                 out_sub_path = tmp_srt_path)
         print(f"{trim_and_re_time_real_sub_time=}")
-        
-        # subtitle_utils.combine_mp4_and_sub_into_mkv(in_mp4_path = clip_dir_data.mp4_path,
-        #                                             in_sub_path = tmp_srt_path,
-        #                                             out_mkv_path = new_mkv_path)
-        # combine__mp4__and__sub_path_lang_dl__into_mkv(in_mp4_path, sub_path_lang_dl, out_mkv_path)
+
         subtitle_utils.combine__mp4__and__sub_path_lang_dl__into_mkv(in_mp4_path      = clip_dir_data.mp4_path,
                                                                      sub_path_lang_dl = sub_path_lang_dl,
                                                                      out_mkv_path     = new_mkv_path)

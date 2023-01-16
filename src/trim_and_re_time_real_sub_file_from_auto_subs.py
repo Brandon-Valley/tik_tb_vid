@@ -74,7 +74,6 @@ def _get_best_sub_slot_offset_and_best_line_match_index(real_subs, auto_subs):
         print(f"......{best_auto_sub_line_match_index=}")
 
         if best_auto_sub_line_match_index == None:
-            # raise Exception(f"ERROR: {best_auto_sub_line_match_index=}, this means maybe some subs are empty or something else happened?")
             raise Exception(f"ERROR: {best_auto_sub_line_match_index=}, this means maybe some subs are empty or something else happened? This can happen even if its a legit show clip (EX: Herbert), This error happens when fuzz ratio is 0 for every episode.  Can happen when there are very few subtitles to match, possibly with long pauses in-between, possibly with sound effects that become false subs (like glass breaking == Thank you), possibly with hard to understand characters (Herbert)")
 
         if sub_slot_score > best_sub_slot_score:
@@ -97,13 +96,6 @@ def _get_best_sub_slot_offset_and_best_line_match_index(real_subs, auto_subs):
 
 
 def _get_real_sub_shift_num_ms(best_match_real_sub_line, best_match_auto_sub_line):
-    print("in _get_real_sub_shift_num_ms()")
-    # best_match_auto_sub_line = auto_subs[best_auto_sub_line_match_index_for_best_sub_slot_offset]
-    # best_match_real_sub_line = real_subs[best_sub_slot_offset + best_auto_sub_line_match_index_for_best_sub_slot_offset]
-    # print(f"--{best_match_auto_sub_line.text=}")
-    # print(f"--{best_match_real_sub_line.text=}")
-    # print(f"--{best_match_auto_sub_line.start=}")
-    # print(f"--{best_match_real_sub_line.start=}")
 
     if best_match_auto_sub_line.start > best_match_real_sub_line.start:
         raise Exception(f"ERROR: {best_match_auto_sub_line.start=} > {best_match_real_sub_line.start=} - This should never be possible. Last time this happened it was caused by picking wrong real subs episode.")
@@ -137,23 +129,7 @@ def _clean_trimmed_subs(in_sub_path, out_sub_path, vid_num_ms):
     su.write_manual_sub_line_l(clean_sub_line_l, out_sub_path)
 
 
-
-
-# def _get_sub_path_best_sub_slot_offset_dl(best_match_real_sub_line, main_best_sub_slot_offset, ep_sub_data):
-#     sub_path_best_sub_slot_offset_dl = [{
-#         "path": ep_sub_data.main_sub_file_path,
-#         "best_sub_slot_offset": main_best_sub_slot_offset}]
-
-#     for non_main_sub_path in ep_sub_data.non_main_sub_file_path_l:
-
-
-# def _make_final_vid_trimmed_re_timed_sub_from_real_sub(out_sub_path, clip_dir_data, real_sub_path, real_subs, auto_subs, best_sub_slot_offset, best_auto_sub_line_match_index_for_best_sub_slot_offset):
 def _make_final_vid_trimmed_re_timed_sub_from_real_sub(out_sub_path, clip_dir_data, real_sub_path, real_subs, best_match_auto_sub_line, best_match_real_sub_line):
-
-    # best_match_auto_sub_line = auto_subs[best_auto_sub_line_match_index_for_best_sub_slot_offset]
-    # best_match_real_sub_line = real_subs[best_sub_slot_offset + best_auto_sub_line_match_index_for_best_sub_slot_offset]
-
-    # real_sub_shift_num_ms = _get_real_sub_shift_num_ms(real_subs, auto_subs, best_sub_slot_offset, best_auto_sub_line_match_index_for_best_sub_slot_offset)
     real_sub_shift_num_ms = _get_real_sub_shift_num_ms(best_match_real_sub_line, best_match_auto_sub_line)
     print(f"{real_sub_shift_num_ms=}")
     neg_real_sub_shift_num_ms = real_sub_shift_num_ms * -1
@@ -183,14 +159,7 @@ def _make_final_vid_trimmed_re_timed_sub_from_real_sub(out_sub_path, clip_dir_da
     fsu.delete_if_exists(tmp_synced_ms_shifted_sub_path)
 
 
-# def _get_non_main_sub_best_sub_slot_offset(non_main_subs, auto_subs, best_auto_sub_line_match_index_for_best_sub_slot_offset):
 def _get_best_match_non_main_subs_line(best_match_auto_sub_line, non_main_subs):
-    # non_main_sub_best_sub_slot_offset = 0
-    # best_match_non_main_subs_line
-
-    # best_match_auto_sub_line = auto_subs[best_auto_sub_line_match_index_for_best_sub_slot_offset]
-    # best_match_real_sub_line = real_subs[best_sub_slot_offset + best_auto_sub_line_match_index_for_best_sub_slot_offset]
-
     best_fuzz_ratio = 0
     best_match_non_main_subs_line = None
 
@@ -205,8 +174,6 @@ def _get_best_match_non_main_subs_line(best_match_auto_sub_line, non_main_subs):
 
 
 def _make_non_main_final_vid_subs__and__get_final_vid_sub_path_l(main_final_vid_sub_path, clip_dir_data, ep_sub_data, best_match_auto_sub_line):
-    #     best_match_auto_sub_line = auto_subs[best_auto_sub_line_match_index_for_best_sub_slot_offset]
-    # best_match_real_sub_line = real_subs[best_sub_slot_offset + best_auto_sub_line_match_index_for_best_sub_slot_offset]
     final_vid_sub_path_l = [main_final_vid_sub_path]
 
     print(f"{len(ep_sub_data.non_main_sub_file_path_l)=}")
@@ -214,7 +181,6 @@ def _make_non_main_final_vid_subs__and__get_final_vid_sub_path_l(main_final_vid_
     for non_main_sub_num, non_main_sub_path in enumerate(ep_sub_data.non_main_sub_file_path_l):
         # get best_match_non_main_subs_line
         non_main_subs = pysubs2.load(non_main_sub_path, encoding="latin1")
-        # best_match_auto_sub_line = auto_subs[best_auto_sub_line_match_index_for_best_sub_slot_offset]
         best_match_non_main_subs_line = _get_best_match_non_main_subs_line(best_match_auto_sub_line, non_main_subs)
         print(best_match_non_main_subs_line.text)
         
@@ -222,7 +188,6 @@ def _make_non_main_final_vid_subs__and__get_final_vid_sub_path_l(main_final_vid_
         non_main_final_vid_sub_path = clip_dir_data.get_final_vid_sub_path(non_main_sub_path, non_main_sub_num + 1)
         print(f"{non_main_final_vid_sub_path=}")
         
-        # _make_final_vid_trimmed_re_timed_sub_from_real_sub(non_main_final_vid_sub_path, clip_dir_data, ep_sub_data.main_sub_file_path, real_subs, best_match_auto_sub_line, best_match_real_sub_line)
         _make_final_vid_trimmed_re_timed_sub_from_real_sub(out_sub_path             = non_main_final_vid_sub_path,
                                                            clip_dir_data            = clip_dir_data,
                                                            real_sub_path            = non_main_sub_path,
@@ -256,8 +221,6 @@ def get_sub_path_lang_dl__from__final_vid_sub_path_l(final_vid_sub_path_l, lang)
     return sub_path_lang_dl
 
 
-# def trim_and_re_time_real_sub_files_from_auto_subs(vid_path, real_sub_file_path, auto_sub_file_path, out_sub_path):
-# def trim_and_re_time_real_sub_file_from_auto_subs(vid_path, ep_sub_data, auto_sub_file_path, out_subs_dir_path):
 def trim_and_re_time_real_sub_file_from_auto_subs(clip_dir_data, ep_sub_data, lang):
     """ 
         - After finding correct real sub file with faster get_real_episode_sub_data_from_auto_sub(), 
@@ -271,17 +234,13 @@ def trim_and_re_time_real_sub_file_from_auto_subs(clip_dir_data, ep_sub_data, la
               single mkv. # TODO for all
     """
 
-    print(f"&&&&&&&&&&&&&&&&&&&&&&&& {len(ep_sub_data.non_main_sub_file_path_l)=}")
-
     print(f"in trim_and_re_time_real_sub_file_from_auto_subs()")
     print(f"{clip_dir_data.mp4_path=}")
     print(f"{ep_sub_data.main_sub_file_path=}")
     print(f"{clip_dir_data.auto_sub_path=}")
-    # print(f"{out_sub_path=}")
     
     # init
     start_time = time.time()
-
 
     # Read subs and validate inputs
     real_subs, auto_subs = _get_and_check_real_and_auto_subs(ep_sub_data.main_sub_file_path, clip_dir_data.auto_sub_path)
@@ -296,29 +255,18 @@ def trim_and_re_time_real_sub_file_from_auto_subs(clip_dir_data, ep_sub_data, la
     print(f"  {best_auto_sub_line_match_index_for_best_sub_slot_offset=}")
 
     sub_path_lang_dl = []
-    # best_match_auto_sub_line = auto_subs[best_auto_sub_line_match_index_for_best_sub_slot_offset]
-    # best_match_real_sub_line = real_subs[main_best_sub_slot_offset + best_auto_sub_line_match_index_for_best_sub_slot_offset]
 
-    # main_final_vid_sub_path = os.path.join(clip_dir_data.data_dir_path, f"f0_{Path(ep_sub_data.main_sub_file_path).name}")
     main_final_vid_sub_path = clip_dir_data.get_final_vid_sub_path(ep_sub_data.main_sub_file_path, 0)
-    # _make_final_vid_trimmed_re_timed_sub_from_real_sub(main_final_vid_sub_path, clip_dir_data, ep_sub_data.main_sub_file_path, real_subs, auto_subs, 
-    #                                                     main_best_sub_slot_offset, best_auto_sub_line_match_index_for_best_sub_slot_offset)
 
     best_match_auto_sub_line = auto_subs[best_auto_sub_line_match_index_for_best_sub_slot_offset]
     best_match_real_sub_line = real_subs[main_best_sub_slot_offset + best_auto_sub_line_match_index_for_best_sub_slot_offset]
 
     _make_final_vid_trimmed_re_timed_sub_from_real_sub(main_final_vid_sub_path, clip_dir_data, ep_sub_data.main_sub_file_path, real_subs, best_match_auto_sub_line, best_match_real_sub_line)
 
-
-    print("here")
-    # _make_non_main_final_vid_subs__and__get_final_vid_sub_path_l(main_final_vid_sub_path, clip_dir_data, ep_sub_data, best_match_auto_sub_line)
-
     # Make final sub file for every non-main-sub as well
-    print(f"&&&&&&&&&&&&&&&&&&&&&&&& {len(ep_sub_data.non_main_sub_file_path_l)=}")
     final_vid_sub_path_l = _make_non_main_final_vid_subs__and__get_final_vid_sub_path_l(main_final_vid_sub_path, clip_dir_data, ep_sub_data, best_match_auto_sub_line)
 
     print(f"{final_vid_sub_path_l=}")
-    # print("here")
 
     sub_path_lang_dl = get_sub_path_lang_dl__from__final_vid_sub_path_l(final_vid_sub_path_l, lang)
     print(f"{sub_path_lang_dl=}")
@@ -327,112 +275,6 @@ def trim_and_re_time_real_sub_file_from_auto_subs(clip_dir_data, ep_sub_data, la
     return sub_path_lang_dl, total_time
 
 
-    # # LATER could maybe make faster by passing main_best_sub_slot_offset and/or find avg winning fuzz_ratio for line match to stop when found?
-    # sub_path_best_sub_slot_offset_dl = _get_sub_path_best_sub_slot_offset_dl(best_match_real_sub_line, main_best_sub_slot_offset, ep_sub_data)
-    # print(f"sub_path_best_sub_slot_offset_dl vv")
-    # pprint(sub_path_best_sub_slot_offset_dl)
-
-    # _make_final_vid_trimmed_re_timed_sub_from_real_sub(real_subs, auto_subs, main_best_sub_slot_offset, best_auto_sub_line_match_index_for_best_sub_slot_offset)
-
-
-    # print(f"@@@@@@@@@@@@@@@@@{ep_sub_data.main_sub_file_path=}")
-    # print(f"@@@@@@@@@@@@@@@@@{clip_dir_data.auto_sub_path=}")
-    # real_sub_shift_num_ms = _get_real_sub_shift_num_ms(real_subs, auto_subs, main_best_sub_slot_offset, best_auto_sub_line_match_index_for_best_sub_slot_offset)
-    # print(f"{real_sub_shift_num_ms=}")
-    # neg_real_sub_shift_num_ms = real_sub_shift_num_ms * -1
-
-    # # init shift
-    # real_subs.shift(ms = neg_real_sub_shift_num_ms)
-    # tmp_ms_shifted_sub_path        = os.path.normpath(os.path.join(Path(out_sub_path).parent.__str__(), Path(out_sub_path).stem + "__TMP_MS_SHIFTED."          + ''.join(Path(out_sub_path).suffixes)))
-    # tmp_synced_ms_shifted_sub_path = os.path.normpath(os.path.join(Path(out_sub_path).parent.__str__(), Path(out_sub_path).stem + "__TMP_MS_SHIFTED__SYNCED." + ''.join(Path(out_sub_path).suffixes)))
-    # print(f"{tmp_ms_shifted_sub_path=}")
-    # real_subs.save(tmp_ms_shifted_sub_path)
-
-    # # This will throw warning, this is normal:  WARNING: low quality of fit. Wrong subtitle file?
-    # # This happens b/c did not trim out the first part of re-timed srt which is all set to 0 (like the theme) and did not trim end
-    # su.sync_subs_with_vid(vid_path     = vid_path,
-    #                       in_sub_path  = tmp_ms_shifted_sub_path,
-    #                       out_sub_path = tmp_synced_ms_shifted_sub_path)
-    # # rest of real subs still in final .srt, need to clean or it will mess with vid len once embedded to mkv
-    # vid_num_ms = veu.get_vid_length(vid_path) * 1000
-    # print(f"{vid_num_ms=}")
-
-    # _clean_trimmed_subs(tmp_synced_ms_shifted_sub_path, out_sub_path, vid_num_ms)
-
-    # # clean up
-    # fsu.delete_if_exists(tmp_ms_shifted_sub_path)
-    # fsu.delete_if_exists(tmp_synced_ms_shifted_sub_path)
-
-    # total_time = time.time() - start_time
-    # return total_time
-
-
-
-# def trim_and_re_time_real_sub_file_from_auto_subs(vid_path, real_sub_file_path, auto_sub_file_path, out_sub_path):
-#     """ 
-#         - After finding correct real sub file with faster get_real_episode_sub_data_from_auto_sub(), 
-#           go through real_sub_file and find exact amount to shift real_sub_file by to align to clip.
-#             - This is done by finding real_sub_shift_num_ms
-#         - Then use this real_sub_shift_num_ms to shift real sub path to align with clip 
-#             - This will get things close but not perfect yet
-#         - Then sub sync to make sure everything aligns perfectly
-#         - Finally, trim out the unused sub lines from the new re-timed real_sub_file
-#             - This is needed b/c otherwise it messes with vid length of final vid once embedded as
-#               single mkv.
-#     """
-#     print(f"in trim_and_re_time_real_sub_file_from_auto_subs()")
-#     print(f"{vid_path=}")
-#     print(f"{real_sub_file_path=}")
-#     print(f"{auto_sub_file_path=}")
-#     print(f"{out_sub_path=}")
-    
-#     start_time = time.time()
-#     fsu.delete_if_exists(out_sub_path)
-#     Path(out_sub_path).parent.mkdir(parents=True, exist_ok=True)
-
-
-#     real_subs, auto_subs = _get_and_check_real_and_auto_subs(real_sub_file_path, auto_sub_file_path)
-
-#     s_time = time.time()
-#     best_sub_slot_offset, best_auto_sub_line_match_index_for_best_sub_slot_offset = _get_best_sub_slot_offset_and_best_line_match_index(real_subs, auto_subs)
-#     exe_time = time.time() - s_time
-#     print(f"_get_best_sub_slot_offset_and_best_line_match_index() took {exe_time} seconds.")
-#     print("after _get_best_sub_slot_offset_and_best_line_match_index()")
-#     print(f"  {best_sub_slot_offset=}")
-#     print(f"  {best_auto_sub_line_match_index_for_best_sub_slot_offset=}")
-
-#     print(f"@@@@@@@@@@@@@@@@@{real_sub_file_path=}")
-#     print(f"@@@@@@@@@@@@@@@@@{auto_sub_file_path=}")
-#     real_sub_shift_num_ms = _get_real_sub_shift_num_ms(real_subs, auto_subs, best_sub_slot_offset, best_auto_sub_line_match_index_for_best_sub_slot_offset)
-#     print(f"{real_sub_shift_num_ms=}")
-#     neg_real_sub_shift_num_ms = real_sub_shift_num_ms * -1
-
-#     # init shift
-#     real_subs.shift(ms = neg_real_sub_shift_num_ms)
-#     tmp_ms_shifted_sub_path        = os.path.normpath(os.path.join(Path(out_sub_path).parent.__str__(), Path(out_sub_path).stem + "__TMP_MS_SHIFTED."          + ''.join(Path(out_sub_path).suffixes)))
-#     tmp_synced_ms_shifted_sub_path = os.path.normpath(os.path.join(Path(out_sub_path).parent.__str__(), Path(out_sub_path).stem + "__TMP_MS_SHIFTED__SYNCED." + ''.join(Path(out_sub_path).suffixes)))
-#     print(f"{tmp_ms_shifted_sub_path=}")
-#     real_subs.save(tmp_ms_shifted_sub_path)
-
-#     # This will throw warning, this is normal:  WARNING: low quality of fit. Wrong subtitle file?
-#     # This happens b/c did not trim out the first part of re-timed srt which is all set to 0 (like the theme) and did not trim end
-#     su.sync_subs_with_vid(vid_path     = vid_path,
-#                           in_sub_path  = tmp_ms_shifted_sub_path,
-#                           out_sub_path = tmp_synced_ms_shifted_sub_path)
-#     # rest of real subs still in final .srt, need to clean or it will mess with vid len once embedded to mkv
-#     vid_num_ms = veu.get_vid_length(vid_path) * 1000
-#     print(f"{vid_num_ms=}")
-
-#     _clean_trimmed_subs(tmp_synced_ms_shifted_sub_path, out_sub_path, vid_num_ms)
-
-#     # clean up
-#     fsu.delete_if_exists(tmp_ms_shifted_sub_path)
-#     fsu.delete_if_exists(tmp_synced_ms_shifted_sub_path)
-
-#     total_time = time.time() - start_time
-#     return total_time
-
-    
 
 if __name__ == "__main__":
     # # real_sub_file_path = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/test/sub_match/family.guy.s10.e05.back.to.the.pilot.(2011).eng.1cd.(4413506)/Family.Guy.S10E05.720p.WEB-DL.DD5.1.H.264-CtrlHD.srt"

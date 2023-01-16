@@ -143,6 +143,8 @@ serted extra subs
 
 - S15E13 - fuzz str 53 char long (max is 22922)
 
+- S1E1 - really bad case for trim/re-time sub time wehe
+
 # Steps
 
 1. dl real subs for whole series
