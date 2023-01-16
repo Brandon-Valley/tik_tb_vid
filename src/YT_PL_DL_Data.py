@@ -9,10 +9,10 @@ class Clip_Dir_Data:
     def __init__(self, clip_dir_path, pl_data_dir_path):
         self.clip_dir_path = clip_dir_path
         self.clip_name = Path(clip_dir_path).name
-        self.clip_data_dir_path = os.path.join(pl_data_dir_path, self.clip_name)
+        self.data_dir_path = os.path.join(pl_data_dir_path, self.clip_name)
 
-        fsu.delete_if_exists(self.clip_data_dir_path)
-        Path(self.clip_data_dir_path).mkdir(parents=True, exist_ok=True)
+        fsu.delete_if_exists(self.data_dir_path)
+        Path(self.data_dir_path).mkdir(parents=True, exist_ok=True)
 
         self._set_mp4_and_auto_sub_paths()
 
