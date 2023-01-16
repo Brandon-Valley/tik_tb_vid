@@ -117,10 +117,12 @@ def combine__mp4__and__sub_path_l__into_mkv__set_file_name_as_lang(in_mp4_path, 
     combine__mp4__and__sub_path_lang_dl__into_mkv(in_mp4_path, sub_path_lang_dl, out_mkv_path)
 
 
-def make_single_embedded_mkv_sub_show_by_default(mkv_path):
-    """ UNTESTED!!!!!! """
+def make_embedded_mkv_sub_track_show_by_default(mkv_path, sub_track_num = 0):
+    o = "C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/mkvs/S10E05__Family_Guy__Back_To_The_Pilot__Clip____TBSFIXEDDDDDDDDDDDD.mkv"
+    # https://stackoverflow.com/questions/26956762/ffmpeg-set-subtitles-track-as-default
     mp_path = "C:/Program Files (x86)/MKVToolNix/mkvpropedit.exe" # TODO
-    cmd = f'"{mp_path}" "{mkv_path}" --edit track:a1 --set flag-default=0'
+    # cmd = f'"{mp_path}" "{mkv_path}" --edit track:s1 --set flag-default={sub_track_num}'
+    cmd = f'ffmpeg -i "{mkv_path}" -disposition:s:{sub_track_num} default {o}'
     print(f"Running {cmd}...")
     subprocess.call(cmd, shell=True)
 
@@ -245,12 +247,15 @@ if __name__ == "__main__":
 
 
 
-    out_mkv_path = "C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/Family_Guy__TBS__alcho_and_pilot__SUB_SET_TEST/Family_Guy__Back_To_The_Pilot__Clip____TBS/Family_Guy__Back_To_The_Pilot__Clip____TBS.mkv"
+    # out_mkv_path = "C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/Family_Guy__TBS__alcho_and_pilot__SUB_SET_TEST/Family_Guy__Back_To_The_Pilot__Clip____TBS/Family_Guy__Back_To_The_Pilot__Clip____TBS.mkv"
 
-    # combine__mp4__and__sub_path_lang_dl__into_mkv(in_vid_path, sub_path_lang_dl, out_mkv_path)
+    # # combine__mp4__and__sub_path_lang_dl__into_mkv(in_vid_path, sub_path_lang_dl, out_mkv_path)
 
 
-    combine__mp4__and__sub_path_l__into_mkv__set_file_name_as_lang(in_vid_path, sub_file_l, out_mkv_path)
+    # combine__mp4__and__sub_path_l__into_mkv__set_file_name_as_lang(in_vid_path, sub_file_l, out_mkv_path)
+
+    make_embedded_mkv_sub_track_show_by_default(mkv_path = "C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/mkvs/S10E05__Family_Guy__Back_To_The_Pilot__Clip____TBS.mkv",
+     sub_track_num = 0)
 
 
     # remove_advertising_from_sub_file("C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en_s5_e17/s05/episode 17/Modern.Family.S05E17.720p.WEB-DL.DD5.1.H.264-HWD.en.srt")

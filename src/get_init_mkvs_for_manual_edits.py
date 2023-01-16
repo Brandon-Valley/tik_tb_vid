@@ -272,6 +272,7 @@ def main():
         subtitle_utils.combine__mp4__and__sub_path_lang_dl__into_mkv(in_mp4_path      = clip_dir_data.mp4_path,
                                                                      sub_path_lang_dl = sub_path_lang_dl,
                                                                      out_mkv_path     = new_mkv_path)
+        subtitle_utils.make_embedded_mkv_sub_track_show_by_default(new_mkv_path)
         fsu.delete_if_exists(tmp_srt_path)
 
         # print("before normal_successful_clip_w_subs_created__get_log_d()")
