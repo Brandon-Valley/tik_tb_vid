@@ -18,6 +18,9 @@ class Clip_Dir_Data:
 
         # print("end of init")
 
+    def get_final_vid_sub_path(self, sub_path, sub_num):
+        return os.path.join(self.data_dir_path, f"f{sub_num}_{Path(sub_path).name}")
+
     def has_subs(self):
         return not (self.auto_sub_path == None)
 

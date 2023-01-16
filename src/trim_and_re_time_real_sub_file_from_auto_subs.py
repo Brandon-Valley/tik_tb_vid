@@ -204,20 +204,25 @@ def _get_best_match_non_main_subs_line(best_match_auto_sub_line, non_main_subs):
     return best_match_non_main_subs_line
 
 
-def _make_non_main_final_vid_subs__and__get_final_vid_sub_path_l(main_final_vid_sub_path, auto_subs, ep_sub_data, best_match_real_sub_line, best_auto_sub_line_match_index_for_best_sub_slot_offset):
+def _make_non_main_final_vid_subs__and__get_final_vid_sub_path_l(main_final_vid_sub_path, clip_dir_data, ep_sub_data, best_match_auto_sub_line):
     #     best_match_auto_sub_line = auto_subs[best_auto_sub_line_match_index_for_best_sub_slot_offset]
     # best_match_real_sub_line = real_subs[best_sub_slot_offset + best_auto_sub_line_match_index_for_best_sub_slot_offset]
     final_vid_sub_path_l = [main_final_vid_sub_path]
 
     print(f"{len(ep_sub_data.non_main_sub_file_path_l)=}")
 
-    for non_main_sub_path in ep_sub_data.non_main_sub_file_path_l:
+    for non_main_sub_num, non_main_sub_path in enumerate(ep_sub_data.non_main_sub_file_path_l):
         # get best_match_non_main_subs_line
         non_main_subs = pysubs2.load(non_main_sub_path, encoding="latin1")
-        best_match_auto_sub_line = auto_subs[best_auto_sub_line_match_index_for_best_sub_slot_offset]
+        # best_match_auto_sub_line = auto_subs[best_auto_sub_line_match_index_for_best_sub_slot_offset]
         best_match_non_main_subs_line = _get_best_match_non_main_subs_line(best_match_auto_sub_line, non_main_subs)
         print(best_match_non_main_subs_line.text)
+        
 
+        non_main_final_vid_sub_path = clip_dir_data.get_final_vid_sub_path(ep_sub_data.main_sub_file_path, 0)
+        print(f"{non_main_final_vid_sub_path=}")
+        
+        # _make_final_vid_trimmed_re_timed_sub_from_real_sub(main_final_vid_sub_path, clip_dir_data, ep_sub_data.main_sub_file_path, real_subs, best_match_auto_sub_line, best_match_real_sub_line)
 
 
     return final_vid_sub_path_l
@@ -274,7 +279,8 @@ def trim_and_re_time_real_sub_file_from_auto_subs(clip_dir_data, ep_sub_data):
     # best_match_auto_sub_line = auto_subs[best_auto_sub_line_match_index_for_best_sub_slot_offset]
     # best_match_real_sub_line = real_subs[main_best_sub_slot_offset + best_auto_sub_line_match_index_for_best_sub_slot_offset]
 
-    main_final_vid_sub_path = os.path.join(clip_dir_data.data_dir_path, f"f0_{Path(ep_sub_data.main_sub_file_path).name}")
+    # main_final_vid_sub_path = os.path.join(clip_dir_data.data_dir_path, f"f0_{Path(ep_sub_data.main_sub_file_path).name}")
+    main_final_vid_sub_path = clip_dir_data.get_final_vid_sub_path(ep_sub_data.main_sub_file_path, 0)
     # _make_final_vid_trimmed_re_timed_sub_from_real_sub(main_final_vid_sub_path, clip_dir_data, ep_sub_data.main_sub_file_path, real_subs, auto_subs, 
     #                                                     main_best_sub_slot_offset, best_auto_sub_line_match_index_for_best_sub_slot_offset)
 
@@ -285,9 +291,9 @@ def trim_and_re_time_real_sub_file_from_auto_subs(clip_dir_data, ep_sub_data):
 
 
     print("here")
+    # _make_non_main_final_vid_subs__and__get_final_vid_sub_path_l(main_final_vid_sub_path, clip_dir_data, ep_sub_data, best_match_auto_sub_line)
 
-    final_vid_sub_path_l = _make_non_main_final_vid_subs__and__get_final_vid_sub_path_l(main_final_vid_sub_path, auto_subs, ep_sub_data, best_match_real_sub_line,
-    best_auto_sub_line_match_index_for_best_sub_slot_offset)
+    final_vid_sub_path_l = _make_non_main_final_vid_subs__and__get_final_vid_sub_path_l(main_final_vid_sub_path, clip_dir_data, ep_sub_data, best_match_auto_sub_line)
 
     print(f"{final_vid_sub_path_l=}")
     
