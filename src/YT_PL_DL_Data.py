@@ -6,9 +6,13 @@ class Clip_Dir_Data:
     mp4_path = False
     auto_sub_path = False
 
-    def __init__(self, clip_dir_path):
+    def __init__(self, clip_dir_path, pl_data_dir_path):
         self.clip_dir_path = clip_dir_path
         self.clip_name = Path(clip_dir_path).name
+        self.clip_data_dir_path = os.path.join(pl_data_dir_path, self.clip_name)
+
+        fsu.delete_if_exists(self.clip_data_dir_path)
+        Path(self.clip_data_dir_path).mkdir(parents=True, exist_ok=True)
 
         self._set_mp4_and_auto_sub_paths()
 
@@ -62,7 +66,7 @@ class YT_PL_DL_Data:
 
         clip_dir_path_l = fsu.get_dir_content_l(in_dir_path, "dir")
         for clip_dir_path in clip_dir_path_l:
-            new_clip_dir_data = Clip_Dir_Data(clip_dir_path)
+            new_clip_dir_data = Clip_Dir_Data(clip_dir_path, self.pl_data_dir_path)
             self.clip_dir_data_l.append(new_clip_dir_data)
 
 
