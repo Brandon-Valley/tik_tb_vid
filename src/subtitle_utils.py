@@ -62,10 +62,11 @@ def combine_mp4_and_sub_into_mkv(in_mp4_path, in_sub_path, out_mkv_path):
     subprocess.call(cmd, shell=True)
 
 
-def combine__mp4__and__sub_path_lang_dl__into_mkv(in_mp4_path, sub_path_lang_dl, out_mkv_path):
+def combine__mp4__and__sub_path_lang_dl__into_mkv(in_mp4_path, sub_path_lang_dl, out_mkv_path, default_sub_track_num = None):
     """ 
         First sub in sub_path_lang_dl will be default
         - Subs MAY need to be .srt
+        - Set default_sub_track_num = 0 to make first sub track default
         - EXAMPLE:
             sub_path_lang_dl = [
                                     {
@@ -96,6 +97,9 @@ def combine__mp4__and__sub_path_lang_dl__into_mkv(in_mp4_path, sub_path_lang_dl,
     for sub_path_lang_d_num, sub_path_lang_d in enumerate(sub_path_lang_dl):
         cmd += f' -metadata:s:s:{sub_path_lang_d_num} language={sub_path_lang_d["lang"]}'
 
+    if default_sub_track_num != None:
+        cmd += f' -disposition:s:{default_sub_track_num} default'
+
     cmd += f' "{out_mkv_path}"'
     
     print(f"Running {cmd=}...\n")
@@ -118,13 +122,16 @@ def combine__mp4__and__sub_path_l__into_mkv__set_file_name_as_lang(in_mp4_path, 
 
 
 def make_embedded_mkv_sub_track_show_by_default(mkv_path, sub_track_num = 0):
+    """ !!! WARNING !!! This is pretty fast, but still prints all the FFMPEG stuff, so may be better to just add the args to whatever other cmds you are using. """
     o = "C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/mkvs/S10E05__Family_Guy__Back_To_The_Pilot__Clip____TBSFIXEDDDDDDDDDDDD.mkv"
+    # TODO finish
     # https://stackoverflow.com/questions/26956762/ffmpeg-set-subtitles-track-as-default
     mp_path = "C:/Program Files (x86)/MKVToolNix/mkvpropedit.exe" # TODO
     # cmd = f'"{mp_path}" "{mkv_path}" --edit track:s1 --set flag-default={sub_track_num}'
-    cmd = f'ffmpeg -i "{mkv_path}" -disposition:s:{sub_track_num} default {o}'
+    cmd = f'ffmpeg -i "{mkv_path}" -c copy -disposition:s:{sub_track_num} default {o}'
     print(f"Running {cmd}...")
-    subprocess.call(cmd, shell=True)
+    # subprocess.call(cmd, shell=True)
+    raise Exception("NOT FINISHED BUT SHOULD WORK BUT READ WARNING")
 
 
 def ms_to_srt_time_str(ms):
