@@ -177,6 +177,21 @@ def _make_final_vid_trimmed_re_timed_sub_from_real_sub(out_sub_path, clip_dir_da
     fsu.delete_if_exists(tmp_synced_ms_shifted_sub_path)
 
 
+def _get_non_main_sub_best_sub_slot_offset(non_main_subs, auto_subs, best_auto_sub_line_match_index_for_best_sub_slot_offset):
+    return "hi"
+
+def _make_non_main_final_vid_subs__and__get_final_vid_sub_path_l(main_final_vid_sub_path, auto_subs, ep_sub_data, best_match_real_sub_line, best_auto_sub_line_match_index_for_best_sub_slot_offset):
+    #     best_match_auto_sub_line = auto_subs[best_auto_sub_line_match_index_for_best_sub_slot_offset]
+    # best_match_real_sub_line = real_subs[best_sub_slot_offset + best_auto_sub_line_match_index_for_best_sub_slot_offset]
+    final_vid_sub_path_l = [main_final_vid_sub_path]
+
+    for non_main_sub_path in ep_sub_data.non_main_sub_file_path_l:
+        non_main_subs = pysubs2.load(non_main_sub_path, encoding="latin1")
+        non_main_sub_best_sub_slot_offset = _get_non_main_sub_best_sub_slot_offset(non_main_subs, auto_subs, best_auto_sub_line_match_index_for_best_sub_slot_offset)
+
+
+    return final_vid_sub_path_l
+
 
 # def trim_and_re_time_real_sub_files_from_auto_subs(vid_path, real_sub_file_path, auto_sub_file_path, out_sub_path):
 # def trim_and_re_time_real_sub_file_from_auto_subs(vid_path, ep_sub_data, auto_sub_file_path, out_subs_dir_path):
@@ -234,7 +249,10 @@ def trim_and_re_time_real_sub_file_from_auto_subs(clip_dir_data, ep_sub_data):
                                                         main_best_sub_slot_offset, best_auto_sub_line_match_index_for_best_sub_slot_offset)
     print("here")
 
-    # final_vid_sub_path_l = make_non_main_final_vid_subs__and__get_final_vid_sub_path_l(main_final_vid_sub_path, ep_sub_data, best_match_real_sub_line)
+    final_vid_sub_path_l = _make_non_main_final_vid_subs__and__get_final_vid_sub_path_l(main_final_vid_sub_path, auto_subs, ep_sub_data, best_match_real_sub_line,
+    best_auto_sub_line_match_index_for_best_sub_slot_offset)
+
+    print(f"{final_vid_sub_path_l=}")
     
 
 
