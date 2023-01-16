@@ -1,5 +1,6 @@
 
 from collections import namedtuple
+from pprint import pprint
 import re
 from typing import Optional, List, Tuple, Sequence
 from pysubs2.common import IntOrFloat
@@ -137,6 +138,16 @@ def _clean_trimmed_subs(in_sub_path, out_sub_path, vid_num_ms):
 
 
 
+
+def _get_sub_path_best_sub_slot_offset_dl(best_match_real_sub_line, main_best_sub_slot_offset, ep_sub_data):
+    sub_path_best_sub_slot_offset_dl = [{
+        "path": ep_sub_data.main_sub_file_path,
+        "best_sub_slot_offset": main_best_sub_slot_offset}]
+
+    print(ep_sub_data.non_main_sub_file_path_l)
+    exit()
+
+
 # def trim_and_re_time_real_sub_files_from_auto_subs(vid_path, real_sub_file_path, auto_sub_file_path, out_sub_path):
 # def trim_and_re_time_real_sub_file_from_auto_subs(vid_path, ep_sub_data, auto_sub_file_path, out_subs_dir_path):
 def trim_and_re_time_real_sub_file_from_auto_subs(clip_dir_data, ep_sub_data):
@@ -166,19 +177,36 @@ def trim_and_re_time_real_sub_file_from_auto_subs(clip_dir_data, ep_sub_data):
 
     # Find best match data from main episode subs
     s_time = time.time()
-    best_sub_slot_offset, best_auto_sub_line_match_index_for_best_sub_slot_offset = _get_best_sub_slot_offset_and_best_line_match_index(real_subs, auto_subs)
+    main_best_sub_slot_offset, best_auto_sub_line_match_index_for_best_sub_slot_offset = _get_best_sub_slot_offset_and_best_line_match_index(real_subs, auto_subs)
     exe_time = time.time() - s_time
     print(f"_get_best_sub_slot_offset_and_best_line_match_index() took {exe_time} seconds.")
     print("after _get_best_sub_slot_offset_and_best_line_match_index()")
-    print(f"  {best_sub_slot_offset=}")
+    print(f"  {main_best_sub_slot_offset=}")
     print(f"  {best_auto_sub_line_match_index_for_best_sub_slot_offset=}")
 
     # TODO find best_sub_slot_offset for all other subs!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    # sub_path_lang_dl = [
+    #                     {
+    #                         "path": "<ABS_PATH_TO_SUB_FILE_1>",
+    #                         "lang": "en"
+    #                     },
+    #                     {
+    #                         "path": "<ABS_PATH_TO_SUB_FILE_2>",
+    #                         "lang": "en2"
+    #                     },
+    #                 ]
+    sub_path_lang_dl = []
+    # best_match_auto_sub_line = auto_subs[best_auto_sub_line_match_index_for_best_sub_slot_offset]
+    best_match_real_sub_line = real_subs[main_best_sub_slot_offset + best_auto_sub_line_match_index_for_best_sub_slot_offset]
 
+    # LATER could maybe make faster by passing main_best_sub_slot_offset and/or find avg winning fuzz_ratio for line match to stop when found?
+    sub_path_best_sub_slot_offset_dl = _get_sub_path_best_sub_slot_offset_dl(best_match_real_sub_line, main_best_sub_slot_offset, ep_sub_data)
+    print(f"sub_path_best_sub_slot_offset_dl vv")
+    pprint(sub_path_best_sub_slot_offset_dl)
 
 
     print(f"@@@@@@@@@@@@@@@@@{ep_sub_data.main_sub_file_path=}")
-    print(f"@@@@@@@@@@@@@@@@@{auto_sub_file_path=}")
+    print(f"@@@@@@@@@@@@@@@@@{clip_dir_data.auto_sub_path=}")
     real_sub_shift_num_ms = _get_real_sub_shift_num_ms(real_subs, auto_subs, best_sub_slot_offset, best_auto_sub_line_match_index_for_best_sub_slot_offset)
     print(f"{real_sub_shift_num_ms=}")
     neg_real_sub_shift_num_ms = real_sub_shift_num_ms * -1

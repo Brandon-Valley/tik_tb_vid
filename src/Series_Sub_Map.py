@@ -22,6 +22,7 @@ BAD_SUB_FILENAME_STR_L = ["directors", "comment", "fps", "UTF", "hearing", "impa
 class Episode_Sub_Data:
     extra_metadata_d = {}
     sub_file_path_l = []
+    non_main_sub_file_path_l = []
     main_sub_file_path = None
     series_name_match_str_set = set()
     # partial_fuzz_str_l = []
@@ -43,6 +44,10 @@ class Episode_Sub_Data:
         if load_method_str == "many_of_one_lang":
             self.sub_file_path_l = fsu.get_dir_content_l(self.episode_subs_dir_path, "file")
             self.main_sub_file_path = self._get_main_sub_file_path()
+
+            for sub_path in self.sub_file_path_l:
+                if sub_path != self.main_sub_file_path:
+                    self.non_main_sub_file_path_l.append(sub_path)
 
             self._get_total_fuzz_str___then___set_len___then___write_total_fuzz_str_to_json()
         else:
