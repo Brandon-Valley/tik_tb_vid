@@ -49,24 +49,8 @@ class Episode_Sub_Data:
             print(f"%%%%%%%%%%%%%%{len(self.sub_file_path_l)=}")
 
             if self.main_sub_file_path != None:
-                # self.non_main_sub_file_path_l = fsu.get_dir_content_l(self.episode_subs_dir_path, "file").remove(str(self.main_sub_file_path))
-                # self.non_main_sub_file_path_l = fsu.get_dir_content_l(self.episode_subs_dir_path, "file")
                 self.non_main_sub_file_path_l = self.sub_file_path_l
-                # print(self.non_main_sub_file_path_l)
-                # self.non_main_sub_file_path_l.remove(str(self.main_sub_file_path))
                 self.non_main_sub_file_path_l.remove(self.main_sub_file_path)
-                # print(self.non_main_sub_file_path_l)
-
-            # # TMP
-            # if self.season_num == 10:
-            #     pprint(self.sub_file_path_l)
-
-            # self.non_main_sub_file_path_l = []
-
-            # for sub_path in self.sub_file_path_l:
-            #     if sub_path != self.main_sub_file_path:
-            #         print(f"%%%{sub_path=}")
-            #         self.non_main_sub_file_path_l.append(sub_path)
 
             self._get_total_fuzz_str___then___set_len___then___write_total_fuzz_str_to_json()
         else:
