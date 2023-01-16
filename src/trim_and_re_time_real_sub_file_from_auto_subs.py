@@ -148,22 +148,16 @@ def _clean_trimmed_subs(in_sub_path, out_sub_path, vid_num_ms):
 
 
 def _make_final_vid_trimmed_re_timed_sub_from_real_sub(out_sub_path, clip_dir_data, real_sub_path, real_subs, auto_subs, best_sub_slot_offset, best_auto_sub_line_match_index_for_best_sub_slot_offset):
-    # print(f"@@@@@@@@@@@@@@@@@{ep_sub_data.main_sub_file_path=}")
-    # print(f"@@@@@@@@@@@@@@@@@{clip_dir_data.auto_sub_path=}")
     real_sub_shift_num_ms = _get_real_sub_shift_num_ms(real_subs, auto_subs, best_sub_slot_offset, best_auto_sub_line_match_index_for_best_sub_slot_offset)
     print(f"{real_sub_shift_num_ms=}")
     neg_real_sub_shift_num_ms = real_sub_shift_num_ms * -1
 
     # init shift
     real_subs.shift(ms = neg_real_sub_shift_num_ms)
-    # tmp_ms_shifted_sub_path        = os.path.normpath(os.path.join(Path(out_sub_path).parent.__str__(), Path(out_sub_path).stem + "__TMP_MS_SHIFTED."          + ''.join(Path(out_sub_path).suffixes)))
-    # tmp_synced_ms_shifted_sub_path = os.path.normpath(os.path.join(Path(out_sub_path).parent.__str__(), Path(out_sub_path).stem + "__TMP_MS_SHIFTED__SYNCED." + ''.join(Path(out_sub_path).suffixes)))
 
     tmp_ms_shifted_sub_path        = os.path.join(clip_dir_data.data_dir_path, f"TMP_MS_SHIFTED__{Path(real_sub_path).name}")
     tmp_synced_ms_shifted_sub_path = os.path.join(clip_dir_data.data_dir_path, f"TMP_MS_SHIFTED__SYNCED__{Path(real_sub_path).name}")
 
-    # tmp_ms_shifted_sub_path        = os.path.normpath(os.path.join(Path(out_sub_path).parent.__str__(), Path(out_sub_path).stem + "__TMP_MS_SHIFTED."          + ''.join(Path(out_sub_path).suffixes)))
-    # tmp_synced_ms_shifted_sub_path = os.path.normpath(os.path.join(Path(out_sub_path).parent.__str__(), Path(out_sub_path).stem + "__TMP_MS_SHIFTED__SYNCED." + ''.join(Path(out_sub_path).suffixes)))
     print(f"{tmp_ms_shifted_sub_path=}")
     real_subs.save(tmp_ms_shifted_sub_path)
 
@@ -239,6 +233,11 @@ def trim_and_re_time_real_sub_file_from_auto_subs(clip_dir_data, ep_sub_data):
     _make_final_vid_trimmed_re_timed_sub_from_real_sub(main_final_vid_sub_path, clip_dir_data, ep_sub_data.main_sub_file_path, real_subs, auto_subs, 
                                                         main_best_sub_slot_offset, best_auto_sub_line_match_index_for_best_sub_slot_offset)
     print("here")
+
+    # final_vid_sub_path_l = make_non_main_final_vid_subs__and__get_final_vid_sub_path_l(main_final_vid_sub_path, ep_sub_data, best_match_real_sub_line)
+    
+
+
     # # LATER could maybe make faster by passing main_best_sub_slot_offset and/or find avg winning fuzz_ratio for line match to stop when found?
     # sub_path_best_sub_slot_offset_dl = _get_sub_path_best_sub_slot_offset_dl(best_match_real_sub_line, main_best_sub_slot_offset, ep_sub_data)
     # print(f"sub_path_best_sub_slot_offset_dl vv")
