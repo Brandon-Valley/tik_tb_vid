@@ -18,6 +18,7 @@ RUN_LOG_JSON_PATH = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "run_log_l.json
 SSM_LOG_JSON_PATH = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "SSM_log.json")
 SSM_STATS_JSON_PATH = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "SSM_stats.json")
 FINAL_STATS_JSON_PATH = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "final_stats.json")
+PL_DATA_DIR_PATH = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "YT_PL_DATA")
 # SERIES_SUB_EN_DIR_PATH = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en"
 # SERIES_SUB_EN_DIR_PATH = "C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en_s4_16_and_17"
 # SERIES_SUB_EN_DIR_PATH = "C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en"
@@ -206,8 +207,8 @@ def main():
     # yt_pl_dl_dir_path = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "Family_Guy__TBS__blue_harvest_test")
     # yt_pl_dl_dir_path = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "Family_Guy___TBS__google_earth_test__and__pilot")
     # yt_pl_dl_dir_path = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "Family_Guy___TBS__google_earth_test")
-    yt_pl_dl_dir_data = YT_PL_DL_Data(yt_pl_dl_dir_path)
-
+    yt_pl_dl_dir_data = YT_PL_DL_Data(yt_pl_dl_dir_path, PL_DATA_DIR_PATH)
+    exit()
     run_log_l = []
 
     for clip_dir_data in yt_pl_dl_dir_data.clip_dir_data_l:
@@ -259,7 +260,8 @@ def main():
         new_mkv_path = new_srt_mkv_file_path_no_ext + f".mkv"
 
         trim_and_re_time_real_sub_time = trim_and_re_time_real_sub_file_from_auto_subs(vid_path = clip_dir_data.mp4_path,
-                                                                                        real_sub_file_path = ep_sub_data.main_sub_file_path,
+                                                                                        # real_sub_file_path = ep_sub_data.main_sub_file_path,
+                                                                                        ep_sub_data = ep_sub_data,
                                                                                         auto_sub_file_path = clip_dir_data.auto_sub_path,
                                                                                         out_sub_path = tmp_srt_path)
 

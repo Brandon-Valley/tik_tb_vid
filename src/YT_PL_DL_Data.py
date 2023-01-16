@@ -53,8 +53,12 @@ class Clip_Dir_Data:
 
 class YT_PL_DL_Data:
     clip_dir_data_l = []
-    def __init__(self, in_dir_path):
+    def __init__(self, in_dir_path, pl_data_dir_path):
         self.dir_path = in_dir_path
+        self.pl_data_dir_path = pl_data_dir_path
+
+        fsu.delete_if_exists(pl_data_dir_path)
+        Path(pl_data_dir_path).mkdir(parents=True, exist_ok=True)
 
         clip_dir_path_l = fsu.get_dir_content_l(in_dir_path, "dir")
         for clip_dir_path in clip_dir_path_l:
