@@ -415,6 +415,7 @@ class Series_Sub_map():
         # Now that we know the min_fuzz_str_len, Go through all episodes again and create/write out
         # the partial_fuzz_str_l (from each episode's chosen main sub file) to json
         self._create_and_write__partial_fuzz_str_l__to_json__for_each__ep__for_lang(lang, max_clip_fuzz_str_len)
+        print("here")
 
 
     def get_min_fuzz_str_len_for_lang(self, lang):

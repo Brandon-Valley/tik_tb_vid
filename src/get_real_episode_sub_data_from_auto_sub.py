@@ -1,3 +1,7 @@
+from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import wait
+import cfg
+
 from pprint import pprint
 import fuzz_common as fc
 import os
@@ -79,13 +83,7 @@ def _get_fuzz_ratio_ep_sub_data_l_d(auto_sub_fuzz_str, ssm, lang, method_key, pa
         fuzz_ratios as keys w/ value == list of all ep_sub_data objects that returned that fuzz ratio
           - This fuzz_ratio_ep_sub_data_l_d will be evaluated to find next step/best-match/etc.
     """
-    ep_sub_data_l = ssm.get_episode_sub_data_l_for_lang(lang)
-
-    print(f"{len(ep_sub_data_l)=}")
-
-    fuzz_ratio_ep_sub_data_l_d = {}
-
-    for ep_sub_data in ep_sub_data_l:
+    def _st__build_fuzz_ratio_ep_sub_data_l_d(ep_sub_data, auto_sub_fuzz_str, method_key, partial_fuzz_str_len):
         print(f"  Checking {ep_sub_data.get_season_episode_str()}...")
 
         ep_sub_fuzz_ratio, ep_sub_best_partial_fuzz_str = _get_best_ep_sub_partial_fuzz_ratio(ep_sub_data, auto_sub_fuzz_str, method_key, partial_fuzz_str_len)
@@ -94,6 +92,32 @@ def _get_fuzz_ratio_ep_sub_data_l_d(auto_sub_fuzz_str, ssm, lang, method_key, pa
             fuzz_ratio_ep_sub_data_l_d[ep_sub_fuzz_ratio].append(ep_sub_data)
         else:
             fuzz_ratio_ep_sub_data_l_d[ep_sub_fuzz_ratio] = [ep_sub_data]
+
+
+    ep_sub_data_l = ssm.get_episode_sub_data_l_for_lang(lang)
+
+    print(f"{len(ep_sub_data_l)=}")
+
+    fuzz_ratio_ep_sub_data_l_d = {}
+
+    with ThreadPoolExecutor(cfg.NUM_CORES) as executor:
+        futures = []
+
+        for ep_sub_data in ep_sub_data_l:
+            futures = [executor.submit(_st__build_fuzz_ratio_ep_sub_data_l_d, ep_sub_data, auto_sub_fuzz_str, method_key, partial_fuzz_str_len)]
+        # print(f"  Checking {ep_sub_data.get_season_episode_str()}...")
+
+        # ep_sub_fuzz_ratio, ep_sub_best_partial_fuzz_str = _get_best_ep_sub_partial_fuzz_ratio(ep_sub_data, auto_sub_fuzz_str, method_key, partial_fuzz_str_len)
+
+        # if ep_sub_fuzz_ratio in fuzz_ratio_ep_sub_data_l_d.keys():
+        #     fuzz_ratio_ep_sub_data_l_d[ep_sub_fuzz_ratio].append(ep_sub_data)
+        # else:
+        #     fuzz_ratio_ep_sub_data_l_d[ep_sub_fuzz_ratio] = [ep_sub_data]
+
+                # wait for all tasks to complete
+        print('Waiting for tasks to complete...')
+        wait(futures)
+        print('All tasks are done!')
     return fuzz_ratio_ep_sub_data_l_d
 
 
