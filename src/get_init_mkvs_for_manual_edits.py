@@ -208,7 +208,6 @@ def main():
     ssm.load_lang(SERIES_SUB_EN_DIR_PATH, LANG, SERIES_NAME, yt_pl_dl_dir_data.max_fuzz_str_len)
     ssm.write_log_json(SSM_LOG_JSON_PATH)
     ssm.write_stats_json(SSM_STATS_JSON_PATH)
-    # min_real_sub_num_char, max_real_sub_num_char = ssm.get_min_and_max_episode_fuzz_str_len(LANG)
     
     if ssm.get_num_episodes_in_lang == 0:
         raise Exception(f"ERROR: ssm.get_num_episodes_in_lang == 0, this means something is wrong with loading ssm from {SERIES_SUB_EN_DIR_PATH=} in {LANG=}")

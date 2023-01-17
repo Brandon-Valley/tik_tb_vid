@@ -15,13 +15,14 @@ from sms.file_system_utils import file_system_utils as fsu
 from sms.logger import txt_logger
 import vid_edit_utils as veu
 import subtitle_utils as su
+import cfg
 from pathlib import Path
 
 from fuzzywuzzy import fuzz
 
 import time
 
-NUM_CORES_PERSONAL_LAPTOP = 4
+# NUM_CORES_PERSONAL_LAPTOP = 4
 FUZZ_STR_DELIM = ' '
 
 
@@ -197,7 +198,7 @@ def _make_non_main_final_vid_subs__and__get_final_vid_sub_path_l(main_final_vid_
     print(f"{len(ep_sub_data.non_main_sub_file_path_l)=}")
     
     # start the thread pool
-    with ThreadPoolExecutor(NUM_CORES_PERSONAL_LAPTOP) as executor:
+    with ThreadPoolExecutor(cfg.NUM_CORES) as executor:
         futures = []
         for non_main_sub_num, non_main_sub_path in enumerate(ep_sub_data.non_main_sub_file_path_l):
             non_main_final_vid_sub_path = clip_dir_data.get_final_vid_sub_path(non_main_sub_path, non_main_sub_num + 1)
