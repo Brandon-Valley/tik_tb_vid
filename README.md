@@ -1,5 +1,17 @@
 # tik_tb_vid
 
+
+**THIS WORKED FULL CUT RE-ENCODE looks FINE** - `ffmpeg -i "C:/Users/Brandon/Documents/Other/temp/S02E01__Family_Guy__This_House_is_Freakin__Sweet___Clip____TBS.mkv" -ss 00:00:06.605 -to 00:00:25.592 -acodec copy -vcodec libx264 -crf 0 -preset slow "C:/Users/Brandon/Documents/Other/temp/CUT_W_FFMPEG.mkv"`
+  - ffmpeg -i "C:/Users/Brandon/Documents/Other/temp/ffmpeg_Test/S10E05__Family_Guy__Back_To_The_Pilot__Clip____TBS.mkv" -ss 00:00:44.111 -to 00:01:15.510 -acodec copy -vcodec libx264 -crf 0 -preset slow "C:/Users/Brandon/Documents/Other/temp/ffmpeg_Test/o.mkv"
+
+could also try mkv merge - https://superuser.com/questions/751855/using-ffmpeg-to-split-mkv-but-get-a-few-seconds-video-lost-cutting-between-keyf
+
+
+my exact problem - https://forum.videohelp.com/threads/406833-Lossless-cut-without-losing-subtitles
+
+
+
+
 pip install moviepy
 
 pip install cv2
@@ -69,6 +81,19 @@ https://www.videohelp.com/software/VideoReDo
 https://forum.videohelp.com/threads/359121-How-to-extract-cut-parts-from-a-mkv-including-all-audio-and-subtitle-tracks
 
 https://www.videohelp.com/software/sections/video-editors-basic
+
+mkv cutter - https://www.videohelp.com/software/MKV-Cutter
+- use 7z to extract
+
+
+
+# other splitter options
+
+https://www.videohelp.com/software/SolveigMM-Video-Splitter
+https://www.videohelp.com/software/TMPGEnc-MPEG-Editor
+https://www.videohelp.com/software/TMPGEnc-MPEG-Editor
+https://www.videohelp.com/software/VideoReDo
+
 
 # Manual vid edit with embedded subtitles
 

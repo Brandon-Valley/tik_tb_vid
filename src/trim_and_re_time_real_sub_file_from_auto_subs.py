@@ -1,5 +1,7 @@
 from concurrent.futures import ThreadPoolExecutor
 from concurrent.futures import wait
+import cfg
+
 from collections import namedtuple
 from pprint import pprint
 import re
@@ -15,7 +17,6 @@ from sms.file_system_utils import file_system_utils as fsu
 from sms.logger import txt_logger
 import vid_edit_utils as veu
 import subtitle_utils as su
-import cfg
 from pathlib import Path
 
 from fuzzywuzzy import fuzz
@@ -24,6 +25,7 @@ import time
 
 # NUM_CORES_PERSONAL_LAPTOP = 4
 FUZZ_STR_DELIM = ' '
+MKV_TOOL_NIX_FIRST_SUB_TRACK_ID = 2 
 
 
 def _get_and_check_real_and_auto_subs(real_sub_file_path, auto_sub_file_path):
@@ -231,7 +233,7 @@ def get_sub_path_lang_dl__from__final_vid_sub_path_l(final_vid_sub_path_l, lang)
     for final_vid_sub_num, final_vid_sub_path in enumerate(final_vid_sub_path_l):
         sub_path_lang_dl.append({
             "path": final_vid_sub_path,
-            "lang": f"{lang}{final_vid_sub_num}"
+            "lang": f"{lang}{final_vid_sub_num + MKV_TOOL_NIX_FIRST_SUB_TRACK_ID}"
         })
     return sub_path_lang_dl
 

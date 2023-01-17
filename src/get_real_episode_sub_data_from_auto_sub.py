@@ -101,6 +101,7 @@ def _get_fuzz_ratio_ep_sub_data_l_d(auto_sub_fuzz_str, ssm, lang, method_key, pa
     fuzz_ratio_ep_sub_data_l_d = {}
 
     with ThreadPoolExecutor(cfg.NUM_CORES) as executor:
+    # with ThreadPoolExecutor(1) as executor:
         futures = []
 
         for ep_sub_data in ep_sub_data_l:
