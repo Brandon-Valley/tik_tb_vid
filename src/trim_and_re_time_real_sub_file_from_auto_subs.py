@@ -125,7 +125,9 @@ def _clean_trimmed_subs(in_sub_path, out_sub_path, vid_num_ms):
 
     # Remove end that lasts past length of vid
     for line_num, line in enumerate(clean_sub_line_l):
-        if line.start > vid_num_ms or line.end > vid_num_ms:
+        # if line.start > vid_num_ms or line.end > vid_num_ms:
+        # LATER if too many vids have one small half-second blip of subtitles appear at very end, should add MIN_LAST_SUB_LEN so long dialog at end is not lost
+        if line.start > vid_num_ms:
             clean_sub_line_l = clean_sub_line_l[:line_num]
             print(f"found first line past end of vid: {line.text=}")
             break
