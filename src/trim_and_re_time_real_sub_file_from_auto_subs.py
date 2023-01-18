@@ -221,11 +221,11 @@ def get_sub_path_lang_dl__from__final_vid_sub_path_l(final_vid_sub_path_l, lang)
         sub_path_lang_dl = [
                             {
                                 "path": "<ABS_PATH_TO_SUB_FILE_1>",
-                                "lang": "en"
+                                "lang": "en2"
                             },
                             {
                                 "path": "<ABS_PATH_TO_SUB_FILE_2>",
-                                "lang": "en2"
+                                "lang": "en3"
                             },
                         ]
     """
