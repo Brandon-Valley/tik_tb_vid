@@ -13,10 +13,12 @@ class Clip_Dir_Data:
         self.clip_dir_path = clip_dir_path
         self.clip_name = Path(clip_dir_path).name
         self.data_dir_path = os.path.join(pl_data_dir_path, self.clip_name)
+        self.trim_re_time_working_dir_path = os.path.join(self.data_dir_path, "trim_re_time_wrk")
         self.fuzz_str_json_path = os.path.join(self.data_dir_path, "fuzz_str.json")
 
         fsu.delete_if_exists(self.data_dir_path)
         Path(self.data_dir_path).mkdir(parents=True, exist_ok=True)
+        Path(self.trim_re_time_working_dir_path).mkdir(parents=True, exist_ok=True)
 
         self._set_mp4_and_auto_sub_paths()
 
@@ -76,8 +78,8 @@ class Clip_Dir_Data:
 class YT_PL_DL_Data:
     clip_dir_data_l = []
     def __init__(self, in_dir_path, pl_data_dir_path):
-        self.dir_path = in_dir_path
         self.pl_data_dir_path = pl_data_dir_path
+        self.dir_path = in_dir_path
 
         fsu.delete_if_exists(pl_data_dir_path)
         Path(pl_data_dir_path).mkdir(parents=True, exist_ok=True)

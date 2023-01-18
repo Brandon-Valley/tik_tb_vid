@@ -141,9 +141,8 @@ def _make_final_vid_trimmed_re_timed_sub_from_real_sub(out_sub_path, clip_dir_da
     # init shift
     real_subs.shift(ms = neg_real_sub_shift_num_ms)
 
-    # trim_re_time_working_dir_path = os.path.join()
-    tmp_ms_shifted_sub_path        = os.path.join(clip_dir_data.data_dir_path, f"MS_SHIFTED__{Path(real_sub_path).name}")
-    tmp_synced_ms_shifted_sub_path = os.path.join(clip_dir_data.data_dir_path, f"MS_SHIFTED__SYNCED__{Path(real_sub_path).name}")
+    tmp_ms_shifted_sub_path        = os.path.join(clip_dir_data.trim_re_time_working_dir_path, f"MS_SHIFTED__{Path(real_sub_path).name}")
+    tmp_synced_ms_shifted_sub_path = os.path.join(clip_dir_data.trim_re_time_working_dir_path, f"MS_SHIFTED__SYNCED__{Path(real_sub_path).name}")
 
     print(f"{tmp_ms_shifted_sub_path=}")
     real_subs.save(tmp_ms_shifted_sub_path)
