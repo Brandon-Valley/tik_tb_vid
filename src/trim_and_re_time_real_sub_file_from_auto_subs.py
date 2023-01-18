@@ -141,8 +141,9 @@ def _make_final_vid_trimmed_re_timed_sub_from_real_sub(out_sub_path, clip_dir_da
     # init shift
     real_subs.shift(ms = neg_real_sub_shift_num_ms)
 
-    tmp_ms_shifted_sub_path        = os.path.join(clip_dir_data.data_dir_path, f"TMP_MS_SHIFTED__{Path(real_sub_path).name}")
-    tmp_synced_ms_shifted_sub_path = os.path.join(clip_dir_data.data_dir_path, f"TMP_MS_SHIFTED__SYNCED__{Path(real_sub_path).name}")
+    # trim_re_time_working_dir_path = os.path.join()
+    tmp_ms_shifted_sub_path        = os.path.join(clip_dir_data.data_dir_path, f"MS_SHIFTED__{Path(real_sub_path).name}")
+    tmp_synced_ms_shifted_sub_path = os.path.join(clip_dir_data.data_dir_path, f"MS_SHIFTED__SYNCED__{Path(real_sub_path).name}")
 
     print(f"{tmp_ms_shifted_sub_path=}")
     real_subs.save(tmp_ms_shifted_sub_path)
@@ -158,9 +159,9 @@ def _make_final_vid_trimmed_re_timed_sub_from_real_sub(out_sub_path, clip_dir_da
 
     _clean_trimmed_subs(tmp_synced_ms_shifted_sub_path, out_sub_path, vid_num_ms)
 
-    # clean up
-    fsu.delete_if_exists(tmp_ms_shifted_sub_path)
-    fsu.delete_if_exists(tmp_synced_ms_shifted_sub_path)
+    # # clean up
+    # fsu.delete_if_exists(tmp_ms_shifted_sub_path)
+    # fsu.delete_if_exists(tmp_synced_ms_shifted_sub_path)
 
 
 def _get_best_match_non_main_subs_line(best_match_auto_sub_line, non_main_subs):
@@ -238,6 +239,15 @@ def get_sub_path_lang_dl__from__final_vid_sub_path_l(final_vid_sub_path_l, lang)
     return sub_path_lang_dl
 
 
+def _get_unique_final_vid_sub_path_l__and__rename_duplicates(final_vid_sub_path_l):
+    unique_sub_path_l, dup_sub_path_l = fsu.get_file_path_l_w_duplicate_files_removed(final_vid_sub_path_l, return_removed_file_path_l = True, verbose = False)
+    # Want to keep duplicate subs for record-keeping/testing purposes
+    for dup_sub_path in dup_sub_path_l:
+        new_file_name = f"DUPLICATE__{Path(dup_sub_path).name}"
+        new_file_path = os.path.join(Path(dup_sub_path).parent.__str__(), new_file_name)
+        fsu.rename_file_overwrite(dup_sub_path, new_file_path)
+    return unique_sub_path_l
+
 def trim_and_re_time_real_sub_file_from_auto_subs(clip_dir_data, ep_sub_data, lang):
     """
         - After finding correct real sub file with faster get_real_episode_sub_data_from_auto_sub(),
@@ -281,11 +291,14 @@ def trim_and_re_time_real_sub_file_from_auto_subs(clip_dir_data, ep_sub_data, la
     _make_final_vid_trimmed_re_timed_sub_from_real_sub(main_final_vid_sub_path, clip_dir_data, ep_sub_data.main_sub_file_path, real_subs, best_match_auto_sub_line, best_match_real_sub_line)
 
     # Make final sub file for every non-main-sub as well
+    # final_vid_sub_path_l[0] == main_final_vid_sub_path
     final_vid_sub_path_l = _make_non_main_final_vid_subs__and__get_final_vid_sub_path_l(main_final_vid_sub_path, clip_dir_data, ep_sub_data, best_match_auto_sub_line)
+    unique_final_vid_sub_path_l = _get_unique_final_vid_sub_path_l__and__rename_duplicates(final_vid_sub_path_l)
 
     print(f"{final_vid_sub_path_l=}")
 
-    sub_path_lang_dl = get_sub_path_lang_dl__from__final_vid_sub_path_l(final_vid_sub_path_l, lang)
+    # sub_path_lang_dl = get_sub_path_lang_dl__from__final_vid_sub_path_l(final_vid_sub_path_l, lang)
+    sub_path_lang_dl = get_sub_path_lang_dl__from__final_vid_sub_path_l(unique_final_vid_sub_path_l, lang)
     print(f"{sub_path_lang_dl=}")
 
     total_time = time.time() - start_time

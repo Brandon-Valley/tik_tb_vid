@@ -3,6 +3,23 @@
 
 **THIS WORKED FULL CUT RE-ENCODE looks FINE** - `ffmpeg -i "C:/Users/Brandon/Documents/Other/temp/S02E01__Family_Guy__This_House_is_Freakin__Sweet___Clip____TBS.mkv" -ss 00:00:06.605 -to 00:00:25.592 -acodec copy -vcodec libx264 -crf 0 -preset slow "C:/Users/Brandon/Documents/Other/temp/CUT_W_FFMPEG.mkv"`
   - ffmpeg -i "C:/Users/Brandon/Documents/Other/temp/ffmpeg_Test/S10E05__Family_Guy__Back_To_The_Pilot__Clip____TBS.mkv" -ss 00:00:44.111 -to 00:01:15.510 -acodec copy -vcodec libx264 -crf 0 -preset slow "C:/Users/Brandon/Documents/Other/temp/ffmpeg_Test/o.mkv"
+  - 
+one of these did better job but not perfect maybde? for keeping subsffmpeg -ss 00:00:12.683 -i "C:/Users/Brandon/Documents/Other/temp/S02E01__Family_Guy__This_House_is_Freakin__Sweet___Clip____TBS.mkv" -t 00:00:44.212 -c:v libx264 -crf 0 -preset slow -c:a copy "C:/Users/Brandon/Documents/Other/temp/CUT_W_FFMPEG.mkv"  
+ffmpeg -i input.mp4 -c:v libx264 -crf 18 -preset slow -c:a copy output.mp4
+
+ffmpeg -i "C:/Users/Brandon/Documents/Other/temp/S02E01__Family_Guy__This_House_is_Freakin__Sweet___Clip____TBS.mkv" -ss 00:01:00 -to 00:02:00 -acodec copy -vcodec webm "C:/Users/Brandon/Documents/Other/temp/CUT_W_FFMPEG.mkv"
+ffmpeg -i "C:/Users/Brandon/Documents/Other/temp/S02E01__Family_Guy__This_House_is_Freakin__Sweet___Clip____TBS.mkv" -ss 00:00:12.683 -to 00:00:44.212 -acodec copy -vcodec copy "C:/Users/Brandon/Documents/Other/temp/CUT_W_FFMPEG.mkv"
+ffmpeg -i "C:/Users/Brandon/Documents/Other/temp/S02E01__Family_Guy__This_House_is_Freakin__Sweet___Clip____TBS.mkv" -ss 00:00:06.605 -to 00:00:25.592 -acodec copy -vcodec libx264 -crf 0 -preset slow "C:/Users/Brandon/Documents/Other/temp/CUT_W_FFMPEG.mkv"
+ffmpeg -i "C:/Users/Brandon/Documents/Other/temp/ffmpeg_Test/S10E05__Family_Guy__Back_To_The_Pilot__Clip____TBS.mkv" -ss 00:00:44.111 -to 00:01:15.510 -acodec copy -vcodec libx264 -crf 0 -preset slow "C:/Users/Brandon/Documents/Other/temp/ffmpeg_Test/o.mkv"
+ffmpeg -i "C:/Users/Brandon/Documents/Other/temp/ffmpeg_Test/S10E05__Family_Guy__Back_To_The_Pilot__Clip____TBS.mkv" -ss 00:00:44.111 -to 00:01:15.510 -acodec copy -vcodec libx264 -crf 0 -preset slow -map 0 "C:/Users/Brandon/Documents/Other/temp/ffmpeg_Test/o.mkv"
+ffmpeg -i "C:/Users/Brandon/Documents/Other/temp/ffmpeg_Test/S10E05__Family_Guy__Back_To_The_Pilot__Clip____TBS.mkv" -ss 00:00:44.111 -to 00:01:15.510 -acodec copy -vcodec libx264 -crf 0 -preset slow -codec:s copy "C:/Users/Brandon/Documents/Other/temp/ffmpeg_Test/o.mkv"
+ffmpeg -i "C:/Users/Brandon/Documents/Other/temp/ffmpeg_Test/S10E05__Family_Guy__Back_To_The_Pilot__Clip____TBS.mkv" -ss 00:00:44.111 -to 00:01:15.510 -acodec copy -vcodec libx264 -crf 0 -preset slow -codec:s libx264 -crf 0 -preset slow "C:/Users/Brandon/Documents/Other/temp/ffmpeg_Test/o.mkv"
+ffmpeg -i "C:/Users/Brandon/Documents/Other/temp/ffmpeg_Test/S10E05__Family_Guy__Back_To_The_Pilot__Clip____TBS.mkv" -ss 00:00:44.111 -to 00:01:15.510 -acodec copy -vcodec libx264 -crf 0 -preset slow -codec:s dvd_subtitle "C:/Users/Brandon/Documents/Other/temp/ffmpeg_Test/o.mkv"
+ffmpeg -i "C:/Users/Brandon/Documents/Other/temp/ffmpeg_Test/S10E05__Family_Guy__Back_To_The_Pilot__Clip____TBS.mkv" -ss 00:00:44.111 -to 00:01:15.510 -acodec copy -vcodec libx264 -crf 0 -preset slow -codec:s srt -map 0 "C:/Users/Brandon/Documents/Other/temp/ffmpeg_Test/o.mkv"
+ffmpeg -i "C:/Users/Brandon/Documents/Other/temp/ffmpeg_Test/S10E05__Family_Guy__Back_To_The_Pilot__Clip____TBS.mkv" -ss 00:00:44.111 -to 00:01:15.510 -acodec copy -vcodec libx264 -crf 0 -preset slow -reset_timestamps 1 -codec:s srt -map 0 "C:/Users/Brandon/Documents/Other/temp/ffmpeg_Test/o.mkv"
+ffmpeg -i "C:/Users/Brandon/Documents/Other/temp/ffmpeg_Test/S10E05__Family_Guy__Back_To_The_Pilot__Clip____TBS.mkv" -ss 00:00:44.111 -to 00:01:15.510 -vcodec libx264 -crf 0 -preset slow -reset_timestamps 1 -map 0  "C:/Users/Brandon/Documents/Other/temp/ffmpeg_Test/o.mkv"
+
+
 
 could also try mkv merge - https://superuser.com/questions/751855/using-ffmpeg-to-split-mkv-but-get-a-few-seconds-video-lost-cutting-between-keyf
 
