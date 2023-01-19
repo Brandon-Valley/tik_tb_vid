@@ -21,8 +21,8 @@ IGNORE_DIR_PATH           = os.path.join(cfg.BIG_DATA_DIR_PATH, "ignore")
 
 # PLAYLIST_OG_VIDS_DIR_PATH = os.path.join(IGNORE_DIR_PATH, "playlist_og_clips", "fg_pl_tbs__single_short_test")
 # PLAYLIST_OG_VIDS_DIR_PATH = os.path.join(IGNORE_DIR_PATH, "playlist_og_clips", "fg_pl_tbs__10_clips_full_len_test")
-# PLAYLIST_OG_VIDS_DIR_PATH    = os.path.join(IGNORE_DIR_PATH, "playlist_og_clips", "Family_Guy___TBS")
-PLAYLIST_OG_VIDS_DIR_PATH    = os.path.join(IGNORE_DIR_PATH, "playlist_og_clips", "fg_pl_tbs__manual_edit_mkvs__test")
+PLAYLIST_OG_VIDS_DIR_PATH    = os.path.join(IGNORE_DIR_PATH, "playlist_og_clips", "Family_Guy___TBS")
+# PLAYLIST_OG_VIDS_DIR_PATH    = os.path.join(IGNORE_DIR_PATH, "playlist_og_clips", "fg_pl_tbs__manual_edit_mkvs__test")
 FINAL_OUT_VID_DIR_PATH       = os.path.join(IGNORE_DIR_PATH, "final_output")
 OG_LONG_BOTTOM_VIDS_DIR_PATH = os.path.join(IGNORE_DIR_PATH, "og_long_bottom_vids")
 
@@ -57,9 +57,6 @@ def _get_rand_bottom_vid_to_time_trim(og_long_bottom_vids_dir_path, top_vid_path
     print("`Randomly` choose bottom vid: ", rand_chosen_bottom_vid_path)
     return rand_chosen_bottom_vid_path
 
-####################################################################################################
-# Main
-####################################################################################################
 def make_fg_mcpark_crop_sides_by_percent_tb_vid(crop_sides_by_percent, og_vid_path, vid_edits_dir_path):
     og_vid_file_name = fsu.get_basename_from_path(og_vid_path, include_ext = False)
     # out_vid_path = os.path.join(vid_edits_dir_path, og_vid_file_name + f"_tsbp_{crop_sides_by_percent}.mp4")
@@ -91,6 +88,10 @@ def make_fg_mcpark_crop_sides_by_percent_tb_vid(crop_sides_by_percent, og_vid_pa
             fsu.delete_if_exists(out_vid_path)
     return False
 
+
+####################################################################################################
+# Main
+####################################################################################################
 def batch_make_tb_vids(og_vids_dir_path, out_dir_path):
 
     og_vid_path_l = fsu.get_dir_content_l(og_vids_dir_path, object_type = 'file', content_type = 'abs_path')

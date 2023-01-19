@@ -187,6 +187,16 @@ serted extra subs
 
 - S1E1 - really bad case for trim/re-time sub time wehe
 
+- S02E08__Family_Guy__Women_in_the_Workplace__Clip____TBS - gets right subs but timing wrong, probably because of repeat-dialog
+    - NO_SUBS__WRONG_TIME_PROBABLY_bc_REPEAT_DIALOG__COULD_CUT_AND_HAVE_SUBS_WORK__S04E14__Family_Guy__PTV__Clip____TBS (1).mkv
+    - # LATER not fixed yet
+
+- S04E06 - NO_SUBS__TIME_WRONG__SHOWS_BLIP OF SHORT_STARTING_SUBS__S04E06__Family_Guy__Game_Night__Clip____TBS (1).mkv
+    - # LATER not fixed yet
+
+- NO_SUBS__OPENING__DID_NOT_FIND_CORRECT__S05E05__Family_Guy__Intro_Gone_Wrong__Clip____TBS (1).mkv
+- 
+
 # Steps
 
 1. dl real subs for whole series
