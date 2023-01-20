@@ -1,5 +1,6 @@
+import subprocess as sp
 
-
+import re
 import moviepy.editor as mp
 
 from pprint import pprint
@@ -21,6 +22,10 @@ import PIL.ImageOps
 
 from sms.file_system_utils import file_system_utils as fsu
 from sms.pil_utils import pil_utils as pu
+import cfg
+
+class Impossible_Dims_Exception(Exception): pass
+
 
 SCRIPT_PARENT_DIR_PATH = os.path.abspath(os.path.dirname(__file__)) # src
 TEMP_FRAME_IMGS_DIR_PATH = os.path.join(SCRIPT_PARENT_DIR_PATH, "ignore__temp_frame_imgs")
@@ -30,7 +35,6 @@ END_FRAME_IMG_PATH = os.path.join(TEMP_FRAME_IMGS_DIR_PATH, "end_grey_frame_img.
 BLACK_COLOR_RGB = 0
 
 
-class Impossible_Dims_Exception(Exception): pass
 
 ####################################################################################################
 # Get data about given vid
@@ -45,11 +49,11 @@ def get_vid_length(filename, error_if_vid_not_exist = True):
     if error_if_vid_not_exist and not Path(filename).is_file():
         raise Exception(f"Error: Vid file does not exist: {filename}")
 
-    result = subprocess.run(["ffprobe", "-v", "error", "-show_entries",
+    result = sp.run(["ffprobe", "-v", "error", "-show_entries",
                              "format=duration", "-of",
                              "default=noprint_wrappers=1:nokey=1", filename],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT)
+        stdout=sp.PIPE,
+        stderr=sp.STDOUT)
     # print(f"{result.stdout=}")
     return float(result.stdout)
 
@@ -105,7 +109,7 @@ def scale_vid(new_vid_dim_tup, in_vid_path, out_vid_path):
 
     cmd = f'ffmpeg -i {in_vid_path} -vf "scale={w}:{h}" {out_vid_path}'
     print(f"Running: {cmd}...")
-    subprocess.call(cmd, shell = True)
+    sp.call(cmd, shell = True)
 
     return out_vid_path
 
@@ -127,10 +131,35 @@ def crop_vid(w, h, x, y, in_vid_path, out_vid_path):
 
     cmd = f'ffmpeg -i {in_vid_path} -vf "crop={w}:{h}:{x}:{y}" {out_vid_path}'
     print(f"Running: {cmd}...")
-    subprocess.call(cmd, shell = True)
+    sp.call(cmd, shell = True)
 
 
 def crop_black_border_from_vid_if_needed(in_vid_path, out_vid_path):
+
+    
+    # ffmpeg -hide_banner -i wnkaa.mp4 -vf cropdetect=skip=0 -t 1 -f null
+    # cropdetect_output = sp.run(['ffmpeg', '-hide_banner', '-i', in_vid_path, '-vf', 'cropdetect=skip=0', '-t', '1', '-f', 'null', 'pipe:'], shell=True, stderr=sp.PIPE, universal_newlines=True).stderr
+    # cropdetect_output = sp.run(['ffmpeg', '-hide_banner', '-i', in_vid_path, '-vf', 'cropdetect=skip=0', '-t', '1', '-f', 'null', 'pipe:'], stdout=sp.PIPE, stderr=sp.STDOUT, universal_newlines=True)
+    cropdetect_output = sp.run(['ffmpeg', '-hide_banner', '-i', in_vid_path, '-vf', 'cropdetect', '-t', '1', '-f', 'null', 'pipe:'], stdout=sp.PIPE, stderr=sp.STDOUT, universal_newlines=True).stdout
+    # cropdetect_output = sp.run(['ffmpeg', '-hide_banner', '-i', in_vid_path, '-vf', 'cropdetect'], stdout=sp.PIPE, stderr=sp.STDOUT, universal_newlines=True)
+    
+    
+    # print(f"{cropdetect_output=}")
+    # # print(f"{cropdetect_output.=}")
+    # line_l = []
+    # for line in cropdetect_output.split("\n"):
+    #     line_l.append(line)
+    # pprint(line_l)
+
+
+    # Return: crop=480:304:72:4
+    crop_str = re.search('crop=.*', cropdetect_output).group(0)  # Find the first match of "crop=", and return all characters from "crop=" up to new line.
+
+    # ffmpeg -hide_banner -i wnkaa.mp4 -vf crop=480:304:72:4,setsar=1 cropped_wnkaa.mp4
+    sp.run(['ffmpeg', '-hide_banner', '-i', in_vid_path, '-vf', crop_str+',setsar=1', out_vid_path])
+    return out_vid_path
+
+
     def _get_crop_coords_if_needed(color_rgb):
         ''' If no border of color_rgb, return False'''
         # Open the video file
@@ -211,14 +240,14 @@ def crop_sides_of_vid_to_match_aspect_ratio(vid_dim_tup_to_match_aspect_ratio, i
     in_vid_dim_tup = get_vid_dims(in_vid_path)
     in_vid_w = in_vid_dim_tup[0]
     in_vid_h = in_vid_dim_tup[1]
-    print(f"{in_vid_w=}")
-    print(f"{in_vid_h=}")
+    print(f"    {in_vid_w=}")
+    print(f"    {in_vid_h=}")
 
     aspect_ratio = vid_dim_tup_to_match_aspect_ratio[0] / vid_dim_tup_to_match_aspect_ratio[1]
 
     # new_vid_w = in_vid_h * aspect_ratio
     new_vid_w = int(in_vid_h * aspect_ratio) # TMP NOT SURE IF ADDING INT BREAKS SOMETHING
-    print(f"new vid dims {new_vid_w} x {in_vid_h}")
+    print(f"    new vid dims {new_vid_w} x {in_vid_h}")
 
     if new_vid_w > in_vid_w:
         raise Impossible_Dims_Exception(f"ERROR: {new_vid_w=} > {in_vid_w=}, This means it's impossible to make \
@@ -249,20 +278,19 @@ or by stretching) or by cropping height of in_vid, which is out of the scope of 
              y = 0,
              in_vid_path = in_vid_path, out_vid_path = out_vid_path)
 
-    print(f"----------------")
+    print(f"    ----------------")
+    print(f"    {vid_dim_tup_to_match_aspect_ratio=}")
+    print(f"    {in_vid_dim_tup=}")
+    print(f"    {in_vid_w=}")
+    print(f"    {new_vid_w=}")
+    print(f"    {w_diff=}")
+    print(f"    ----------------")
 
-    print(f"{vid_dim_tup_to_match_aspect_ratio=}")
-    print(f"{in_vid_dim_tup=}")
-    print(f"{in_vid_w=}")
-    print(f"{new_vid_w=}")
-    print(f"{w_diff=}")
-    print(f"----------------")
-
-    print(f"{in_vid_dim_tup=}")
-    print(f"{aspect_ratio=}")
-    print(f"{new_vid_w=}")
-    print(f"{w_diff=}")
-    print(f"{num_pixels_to_trim_from_both_sides=}")
+    print(f"    {in_vid_dim_tup=}")
+    print(f"    {aspect_ratio=}")
+    print(f"    {new_vid_w=}")
+    print(f"    {w_diff=}")
+    print(f"    {num_pixels_to_trim_from_both_sides=}")
     # exit()
     return out_vid_path
 
@@ -359,7 +387,7 @@ def stack_vids(top_vid_path, bottom_vid_path, out_vid_path):
         {out_vid_path}'
 
     print(f"Running: {cmd}...")
-    subprocess.call(cmd, shell = True)
+    sp.call(cmd, shell = True)
     return out_vid_path
 
 # TMP might not work at all
@@ -371,17 +399,17 @@ def embed_sub_file_into_vid_file(sub_file_path, in_vid_path, out_vid_path):
 def burn_subs_into_vid(sub_file_path, in_vid_path, out_vid_path):
     cmd = f"ffmpeg -i {in_vid_path} -vf subtitles={sub_file_path} {out_vid_path}"
     print(f"Running {cmd}...")
-    subprocess.call(cmd, shell=True)
+    sp.call(cmd, shell=True)
 
 def convert_subs(in_sub_path, out_sub_path):
     cmd = f'tt convert -i "{in_sub_path}" -o "{out_sub_path}"'
     print(f"Running {cmd}...")
-    subprocess.call(cmd, shell=True)
+    sp.call(cmd, shell=True)
 
 def extract_embedded_subs_from_vid_to_separate_file(vid_path, new_sub_file_path):
     cmd = f'ffmpeg -i {vid_path} -map 0:s:0 {new_sub_file_path}'
     print(f"Running {cmd}...")
-    subprocess.call(cmd, shell=True)
+    sp.call(cmd, shell=True)
 
 def convert_vid_to_diff_format__no_subs(in_vid_path, out_vid_path):
     """ Can use to convert .mp4 to .mkv """
@@ -391,44 +419,44 @@ def convert_vid_to_diff_format__no_subs(in_vid_path, out_vid_path):
     # cmd = f'ffmpeg -i {in_mp4_path} -i {in_sub_path} -c copy -c:s mov_text {out_mkv_path}'
     cmd = f'ffmpeg -i {in_vid_path} -c copy -c:s copy {out_vid_path}'
     print(f"Running {cmd}...")
-    subprocess.call(cmd, shell=True)
+    sp.call(cmd, shell=True)
 
 def combine_mp4_and_sub_into_mkv(in_mp4_path, in_sub_path, out_mkv_path):
     """ sub may need to be .srt """
     # cmd = f'ffmpeg -i {in_mp4_path} -i {in_sub_path} -c copy -c:s mov_text {out_mkv_path}'
     cmd = f'ffmpeg -i {in_mp4_path} -i {in_sub_path} -c copy -c:s copy {out_mkv_path}'
     print(f"Running {cmd}...")
-    subprocess.call(cmd, shell=True)
+    sp.call(cmd, shell=True)
 
 if __name__ == "__main__":
     # import make_tb_vid
     # make_tb_vid.make_tb_vid()
 
-    # import batch_make_tb_vids
-    # batch_make_tb_vids.main()
+    import batch_make_tb_vids
+    batch_make_tb_vids.main()
 
-    print("start")
-    # burn_subs_into_vid(sub_file_path = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/test/sub_embed_test/og_clip.ttml",
-    #                              in_vid_path = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/test/sub_embed_test/og_clip.mp4",
-    #                              out_vid_path = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/test/sub_embed_test/embed_clip.mp4")
+    # print("start")
+    # # burn_subs_into_vid(sub_file_path = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/test/sub_embed_test/og_clip.ttml",
+    # #                              in_vid_path = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/test/sub_embed_test/og_clip.mp4",
+    # #                              out_vid_path = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/test/sub_embed_test/embed_clip.mp4")
 
-    # convert_subs("C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/test/sub_embed_test/og_clip.ttml",
-    # "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/test/sub_embed_test/og_clip__PY_CONVERTED.srt")
+    # # convert_subs("C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/test/sub_embed_test/og_clip.ttml",
+    # # "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/test/sub_embed_test/og_clip__PY_CONVERTED.srt")
 
-    # extract_embedded_subs_from_vid_to_separate_file("C:/Users/Brandon/Documents/Personal_Projects/youtube_utils/ignore/embed_subs_pl_test/Inventions_that_Backfire/Invention_that_backfires_2/Invention_that_backfires_2.mp4",
-    # "C:/Users/Brandon/Documents/Personal_Projects/youtube_utils/ignore/embed_subs_pl_test/Inventions_that_Backfire/Invention_that_backfires_2/Invention_that_backfires_2.srt")
+    # # extract_embedded_subs_from_vid_to_separate_file("C:/Users/Brandon/Documents/Personal_Projects/youtube_utils/ignore/embed_subs_pl_test/Inventions_that_Backfire/Invention_that_backfires_2/Invention_that_backfires_2.mp4",
+    # # "C:/Users/Brandon/Documents/Personal_Projects/youtube_utils/ignore/embed_subs_pl_test/Inventions_that_Backfire/Invention_that_backfires_2/Invention_that_backfires_2.srt")
 
-    # convert_subs("C:/Users/Brandon/Documents/Personal_Projects/youtube_utils/ignore/Family_Guy__Blue_Harvest_(Clip)___TBS/Family_Guy__Blue_Harvest_(Clip)___TBS.en.ttml",
-    # "C:/Users/Brandon/Documents/Personal_Projects/youtube_utils/ignore/Family_Guy__Blue_Harvest_(Clip)___TBS/Family_Guy__Blue_Harvest_(Clip)___TBS.en.srt")
+    # # convert_subs("C:/Users/Brandon/Documents/Personal_Projects/youtube_utils/ignore/Family_Guy__Blue_Harvest_(Clip)___TBS/Family_Guy__Blue_Harvest_(Clip)___TBS.en.ttml",
+    # # "C:/Users/Brandon/Documents/Personal_Projects/youtube_utils/ignore/Family_Guy__Blue_Harvest_(Clip)___TBS/Family_Guy__Blue_Harvest_(Clip)___TBS.en.srt")
 
-    # combine_mp4_and_sub_into_mkv(in_mp4_path="C:/Users/Brandon/Documents/Personal_Projects/youtube_utils/ignore/Family_Guy__Blue_Harvest_(Clip)___TBS/Family_Guy__Blue_Harvest_(Clip)___TBS.mp4",
-    #  in_sub_path = "C:/Users/Brandon/Documents/Personal_Projects/youtube_utils/ignore/Family_Guy__Blue_Harvest_(Clip)___TBS/Family_Guy__Blue_Harvest_(Clip)___TBS.en.srt",
-    #  out_mkv_path="C:/Users/Brandon/Documents/Personal_Projects/youtube_utils/ignore/Family_Guy__Blue_Harvest_(Clip)___TBS/Family_Guy__Blue_Harvest_(Clip)___TBS_combined.mkv")
+    # # combine_mp4_and_sub_into_mkv(in_mp4_path="C:/Users/Brandon/Documents/Personal_Projects/youtube_utils/ignore/Family_Guy__Blue_Harvest_(Clip)___TBS/Family_Guy__Blue_Harvest_(Clip)___TBS.mp4",
+    # #  in_sub_path = "C:/Users/Brandon/Documents/Personal_Projects/youtube_utils/ignore/Family_Guy__Blue_Harvest_(Clip)___TBS/Family_Guy__Blue_Harvest_(Clip)___TBS.en.srt",
+    # #  out_mkv_path="C:/Users/Brandon/Documents/Personal_Projects/youtube_utils/ignore/Family_Guy__Blue_Harvest_(Clip)___TBS/Family_Guy__Blue_Harvest_(Clip)___TBS_combined.mkv")
 
-    convert_vid_to_diff_format__no_subs(in_vid_path = "C:/Users/Brandon/Documents/Other/temp/Family_Guy__McStroke__Clip____TBS.mp4",
-     out_vid_path = "C:/Users/Brandon/Documents/Other/temp/Family_Guy__McStroke__Clip____TBS.mkv")
+    # convert_vid_to_diff_format__no_subs(in_vid_path = "C:/Users/Brandon/Documents/Other/temp/Family_Guy__McStroke__Clip____TBS.mp4",
+    #  out_vid_path = "C:/Users/Brandon/Documents/Other/temp/Family_Guy__McStroke__Clip____TBS.mkv")
 
 
-    print("done")
+    # print("done")
 
-    # tt convert -i "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/test/sub_embed_test/og_clip.ttml" -o "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/test/sub_embed_test/og_clip.srt"
+    # # tt convert -i "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/test/sub_embed_test/og_clip.ttml" -o "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/test/sub_embed_test/og_clip.srt"

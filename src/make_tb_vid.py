@@ -3,6 +3,8 @@ from pathlib import Path
 import os
 import random
 import cfg
+from vid_edit_utils import Impossible_Dims_Exception
+
 
 # Working top vid paths
 TOP_VID_PATH__BLACK_BARS_REMOVED = os.path.join(cfg.BIG_DATA_WORKING_DIR_PATH, "top__black_bars_removed.mp4")
@@ -14,12 +16,20 @@ BOTTOM_VID_PATH__CUSTOM_EDIT  = os.path.join(cfg.BIG_DATA_WORKING_DIR_PATH, "bot
 BOTTOM_VID_PATH__SCALED       = os.path.join(cfg.BIG_DATA_WORKING_DIR_PATH, "bottom__scaled.mp4")
 BOTTOM_VID_PATH__TIME_TRIMMED = os.path.join(cfg.BIG_DATA_WORKING_DIR_PATH, "bottom__time_trimmed.mp4")
 
+
+def file_not_exist_msg(file_path):
+    if Path(file_path).exists():
+        return False
+    return f"ERROR: File doesn't exist: {file_path}"
+
 ####################################################################################################
 # Top Vid Exclusive
 ####################################################################################################
 
 def _scale_vid_to_new_w_matched_vid_dims(final_vid_dim_tup, in_vid_path, out_vid_path):
     """Assumes final_vid_dim_tup always taller than vid_path"""
+    if file_not_exist_msg(in_vid_path): raise Exception(file_not_exist_msg(in_vid_path)) # Confirm input vid exists
+
     print(f"{in_vid_path=}")
     print(f"{out_vid_path=}")
 
@@ -36,21 +46,138 @@ def _scale_vid_to_new_w_matched_vid_dims(final_vid_dim_tup, in_vid_path, out_vid
     return scaled_vid_path
 
 
+# LATER should maybe edit out_vid_path or have some way to pass final true_final_vid_h_percent b/c would need it for placing subtitles
+def _crop_sides_of_vid_to_match_aspect_ratio_from_pref_percent_of_final_dims(custom_edit_percent, final_vid_dim_tup, in_vid_path, out_vid_path):
+    """
+        - custom_edit_percent == The PREFERRED % of the final vid you want the top vid to take up
+        - Using ^^ calculate final_top_vid_dim_tup == The PREFERRED final dims of top vid
+        - Then, check to see if these dims will result in Impossible_Dims_Exception
+            - Reduce custom_edit_percent until it will not throw Impossible_Dims_Exception
+        - edit in_vid to match the aspect ratio of final_top_vid_dim_tup by ONLY trimming sides
+    """
+    if file_not_exist_msg(in_vid_path): raise Exception(file_not_exist_msg(in_vid_path)) # Confirm input vid exists
 
-def _crop_sides_of_vid_to_match_aspect_ratio_from_percent_of_final_dims(custom_edit_percent, final_vid_dim_tup, in_vid_path, out_vid_path):
-    print(f"{custom_edit_percent=}")
-    print(f"{final_vid_dim_tup=}")
-    print(f"{in_vid_path=}")
-    print(f"{out_vid_path=}")
+    def try_true_final_vid_h_percent(true_final_vid_h_percent):
+        if true_final_vid_h_percent > 100 or true_final_vid_h_percent < 0:
+            raise Impossible_Dims_Exception
+        output_vid_path =  _crop_sides_of_vid_to_match_aspect_ratio_from_exact_percent_of_final_dims(true_final_vid_h_percent, final_vid_dim_tup, in_vid_path, out_vid_path)
+        # LATER Here is where you can edit filename or return something to pass the correct true_final_vid_h_percent for subtitle placement?
+        return output_vid_path
+
+    modifier = 0
+    # true_final_vid_h_percent = custom_edit_percent
+    # while true_final_vid_h_percent != 0:
+    while modifier < custom_edit_percent:
+        print(f"       top of while - {modifier=}")
+        try:
+            return try_true_final_vid_h_percent(custom_edit_percent + modifier)
+        except Impossible_Dims_Exception:
+            try:
+                return try_true_final_vid_h_percent(custom_edit_percent - modifier)
+            except Impossible_Dims_Exception:
+                modifier += 1
+                continue
+    raise Exception("ERROR: How did you even get here?")
+
+
+
+
+
+        # print(f"&&&&&&&&&&&&11 in while testing - {true_final_vid_h_percent=}")
+        # true_final_vid_h_percent = custom_edit_percent + modifier
+        # try:
+        #     output_vid_path = _crop_sides_of_vid_to_match_aspect_ratio_from_exact_percent_of_final_dims(true_final_vid_h_percent, final_vid_dim_tup, in_vid_path, out_vid_path)
+        #     print(f"***Found {true_final_vid_h_percent=} - {output_vid_path=}")
+        #     return output_vid_path
+        # except Impossible_Dims_Exception:
+        #     # true_final_vid_h_percent += modifier
+        #     # pass
+
+        #     print(f"  &&&&&&&&&&&&22 in while testing - {true_final_vid_h_percent=}")
+        #     true_final_vid_h_percent = custom_edit_percent - modifier
+        #     try:
+        #         output_vid_path = _crop_sides_of_vid_to_match_aspect_ratio_from_exact_percent_of_final_dims(true_final_vid_h_percent, final_vid_dim_tup, in_vid_path, out_vid_path)
+        #         print(f"***Found {true_final_vid_h_percent=} - {output_vid_path=}")
+        #         return output_vid_path
+        #     except Impossible_Dims_Exception:
+        #         # true_final_vid_h_percent += modifier
+        #         pass
+
+
+
+    # raise Exception("ERROR: How did you even get here?")
+
+            
+    # def _new_vid_dims_possible(new_vid_w, new_vid_h, in_vid_w, in_vid_h):
+    #     if new_vid_h == None:
+    #         return False
+    #     aspect_ratio = new_vid_w / new_vid_h
+    #     new_vid_w = in_vid_h * aspect_ratio
+    #     print(f"       in _new_vid_dims_possible() - {new_vid_w=} {in_vid_w=}")
+    #     if new_vid_w > in_vid_w:
+    #         return False
+    #     return True
+
+    # print(f"{custom_edit_percent=}")
+    # print(f"{final_vid_dim_tup=}")
+    # print(f"{in_vid_path=}")
+    # print(f"{out_vid_path=}")
+
+    # final_vid_w = final_vid_dim_tup[0]
+    # final_vid_h = final_vid_dim_tup[1]
+
+    # # LATER do you really need to trim sides to match aspect ratio THEN scale separately in 2 diff steps?
+    # # LATER have final top vid dims here vv, could you save time by doing both in 1 step?
+    # final_top_vid_h = int(final_vid_h * (custom_edit_percent / 100))
+    # final_top_vid_dim_tup = (final_vid_w, final_top_vid_h)
+    # print(f"{final_top_vid_dim_tup=}")
+
+    # # find final_top_vid_h that wont throw Impossible_Dims_Exception
+    # in_vid_w, in_vid_h = veu.get_vid_dims(in_vid_path)
+    # final_vid_h_percent = custom_edit_percent
+    # final_top_vid_h = None
+    # print("top of while")
+    # # while(final_top_vid_h != None or not _new_vid_dims_possible(final_vid_w, final_top_vid_h, in_vid_w, in_vid_h)):
+    # while(not _new_vid_dims_possible(final_vid_w, final_top_vid_h, in_vid_w, in_vid_h)):
+    #     print(f"  in while - {final_vid_h_percent=}")
+    #     final_top_vid_h = int(final_vid_h * (final_vid_h_percent / 100))
+    #     print(f"    in while - {final_top_vid_h=}")
+    #     final_vid_h_percent -= 1
+
+    # true_final_vid_h_percent = final_vid_h_percent + 1
+    # print(f"Found {true_final_vid_h_percent=}")
+    # final_top_vid_dim_tup = (final_vid_w, final_top_vid_h)
+    # print(f"  {final_top_vid_dim_tup=}")
+
+    # cropped_or_uncropped_vid_path = veu.crop_sides_of_vid_to_match_aspect_ratio(final_top_vid_dim_tup, in_vid_path, out_vid_path)
+
+    # return cropped_or_uncropped_vid_path
+    
+
+
+def _crop_sides_of_vid_to_match_aspect_ratio_from_exact_percent_of_final_dims(custom_edit_percent, final_vid_dim_tup, in_vid_path, out_vid_path):
+    """
+        - custom_edit_percent == the EXACT % of the final vid you want the top vid to take up
+        - Using ^^ calculate final_top_vid_dim_tup == The EXACT final dims of top vid
+        - Then edit in_vid to match the aspect ratio of final_top_vid_dim_tup by ONLY trimming sides
+            - This will fail and throw Impossible_Dims_Exception if impossible to achieve without trimming height
+            - In this case just skips
+    """
+    if file_not_exist_msg(in_vid_path): raise Exception(file_not_exist_msg(in_vid_path)) # Confirm input vid exists
+
+    print(f"  {custom_edit_percent=}")
+    print(f"  {final_vid_dim_tup=}")
+    print(f"  {in_vid_path=}")
+    print(f"  {out_vid_path=}")
 
     final_vid_w = final_vid_dim_tup[0]
     final_vid_h = final_vid_dim_tup[1]
 
     # LATER do you really need to trim sides to match aspect ratio THEN scale separately in 2 diff steps?
-    # LATER have vinal top vid dims here vv, could you save time by doing both in 1 step?
+    # LATER have final top vid dims here vv, could you save time by doing both in 1 step?
     final_top_vid_h = int(final_vid_h * (custom_edit_percent / 100))
     final_top_vid_dim_tup = (final_vid_w, final_top_vid_h)
-
+    print(f"  {final_top_vid_dim_tup=}")
     # top_vid_aspect_ratio = final_vid_w / final_top_vid_h
 
     cropped_or_uncropped_vid_path = veu.crop_sides_of_vid_to_match_aspect_ratio(final_top_vid_dim_tup, in_vid_path, out_vid_path)
@@ -59,6 +186,7 @@ def _crop_sides_of_vid_to_match_aspect_ratio_from_percent_of_final_dims(custom_e
 
 
 def _custom_edit_top_vid(in_vid_path, out_vid_path, custom_edit_vid_method_str, custom_edit_percent, final_vid_dim_tup):
+    if file_not_exist_msg(in_vid_path): raise Exception(file_not_exist_msg(in_vid_path)) # Confirm input vid exists
 
     if custom_edit_vid_method_str == None:
         raise Exception("ERROR: not implemented yet")
@@ -80,8 +208,13 @@ def _custom_edit_top_vid(in_vid_path, out_vid_path, custom_edit_vid_method_str, 
     #     whats going on) that you can hardly see the bottom vid.
     #   - Also, crop_sides_by_percent will result in a batch of final vids that have different ratios of 
     #     top-to-bottom-vids, might be nice for all final vids to have same ratio?
-    elif custom_edit_vid_method_str == "crop_sides_of_vid_to_match_aspect_ratio_from_percent_of_final_dims":
-        cropped_or_uncropped_vid_path = _crop_sides_of_vid_to_match_aspect_ratio_from_percent_of_final_dims(custom_edit_percent, final_vid_dim_tup, in_vid_path, out_vid_path)
+    elif custom_edit_vid_method_str == "crop_sides_of_vid_to_match_aspect_ratio_from_exact_percent_of_final_dims":
+        cropped_or_uncropped_vid_path = _crop_sides_of_vid_to_match_aspect_ratio_from_exact_percent_of_final_dims(custom_edit_percent, final_vid_dim_tup, in_vid_path, out_vid_path)
+        print(f"{cropped_or_uncropped_vid_path=}")
+        return cropped_or_uncropped_vid_path
+
+    elif custom_edit_vid_method_str == "crop_sides_of_vid_to_match_aspect_ratio_from_pref_percent_of_final_dims":
+        cropped_or_uncropped_vid_path = _crop_sides_of_vid_to_match_aspect_ratio_from_pref_percent_of_final_dims(custom_edit_percent, final_vid_dim_tup, in_vid_path, out_vid_path)
         print(f"{cropped_or_uncropped_vid_path=}")
         return cropped_or_uncropped_vid_path
     else:
@@ -138,6 +271,8 @@ def _time_trim_bottom_vid_to_match_top(final_top_vid_len, bottom_vid_path, out_v
 
 
 def _custom_edit_bottom_vid(vid_dim_tup_to_match_aspect_ratio, in_vid_path, out_vid_path, custom_edit_vid_method_str):
+    if file_not_exist_msg(in_vid_path): raise Exception(file_not_exist_msg(in_vid_path)) # Confirm input vid exists
+
     if custom_edit_vid_method_str == "crop_sides":
         side_cropped_vid_path = veu.crop_sides_of_vid_to_match_aspect_ratio(vid_dim_tup_to_match_aspect_ratio, in_vid_path, out_vid_path)
         return side_cropped_vid_path

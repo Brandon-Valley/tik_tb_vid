@@ -21,7 +21,9 @@ IGNORE_DIR_PATH           = os.path.join(cfg.BIG_DATA_DIR_PATH, "ignore")
 
 # PLAYLIST_OG_VIDS_DIR_PATH = os.path.join(IGNORE_DIR_PATH, "playlist_og_clips", "fg_pl_tbs__single_short_test")
 # PLAYLIST_OG_VIDS_DIR_PATH = os.path.join(IGNORE_DIR_PATH, "playlist_og_clips", "fg_pl_tbs__10_clips_full_len_test")
-PLAYLIST_OG_VIDS_DIR_PATH    = os.path.join(IGNORE_DIR_PATH, "playlist_og_clips", "Family_Guy___TBS")
+# PLAYLIST_OG_VIDS_DIR_PATH    = os.path.join(IGNORE_DIR_PATH, "playlist_og_clips", "Family_Guy___TBS")
+PLAYLIST_OG_VIDS_DIR_PATH    = os.path.join(IGNORE_DIR_PATH, "playlist_og_clips", "test_easy_black_boarders")
+# PLAYLIST_OG_VIDS_DIR_PATH    = os.path.join(IGNORE_DIR_PATH, "playlist_og_clips", "test_chicken")
 # PLAYLIST_OG_VIDS_DIR_PATH    = os.path.join(IGNORE_DIR_PATH, "playlist_og_clips", "fg_pl_tbs__manual_edit_mkvs__test")
 FINAL_OUT_VID_DIR_PATH       = os.path.join(IGNORE_DIR_PATH, "final_output")
 OG_LONG_BOTTOM_VIDS_DIR_PATH = os.path.join(IGNORE_DIR_PATH, "og_long_bottom_vids")
@@ -73,7 +75,8 @@ def make_fg_mcpark_crop_sides_by_percent_tb_vid(crop_sides_by_percent, og_vid_pa
                     time_trim_bottom_vid_method_str = "from_rand_start",
                     custom_edit_bottom_vid_method_str = "crop_sides",
                     # custom_edit_top_vid_method_str = "crop_sides_by_percent",
-                    custom_edit_top_vid_method_str = "crop_sides_of_vid_to_match_aspect_ratio_from_percent_of_final_dims",
+                    # custom_edit_top_vid_method_str = "crop_sides_of_vid_to_match_aspect_ratio_from_exact_percent_of_final_dims",
+                    custom_edit_top_vid_method_str = "crop_sides_of_vid_to_match_aspect_ratio_from_pref_percent_of_final_dims",
                     top_vid_custom_edit_percent = crop_sides_by_percent)
         return True
     except Impossible_Dims_Exception as e:
