@@ -146,14 +146,31 @@ def crop_black_border_from_vid_if_needed(in_vid_path, out_vid_path):
     # for line in cropdetect_output.split("\n"):
     #     line_l.append(line)
     # pprint(line_l)
-
+    # print("========================================================================")
+    # print("========================================================================")
+    # print("========================================================================")
+    # print("========================================================================")
 
     # Return: crop=480:304:72:4
     crop_str = re.search('crop=.*', cropdetect_output).group(0)  # Find the first match of "crop=", and return all characters from "crop=" up to new line.
 
-    # ffmpeg -hide_banner -i wnkaa.mp4 -vf crop=480:304:72:4,setsar=1 cropped_wnkaa.mp4
+    # ffmpeg -hide_banner -i in_vid_path -vf crop=480:304:72:4,setsar=1 out_vid_path
+    # Can fail with msg like "Invalid too big or non positive size for width '-1264' or height '-704'"
+    # - If this happens, will not throw exception, but will make out_vid_path w/ 0 bytes
+    # - This fail happens almost immediately, no significant time lost
+    # - Therefore, just return in_vid_path if no new vid created
     sp.run(['ffmpeg', '-hide_banner', '-i', in_vid_path, '-vf', crop_str+',setsar=1', out_vid_path])
-    return out_vid_path
+
+    if not Path(out_vid_path).is_file():
+        raise FileNotFoundError(f"File does not exist, not sure what could cause this: {out_vid_path=}")
+
+    # just return in_vid_path if no new vid created
+    if os.path.getsize(out_vid_path) == 0:
+        fsu.delete_if_exists(out_vid_path)
+        return in_vid_path
+    else:
+        return out_vid_path
+
 
 
     def _get_crop_coords_if_needed(color_rgb):
