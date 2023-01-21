@@ -51,7 +51,7 @@ def get_vid_length(filename, error_if_vid_not_exist = True):
 
     result = sp.run(["ffprobe", "-v", "error", "-show_entries",
                              "format=duration", "-of",
-                             "default=noprint_wrappers=1:nokey=1", filename],
+                             "default=noprint_wrappers=1:nokey=1", str(Path(filename))],
         stdout=sp.PIPE,
         stderr=sp.STDOUT)
     # print(f"{result.stdout=}")
@@ -74,9 +74,9 @@ def trim_vid(in_vid_path, out_vid_path, time_tup):
 
         cmd = [get_setting("FFMPEG_BINARY"),"-y",
                "-ss", "%0.2f"%t1,
-               "-i", filename,
+               "-i", str(Path(filename)),
                "-t", "%0.2f"%(t2-t1),
-               "-vcodec", "copy", "-acodec", "copy", target_name]
+               "-vcodec", "copy", "-acodec", "copy", str(Path(target_name))]
         subprocess_call(cmd)
 
     ffmpeg_extract_subclip(in_vid_path, time_tup[0], time_tup[1], target_name=out_vid_path)
