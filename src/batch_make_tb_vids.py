@@ -98,8 +98,8 @@ def make_fg_mcpark_crop_sides_by_pref_percent_tb_vid(crop_sides_by_percent, og_v
             This probably means got to crop_sides_of_vid_to_match_aspect_ratio() and turned out that given dims were impossible.\n \
             Probably caused by crop_top_vid_sides_percent ({crop_sides_by_percent}) being set too high.\n \
             This should be avoided since now all the time spent processing up to that point has been wasted.\n \
-            Ending current run of make_tb_vid() and deleting {vid_edits_dir_path=} if needed...")
-            fsu.delete_if_exists(vid_edits_dir_path)
+            Ending current run of make_tb_vid() and deleting {out_dir_path=} if needed...")
+            fsu.delete_if_exists(out_dir_path)
     return False
 
 
@@ -107,6 +107,9 @@ def make_fg_mcpark_crop_sides_by_pref_percent_tb_vid(crop_sides_by_percent, og_v
 # Main
 ####################################################################################################
 def batch_make_tb_vids(og_vids_dir_path, out_dir_path):
+    fsu.delete_if_exists(cfg.BIG_DATA_WORKING_DIR_PATH)
+    Path(cfg.BIG_DATA_WORKING_DIR_PATH).mkdir(parents=True, exist_ok=True)
+
     failed_top_vid_path_l = []
 
     def _st__make_vid_edits_for_single_vid(og_vid_path):

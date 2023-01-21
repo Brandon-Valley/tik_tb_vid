@@ -209,7 +209,7 @@ def _custom_edit_bottom_vid(vid_dim_tup_to_match_aspect_ratio, in_vid_path, out_
 #     return veu.crop_black_border_from_vid_if_needed(cur_top_vid_path, join("top__black_bars_removed.mp4", "top") # PUT BACK!!!!!!!!!!!!!!
 
 def _get_and_init_clip_wrk_dir_path(top_vid_path):
-    clip_wrk_dir_path = join(cfg.BIG_DATA_WORKING_DIR_PATH, Path(top_vid_path).name)
+    clip_wrk_dir_path = join(cfg.BIG_DATA_WORKING_DIR_PATH, Path(top_vid_path).name.replace(" ", "_").split(".")[0])
     fsu.delete_if_exists(clip_wrk_dir_path)
     Path(clip_wrk_dir_path).mkdir(parents=True, exist_ok=True)
     return clip_wrk_dir_path

@@ -138,7 +138,7 @@ def crop_black_border_from_vid_if_needed(in_vid_path, out_vid_path):
     fsu.delete_if_exists(out_vid_path)
     Path(out_vid_path).parent.mkdir(parents=True, exist_ok=True)
 
-    cropdetect_output = sp.run(['ffmpeg', '-hide_banner', '-i', in_vid_path, '-vf', 'cropdetect', '-t', '1', '-f', 'null', 'pipe:'], stdout=sp.PIPE, stderr=sp.STDOUT, universal_newlines=True).stdout
+    cropdetect_output = sp.run(['ffmpeg', '-hide_banner', '-i', str(Path(in_vid_path)), '-vf', 'cropdetect', '-t', '1', '-f', 'null', 'pipe:'], stdout=sp.PIPE, stderr=sp.STDOUT, universal_newlines=True).stdout
     
     # print(f"{cropdetect_output=}")
     # # print(f"{cropdetect_output.=}")
@@ -159,7 +159,8 @@ def crop_black_border_from_vid_if_needed(in_vid_path, out_vid_path):
     # - If this happens, will not throw exception, but will make out_vid_path w/ 0 bytes
     # - This fail happens almost immediately, no significant time lost
     # - Therefore, just return in_vid_path if no new vid created
-    sp.run(['ffmpeg', '-hide_banner', '-i', in_vid_path, '-vf', crop_str+',setsar=1', out_vid_path])
+    # sp.run(['ffmpeg', '-hide_banner', '-i', f'"{in_vid_path}"', '-vf', crop_str+',setsar=1', f'"{out_vid_path}"'])
+    sp.run(['ffmpeg', '-hide_banner', '-i', str(Path(in_vid_path)), '-vf', crop_str+',setsar=1', str(Path(out_vid_path))])
 
     if not Path(out_vid_path).is_file():
         raise FileNotFoundError(f"File does not exist, not sure what could cause this: {out_vid_path=}")
