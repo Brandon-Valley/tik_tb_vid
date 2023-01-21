@@ -1,10 +1,12 @@
+
 import vid_edit_utils as veu
 from pathlib import Path
 import os
 import random
 import cfg
 from vid_edit_utils import Impossible_Dims_Exception
-
+from sms.file_system_utils import file_system_utils as fsu
+from os.path import join
 
 # Working top vid paths
 TOP_VID_PATH__BLACK_BARS_REMOVED = os.path.join(cfg.BIG_DATA_WORKING_DIR_PATH, "top__black_bars_removed.mp4")
@@ -65,8 +67,6 @@ def _crop_sides_of_vid_to_match_aspect_ratio_from_pref_percent_of_final_dims(cus
         return output_vid_path
 
     modifier = 0
-    # true_final_vid_h_percent = custom_edit_percent
-    # while true_final_vid_h_percent != 0:
     while modifier < custom_edit_percent:
         print(f"       top of while - {modifier=}")
         try:
@@ -78,81 +78,6 @@ def _crop_sides_of_vid_to_match_aspect_ratio_from_pref_percent_of_final_dims(cus
                 modifier += 1
                 continue
     raise Exception("ERROR: How did you even get here?")
-
-
-
-
-
-        # print(f"&&&&&&&&&&&&11 in while testing - {true_final_vid_h_percent=}")
-        # true_final_vid_h_percent = custom_edit_percent + modifier
-        # try:
-        #     output_vid_path = _crop_sides_of_vid_to_match_aspect_ratio_from_exact_percent_of_final_dims(true_final_vid_h_percent, final_vid_dim_tup, in_vid_path, out_vid_path)
-        #     print(f"***Found {true_final_vid_h_percent=} - {output_vid_path=}")
-        #     return output_vid_path
-        # except Impossible_Dims_Exception:
-        #     # true_final_vid_h_percent += modifier
-        #     # pass
-
-        #     print(f"  &&&&&&&&&&&&22 in while testing - {true_final_vid_h_percent=}")
-        #     true_final_vid_h_percent = custom_edit_percent - modifier
-        #     try:
-        #         output_vid_path = _crop_sides_of_vid_to_match_aspect_ratio_from_exact_percent_of_final_dims(true_final_vid_h_percent, final_vid_dim_tup, in_vid_path, out_vid_path)
-        #         print(f"***Found {true_final_vid_h_percent=} - {output_vid_path=}")
-        #         return output_vid_path
-        #     except Impossible_Dims_Exception:
-        #         # true_final_vid_h_percent += modifier
-        #         pass
-
-
-
-    # raise Exception("ERROR: How did you even get here?")
-
-            
-    # def _new_vid_dims_possible(new_vid_w, new_vid_h, in_vid_w, in_vid_h):
-    #     if new_vid_h == None:
-    #         return False
-    #     aspect_ratio = new_vid_w / new_vid_h
-    #     new_vid_w = in_vid_h * aspect_ratio
-    #     print(f"       in _new_vid_dims_possible() - {new_vid_w=} {in_vid_w=}")
-    #     if new_vid_w > in_vid_w:
-    #         return False
-    #     return True
-
-    # print(f"{custom_edit_percent=}")
-    # print(f"{final_vid_dim_tup=}")
-    # print(f"{in_vid_path=}")
-    # print(f"{out_vid_path=}")
-
-    # final_vid_w = final_vid_dim_tup[0]
-    # final_vid_h = final_vid_dim_tup[1]
-
-    # # LATER do you really need to trim sides to match aspect ratio THEN scale separately in 2 diff steps?
-    # # LATER have final top vid dims here vv, could you save time by doing both in 1 step?
-    # final_top_vid_h = int(final_vid_h * (custom_edit_percent / 100))
-    # final_top_vid_dim_tup = (final_vid_w, final_top_vid_h)
-    # print(f"{final_top_vid_dim_tup=}")
-
-    # # find final_top_vid_h that wont throw Impossible_Dims_Exception
-    # in_vid_w, in_vid_h = veu.get_vid_dims(in_vid_path)
-    # final_vid_h_percent = custom_edit_percent
-    # final_top_vid_h = None
-    # print("top of while")
-    # # while(final_top_vid_h != None or not _new_vid_dims_possible(final_vid_w, final_top_vid_h, in_vid_w, in_vid_h)):
-    # while(not _new_vid_dims_possible(final_vid_w, final_top_vid_h, in_vid_w, in_vid_h)):
-    #     print(f"  in while - {final_vid_h_percent=}")
-    #     final_top_vid_h = int(final_vid_h * (final_vid_h_percent / 100))
-    #     print(f"    in while - {final_top_vid_h=}")
-    #     final_vid_h_percent -= 1
-
-    # true_final_vid_h_percent = final_vid_h_percent + 1
-    # print(f"Found {true_final_vid_h_percent=}")
-    # final_top_vid_dim_tup = (final_vid_w, final_top_vid_h)
-    # print(f"  {final_top_vid_dim_tup=}")
-
-    # cropped_or_uncropped_vid_path = veu.crop_sides_of_vid_to_match_aspect_ratio(final_top_vid_dim_tup, in_vid_path, out_vid_path)
-
-    # return cropped_or_uncropped_vid_path
-    
 
 
 def _crop_sides_of_vid_to_match_aspect_ratio_from_exact_percent_of_final_dims(custom_edit_percent, final_vid_dim_tup, in_vid_path, out_vid_path):
@@ -178,7 +103,6 @@ def _crop_sides_of_vid_to_match_aspect_ratio_from_exact_percent_of_final_dims(cu
     final_top_vid_h = int(final_vid_h * (custom_edit_percent / 100))
     final_top_vid_dim_tup = (final_vid_w, final_top_vid_h)
     print(f"  {final_top_vid_dim_tup=}")
-    # top_vid_aspect_ratio = final_vid_w / final_top_vid_h
 
     cropped_or_uncropped_vid_path = veu.crop_sides_of_vid_to_match_aspect_ratio(final_top_vid_dim_tup, in_vid_path, out_vid_path)
 
@@ -213,6 +137,7 @@ def _custom_edit_top_vid(in_vid_path, out_vid_path, custom_edit_vid_method_str, 
         print(f"{cropped_or_uncropped_vid_path=}")
         return cropped_or_uncropped_vid_path
 
+    # Like ^^ but will find closest % (up or down) that does not throw Impossible_Dims_Exception
     elif custom_edit_vid_method_str == "crop_sides_of_vid_to_match_aspect_ratio_from_pref_percent_of_final_dims":
         cropped_or_uncropped_vid_path = _crop_sides_of_vid_to_match_aspect_ratio_from_pref_percent_of_final_dims(custom_edit_percent, final_vid_dim_tup, in_vid_path, out_vid_path)
         print(f"{cropped_or_uncropped_vid_path=}")
@@ -279,10 +204,22 @@ def _custom_edit_bottom_vid(vid_dim_tup_to_match_aspect_ratio, in_vid_path, out_
     else:
         raise Exception(f"ERROR: invalid {custom_edit_vid_method_str=}")
 
+# def _crop_black_border_from_vid_if_needed(cur_top_vid_path):
+#     out_vid_path = get
+#     return veu.crop_black_border_from_vid_if_needed(cur_top_vid_path, os.path.join("top__black_bars_removed.mp4", "top") # PUT BACK!!!!!!!!!!!!!!
+
+def _get_and_init_clip_wrk_dir_path(top_vid_path):
+    clip_wrk_dir_path = join(cfg.BIG_DATA_WORKING_DIR_PATH, Path(top_vid_path).name)
+    fsu.delete_if_exists(clip_wrk_dir_path)
+    Path(clip_wrk_dir_path).mkdir(parents=True, exist_ok=True)
+    return clip_wrk_dir_path
+
+
 ########################################################################################################################
 # Main
 ########################################################################################################################
-def make_tb_vid(final_vid_dim_tup, out_vid_path, top_vid_path, bottom_vid_path, use_audio_from_str = "top",
+# def make_tb_vid(final_vid_dim_tup, out_vid_path, top_vid_path, bottom_vid_path, use_audio_from_str = "top",
+def make_tb_vid(final_vid_dim_tup, out_dir_path, top_vid_path, bottom_vid_path, use_audio_from_str = "top",
                 time_trim_bottom_vid_method_str = "from_rand_start",
                 custom_edit_bottom_vid_method_str = "crop_sides",
                 custom_edit_top_vid_method_str = "crop_sides_by_percent",
@@ -302,9 +239,11 @@ def make_tb_vid(final_vid_dim_tup, out_vid_path, top_vid_path, bottom_vid_path, 
     ##################
 
     cur_top_vid_path = top_vid_path
+    clip_wrk_dir_path = _get_and_init_clip_wrk_dir_path(top_vid_path)
 
     # Will not create new vid if no black borders need to be removed
-    cur_top_vid_path = veu.crop_black_border_from_vid_if_needed(cur_top_vid_path, TOP_VID_PATH__BLACK_BARS_REMOVED) # PUT BACK!!!!!!!!!!!!!!
+    cur_top_vid_path = veu.crop_black_border_from_vid_if_needed(cur_top_vid_path, join(clip_wrk_dir_path, "top__black_bars_removed.mp4")) # PUT BACK!!!!!!!!!!!!!!
+    # cur_top_vid_path = _crop_black_border_from_vid_if_needed(cur_top_vid_path) # PUT BACK!!!!!!!!!!!!!!
 
     # Perform custom edit to top vid
     # - This can be different depending on custom_edit_top_vid_method_str to best match the type of vid on top
@@ -345,11 +284,11 @@ def make_tb_vid(final_vid_dim_tup, out_vid_path, top_vid_path, bottom_vid_path, 
     #########################################################
     # Combine top and bottom vids to create final output vid
     #########################################################
-    cur_out_vid_path = out_vid_path
+    cur_out_vid_path = os.path.join(out_dir_path, Path(cur_top_vid_path).name)
 
     cur_out_vid_path = veu.stack_vids(cur_top_vid_path, cur_bottom_vid_path, cur_out_vid_path) # PUT BACK!!!!!!!!!
 
-    print(f"Finished Making Top-Bottom Video: {out_vid_path}")
+    print(f"Finished Making Top-Bottom Video: {cur_out_vid_path}")
 
 
 if __name__ == "__main__":

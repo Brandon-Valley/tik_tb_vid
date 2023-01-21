@@ -135,14 +135,10 @@ def crop_vid(w, h, x, y, in_vid_path, out_vid_path):
 
 
 def crop_black_border_from_vid_if_needed(in_vid_path, out_vid_path):
+    fsu.delete_if_exists(out_vid_path)
+    Path(out_vid_path).parent.mkdir(parents=True, exist_ok=True)
 
-    
-    # ffmpeg -hide_banner -i wnkaa.mp4 -vf cropdetect=skip=0 -t 1 -f null
-    # cropdetect_output = sp.run(['ffmpeg', '-hide_banner', '-i', in_vid_path, '-vf', 'cropdetect=skip=0', '-t', '1', '-f', 'null', 'pipe:'], shell=True, stderr=sp.PIPE, universal_newlines=True).stderr
-    # cropdetect_output = sp.run(['ffmpeg', '-hide_banner', '-i', in_vid_path, '-vf', 'cropdetect=skip=0', '-t', '1', '-f', 'null', 'pipe:'], stdout=sp.PIPE, stderr=sp.STDOUT, universal_newlines=True)
     cropdetect_output = sp.run(['ffmpeg', '-hide_banner', '-i', in_vid_path, '-vf', 'cropdetect', '-t', '1', '-f', 'null', 'pipe:'], stdout=sp.PIPE, stderr=sp.STDOUT, universal_newlines=True).stdout
-    # cropdetect_output = sp.run(['ffmpeg', '-hide_banner', '-i', in_vid_path, '-vf', 'cropdetect'], stdout=sp.PIPE, stderr=sp.STDOUT, universal_newlines=True)
-    
     
     # print(f"{cropdetect_output=}")
     # # print(f"{cropdetect_output.=}")

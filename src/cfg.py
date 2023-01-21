@@ -6,7 +6,7 @@ SCRIPT_PARENT_DIR_PATH    = abspath(dirname(__file__)) # src
 REPO_ROOT_DIR_PATH        = dirname(SCRIPT_PARENT_DIR_PATH)
 # BIG_DATA_DIR_PATH         = join(dirname(REPO_ROOT_DIR_PATH), "tik_tb_vid_big_data")
 BIG_DATA_DIR_PATH         = "C:/p/tik_tb_vid_big_data"
-BIG_DATA_WORKING_DIR_PATH = join(BIG_DATA_DIR_PATH, "working")
+BIG_DATA_WORKING_DIR_PATH = join(BIG_DATA_DIR_PATH, "ignore", "working")
 
 INIT_MKVS_WORKING_DIR_PATH = "C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS"
 
