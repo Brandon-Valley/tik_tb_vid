@@ -1,18 +1,28 @@
+# https://superfastpython.com/threadpoolexecutor-wait-all-tasks/
 
-import vid_edit_utils as veu
-from pathlib import Path
-import os
-import random
-import cfg
-from vid_edit_utils import Impossible_Dims_Exception
-from sms.file_system_utils import file_system_utils as fsu
-from os.path import join
+# SuperFastPython.com
+# example of waiting for tasks to complete
+from time import sleep
+from random import random
+from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import wait
+ 
+# custom task that will sleep for a variable amount of time
+def task(name):
+    # sleep for less than a second
+    sleep(random())
+    print(f'Done: {name}')
+ 
+# start the thread pool
+with ThreadPoolExecutor(2) as executor:
+    futures = []
 
+    for i in range(10):
+        
+        # submit tasks and collect futures
+        futures = [executor.submit(task, i)]
 
-
-cur_top_vid_path = "C:/p/tik_tb_vid_big_data/ignore/working/top__scaled.mp4.123"
-final_top_vid_dims_tup = (1,222)
-
-# Put top vid height in filename as ref. point if add subtitles
-cur_out_vid_name = Path(cur_top_vid_path).name.split(".")[0] + f"__tvh_{final_top_vid_dims_tup[1]}_" + '.' + '.'.join(Path(cur_top_vid_path).name.split(".")[1:])
-print(f"{cur_out_vid_name=}")
+    # wait for all tasks to complete
+    print('Waiting for tasks to complete...')
+    wait(futures)
+    print('All tasks are done!')

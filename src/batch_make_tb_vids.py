@@ -1,4 +1,10 @@
 
+from time import sleep
+from random import random
+from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import wait
+
+
 from pprint import pprint
 import random
 import vid_edit_utils as veu
@@ -100,16 +106,9 @@ def make_fg_mcpark_crop_sides_by_pref_percent_tb_vid(crop_sides_by_percent, og_v
 # Main
 ####################################################################################################
 def batch_make_tb_vids(og_vids_dir_path, out_dir_path):
-    fsu.delete_if_exists(out_dir_path)
-    Path(out_dir_path).mkdir(parents=True,exist_ok=True)
-
-    og_vid_path_l = fsu.get_dir_content_l(og_vids_dir_path, object_type = 'file', content_type = 'abs_path')
-    print(og_vid_path_l)
-
     failed_top_vid_path_l = []
 
-    for og_vid_path in og_vid_path_l:
-
+    def _st__make_vid_edits_for_single_vid(og_vid_path):
         print(f"{og_vid_path=}")
         print(f"{veu.get_vid_length(og_vid_path)=}")
         og_vid_file_name = fsu.get_basename_from_path(og_vid_path, include_ext = False)
@@ -134,6 +133,53 @@ def batch_make_tb_vids(og_vids_dir_path, out_dir_path):
 
         if not made_tb_vid:
             failed_top_vid_path_l.append(og_vid_path)
+
+
+
+
+    fsu.delete_if_exists(out_dir_path)
+    Path(out_dir_path).mkdir(parents=True,exist_ok=True)
+
+    og_vid_path_l = fsu.get_dir_content_l(og_vids_dir_path, object_type = 'file', content_type = 'abs_path')
+    print(og_vid_path_l)
+
+    with ThreadPoolExecutor(cfg.NUM_CORES) as executor:
+        futures = []
+
+        for og_vid_path in og_vid_path_l:
+
+            # submit tasks and collect futures
+            futures = [executor.submit(_st__make_vid_edits_for_single_vid, og_vid_path)]
+
+        # wait for all tasks to complete
+        print('Waiting for tasks to complete...')
+        wait(futures)
+        print('All tasks are done!')
+
+        # print(f"{og_vid_path=}")
+        # print(f"{veu.get_vid_length(og_vid_path)=}")
+        # og_vid_file_name = fsu.get_basename_from_path(og_vid_path, include_ext = False)
+        # vid_len = int(veu.get_vid_length(og_vid_path))
+        # vid_edits_dir_path = os.path.join(out_dir_path, f"vl_{vid_len}__" + og_vid_file_name)
+
+        # fsu.delete_if_exists(vid_edits_dir_path)
+        # fsu.make_dir_if_not_exist(vid_edits_dir_path)
+
+        # # make_fg_mcpark_crop_sides_by_pref_percent_tb_vid(0,  og_vid_path, vid_edits_dir_path)
+        # # # # # make_fg_mcpark_crop_sides_by_pref_percent_tb_vid(5,  og_vid_path, vid_edits_dir_path)
+        # # make_fg_mcpark_crop_sides_by_pref_percent_tb_vid(10, og_vid_path, vid_edits_dir_path)
+        # # # # # make_fg_mcpark_crop_sides_by_pref_percent_tb_vid(15, og_vid_path, vid_edits_dir_path)
+        # made_tb_vid = make_fg_mcpark_crop_sides_by_pref_percent_tb_vid(40, og_vid_path, vid_edits_dir_path)
+        # # # # make_fg_mcpark_crop_sides_by_pref_percent_tb_vid(25, og_vid_path, vid_edits_dir_path)
+        # # make_fg_mcpark_crop_sides_by_pref_percent_tb_vid(30, og_vid_path, vid_edits_dir_path)
+        # # # make_fg_mcpark_crop_sides_by_pref_percent_tb_vid(35, og_vid_path, vid_edits_dir_path)
+
+
+        # # make_fg_mcpark_crop_sides_by_pref_percent_tb_vid(40, og_vid_path, vid_edits_dir_path)
+        # # # make_fg_mcpark_crop_sides_by_pref_percent_tb_vid(45, og_vid_path, vid_edits_dir_path)
+
+        # if not made_tb_vid:
+        #     failed_top_vid_path_l.append(og_vid_path)
 
         print(f"{failed_top_vid_path_l=}")
         print(f"---")
