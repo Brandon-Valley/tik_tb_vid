@@ -8,15 +8,15 @@ from vid_edit_utils import Impossible_Dims_Exception
 from sms.file_system_utils import file_system_utils as fsu
 from os.path import join
 
-# Working top vid paths
-TOP_VID_PATH__BLACK_BARS_REMOVED = join(cfg.BIG_DATA_WORKING_DIR_PATH, "top__black_bars_removed.mp4")
-TOP__VID_PATH__SCALED            = join(cfg.BIG_DATA_WORKING_DIR_PATH, "top__scaled.mp4")
-TOP_VID_PATH__CUSTOM_EDIT        = join(cfg.BIG_DATA_WORKING_DIR_PATH, "top__custom_edited.mp4")
+# # Working top vid paths
+# TOP_VID_PATH__BLACK_BARS_REMOVED = join(cfg.BIG_DATA_WORKING_DIR_PATH, "top__black_bars_removed.mp4")
+# TOP__VID_PATH__SCALED            = join(cfg.BIG_DATA_WORKING_DIR_PATH, "top__scaled.mp4")
+# TOP_VID_PATH__CUSTOM_EDIT        = join(cfg.BIG_DATA_WORKING_DIR_PATH, "top__custom_edited.mp4")
 
-# Working bottom vid paths
-BOTTOM_VID_PATH__CUSTOM_EDIT  = join(cfg.BIG_DATA_WORKING_DIR_PATH, "bottom__custom_edited.mp4")
-BOTTOM_VID_PATH__SCALED       = join(cfg.BIG_DATA_WORKING_DIR_PATH, "bottom__scaled.mp4")
-BOTTOM_VID_PATH__TIME_TRIMMED = join(cfg.BIG_DATA_WORKING_DIR_PATH, "bottom__time_trimmed.mp4")
+# # Working bottom vid paths
+# BOTTOM_VID_PATH__CUSTOM_EDIT  = join(cfg.BIG_DATA_WORKING_DIR_PATH, "bottom__custom_edited.mp4")
+# BOTTOM_VID_PATH__SCALED       = join(cfg.BIG_DATA_WORKING_DIR_PATH, "bottom__scaled.mp4")
+# BOTTOM_VID_PATH__TIME_TRIMMED = join(cfg.BIG_DATA_WORKING_DIR_PATH, "bottom__time_trimmed.mp4")
 
 
 def file_not_exist_msg(file_path):
@@ -292,7 +292,7 @@ def make_tb_vid(final_vid_dim_tup, out_dir_path, top_vid_path, bottom_vid_path, 
 
     cur_out_vid_path = veu.stack_vids(cur_top_vid_path, cur_bottom_vid_path, cur_out_vid_path) # PUT BACK!!!!!!!!!
 
-    
+
 
     print(f"Finished Making Top-Bottom Video: {cur_out_vid_path}")
 
