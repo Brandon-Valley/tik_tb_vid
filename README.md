@@ -187,6 +187,9 @@ serted extra subs
 
 - S1E1 - really bad case for trim/re-time sub time wehe
 
+- S09E05__Family_Guy__Peter_s_Birthday_Card_Comes_with_an_Extra_Surprise__Clip____TBS (1).mkv - long black screen opening
+  - would be good test for black boarder border ba black bars remov
+
 - S02E08__Family_Guy__Women_in_the_Workplace__Clip____TBS - gets right subs but timing wrong, probably because of repeat-dialog
     - NO_SUBS__WRONG_TIME_PROBABLY_bc_REPEAT_DIALOG__COULD_CUT_AND_HAVE_SUBS_WORK__S04E14__Family_Guy__PTV__Clip____TBS (1).mkv
     - # LATER not fixed yet
@@ -195,7 +198,11 @@ serted extra subs
     - # LATER not fixed yet
 
 - NO_SUBS__OPENING__DID_NOT_FIND_CORRECT__S05E05__Family_Guy__Intro_Gone_Wrong__Clip____TBS (1).mkv
-- 
+  -  # LATER not fixed yet
+- NO_SUBS__MUSIC_SPECIAL_CHARS_BROKE__S08E01__Family_Guy__Road_To_The_Multiverse__Clip____TBS (1).mkv
+  -  # LATER not fixed yet
+
+- S09E15__Family_Guy__Transformers__Clip____TBS (1).mkv - short blip of subs at start
 
 # Steps
 
