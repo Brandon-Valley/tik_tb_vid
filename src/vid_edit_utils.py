@@ -21,7 +21,7 @@ import PIL.ImageFont
 import PIL.ImageOps
 
 from sms.file_system_utils import file_system_utils as fsu
-from sms.pil_utils import pil_utils as pu
+# from sms.pil_utils import pil_utils as pu # TODO remove pil utils sm!!!!!!
 import cfg
 
 class Impossible_Dims_Exception(Exception): pass
