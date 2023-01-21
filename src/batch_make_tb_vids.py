@@ -21,11 +21,12 @@ IGNORE_DIR_PATH           = os.path.join(cfg.BIG_DATA_DIR_PATH, "ignore")
 
 # PLAYLIST_OG_VIDS_DIR_PATH    = os.path.join(IGNORE_DIR_PATH, "playlist_og_clips", "Family_Guy___TBS")
 # PLAYLIST_OG_VIDS_DIR_PATH = "C:/p/tik_tb_vid_big_data/ignore/playlist_og_clips/fg_ns_mp4/Family_Guy___TBS"
-# PLAYLIST_OG_VIDS_DIR_PATH = os.path.join(IGNORE_DIR_PATH, "playlist_og_clips", "fg_pl_tbs__single_short_test")
+PLAYLIST_OG_VIDS_DIR_PATH = os.path.join(IGNORE_DIR_PATH, "playlist_og_clips", "fg_pl_tbs__single_short_test")
+# PLAYLIST_OG_VIDS_DIR_PATH = os.path.join(IGNORE_DIR_PATH, "playlist_og_clips", "test_2_short")
 # PLAYLIST_OG_VIDS_DIR_PATH = os.path.join(IGNORE_DIR_PATH, "playlist_og_clips", "fg_pl_tbs__10_clips_full_len_test")
 # PLAYLIST_OG_VIDS_DIR_PATH    = os.path.join(IGNORE_DIR_PATH, "playlist_og_clips", "test_easy_black_boarders")
 # PLAYLIST_OG_VIDS_DIR_PATH    = os.path.join(IGNORE_DIR_PATH, "playlist_og_clips", "test_chicken")
-PLAYLIST_OG_VIDS_DIR_PATH    = os.path.join(IGNORE_DIR_PATH, "playlist_og_clips", "test_harvest")
+# PLAYLIST_OG_VIDS_DIR_PATH    = os.path.join(IGNORE_DIR_PATH, "playlist_og_clips", "test_harvest")
 # PLAYLIST_OG_VIDS_DIR_PATH    = os.path.join(IGNORE_DIR_PATH, "playlist_og_clips", "fg_pl_tbs__manual_edit_mkvs__test")
 FINAL_OUT_VID_DIR_PATH       = os.path.join(IGNORE_DIR_PATH, "final_output")
 OG_LONG_BOTTOM_VIDS_DIR_PATH = os.path.join(IGNORE_DIR_PATH, "og_long_bottom_vids")
@@ -61,10 +62,10 @@ def _get_rand_bottom_vid_to_time_trim(og_long_bottom_vids_dir_path, top_vid_path
     print("`Randomly` choose bottom vid: ", rand_chosen_bottom_vid_path)
     return rand_chosen_bottom_vid_path
 
-def make_fg_mcpark_crop_sides_by_percent_tb_vid(crop_sides_by_percent, og_vid_path, vid_edits_dir_path):
+def make_fg_mcpark_crop_sides_by_pref_percent_tb_vid(crop_sides_by_percent, og_vid_path, vid_edits_dir_path):
     og_vid_file_name = fsu.get_basename_from_path(og_vid_path, include_ext = False)
     # out_vid_path = os.path.join(vid_edits_dir_path, og_vid_file_name + f"_tsbp_{crop_sides_by_percent}.mp4")
-    out_vid_path = os.path.join(vid_edits_dir_path, og_vid_file_name + f"_tsbfd_{crop_sides_by_percent}.mp4")
+    # out_vid_path = os.path.join(vid_edits_dir_path, og_vid_file_name + f"_tsbfd_{crop_sides_by_percent}.mp4")
 
     rand_chosen_bottom_vid_path = _get_rand_bottom_vid_to_time_trim(OG_LONG_BOTTOM_VIDS_DIR_PATH, top_vid_path = og_vid_path)
 
@@ -90,8 +91,8 @@ def make_fg_mcpark_crop_sides_by_percent_tb_vid(crop_sides_by_percent, og_vid_pa
             This probably means got to crop_sides_of_vid_to_match_aspect_ratio() and turned out that given dims were impossible.\n \
             Probably caused by crop_top_vid_sides_percent ({crop_sides_by_percent}) being set too high.\n \
             This should be avoided since now all the time spent processing up to that point has been wasted.\n \
-            Ending current run of make_tb_vid() and deleting {out_vid_path=} if needed...")
-            fsu.delete_if_exists(out_vid_path)
+            Ending current run of make_tb_vid() and deleting {vid_edits_dir_path=} if needed...")
+            fsu.delete_if_exists(vid_edits_dir_path)
     return False
 
 
@@ -116,18 +117,18 @@ def batch_make_tb_vids(og_vids_dir_path, out_dir_path):
         fsu.delete_if_exists(vid_edits_dir_path)
         fsu.make_dir_if_not_exist(vid_edits_dir_path)
 
-        # make_fg_mcpark_crop_sides_by_percent_tb_vid(0,  og_vid_path, vid_edits_dir_path)
-        # # # # make_fg_mcpark_crop_sides_by_percent_tb_vid(5,  og_vid_path, vid_edits_dir_path)
-        # make_fg_mcpark_crop_sides_by_percent_tb_vid(10, og_vid_path, vid_edits_dir_path)
-        # # # # make_fg_mcpark_crop_sides_by_percent_tb_vid(15, og_vid_path, vid_edits_dir_path)
-        made_tb_vid = make_fg_mcpark_crop_sides_by_percent_tb_vid(40, og_vid_path, vid_edits_dir_path)
-        # # # make_fg_mcpark_crop_sides_by_percent_tb_vid(25, og_vid_path, vid_edits_dir_path)
-        # make_fg_mcpark_crop_sides_by_percent_tb_vid(30, og_vid_path, vid_edits_dir_path)
-        # # make_fg_mcpark_crop_sides_by_percent_tb_vid(35, og_vid_path, vid_edits_dir_path)
+        # make_fg_mcpark_crop_sides_by_pref_percent_tb_vid(0,  og_vid_path, vid_edits_dir_path)
+        # # # # make_fg_mcpark_crop_sides_by_pref_percent_tb_vid(5,  og_vid_path, vid_edits_dir_path)
+        # make_fg_mcpark_crop_sides_by_pref_percent_tb_vid(10, og_vid_path, vid_edits_dir_path)
+        # # # # make_fg_mcpark_crop_sides_by_pref_percent_tb_vid(15, og_vid_path, vid_edits_dir_path)
+        made_tb_vid = make_fg_mcpark_crop_sides_by_pref_percent_tb_vid(40, og_vid_path, vid_edits_dir_path)
+        # # # make_fg_mcpark_crop_sides_by_pref_percent_tb_vid(25, og_vid_path, vid_edits_dir_path)
+        # make_fg_mcpark_crop_sides_by_pref_percent_tb_vid(30, og_vid_path, vid_edits_dir_path)
+        # # make_fg_mcpark_crop_sides_by_pref_percent_tb_vid(35, og_vid_path, vid_edits_dir_path)
 
 
-        # make_fg_mcpark_crop_sides_by_percent_tb_vid(40, og_vid_path, vid_edits_dir_path)
-        # # make_fg_mcpark_crop_sides_by_percent_tb_vid(45, og_vid_path, vid_edits_dir_path)
+        # make_fg_mcpark_crop_sides_by_pref_percent_tb_vid(40, og_vid_path, vid_edits_dir_path)
+        # # make_fg_mcpark_crop_sides_by_pref_percent_tb_vid(45, og_vid_path, vid_edits_dir_path)
 
         if not made_tb_vid:
             failed_top_vid_path_l.append(og_vid_path)

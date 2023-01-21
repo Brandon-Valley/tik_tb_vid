@@ -1,23 +1,18 @@
-# import cv2 as cv
-# import numpy as np
-# import time
 
-# # img = cv.imread('images/horse.jpg')
-# img = cv.imread("C:\\Users\\Brandon\\Documents\\Personal_Projects\\tik_tb_vid_big_data\\test_pics\\fg_off_center.JPG")
-# cv.imshow('window',  img)
-# cv.waitKey(1)
-
+import vid_edit_utils as veu
 from pathlib import Path
+import os
+import random
+import cfg
+from vid_edit_utils import Impossible_Dims_Exception
+from sms.file_system_utils import file_system_utils as fsu
+from os.path import join
 
 
-p = "C:/p/tik_tb_vid_big_data/working/bottom__time_trimmed.mp4"
 
+cur_top_vid_path = "C:/p/tik_tb_vid_big_data/ignore/working/top__scaled.mp4.123"
+final_top_vid_dims_tup = (1,222)
 
-def file_not_exist_msg(file_path):
-    if Path(file_path).exists():
-        return False
-    return f"ERROR: File doesn't exist: {file_path}"
-
-
-if not_exist_msg(p): raise Exception(not_exist_msg(p))
-print("Done")
+# Put top vid height in filename as ref. point if add subtitles
+cur_out_vid_name = Path(cur_top_vid_path).name.split(".")[0] + f"__tvh_{final_top_vid_dims_tup[1]}_" + '.' + '.'.join(Path(cur_top_vid_path).name.split(".")[1:])
+print(f"{cur_out_vid_name=}")
