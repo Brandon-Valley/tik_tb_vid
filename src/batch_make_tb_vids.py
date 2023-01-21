@@ -21,8 +21,8 @@ IGNORE_DIR_PATH           = os.path.join(cfg.BIG_DATA_DIR_PATH, "ignore")
 
 # PLAYLIST_OG_VIDS_DIR_PATH    = os.path.join(IGNORE_DIR_PATH, "playlist_og_clips", "Family_Guy___TBS")
 # PLAYLIST_OG_VIDS_DIR_PATH = "C:/p/tik_tb_vid_big_data/ignore/playlist_og_clips/fg_ns_mp4/Family_Guy___TBS"
-PLAYLIST_OG_VIDS_DIR_PATH = os.path.join(IGNORE_DIR_PATH, "playlist_og_clips", "fg_pl_tbs__single_short_test")
-# PLAYLIST_OG_VIDS_DIR_PATH = os.path.join(IGNORE_DIR_PATH, "playlist_og_clips", "test_2_short")
+# PLAYLIST_OG_VIDS_DIR_PATH = os.path.join(IGNORE_DIR_PATH, "playlist_og_clips", "fg_pl_tbs__single_short_test")
+PLAYLIST_OG_VIDS_DIR_PATH = os.path.join(IGNORE_DIR_PATH, "playlist_og_clips", "test_2_short")
 # PLAYLIST_OG_VIDS_DIR_PATH = os.path.join(IGNORE_DIR_PATH, "playlist_og_clips", "fg_pl_tbs__10_clips_full_len_test")
 # PLAYLIST_OG_VIDS_DIR_PATH    = os.path.join(IGNORE_DIR_PATH, "playlist_og_clips", "test_easy_black_boarders")
 # PLAYLIST_OG_VIDS_DIR_PATH    = os.path.join(IGNORE_DIR_PATH, "playlist_og_clips", "test_chicken")
@@ -100,6 +100,8 @@ def make_fg_mcpark_crop_sides_by_pref_percent_tb_vid(crop_sides_by_percent, og_v
 # Main
 ####################################################################################################
 def batch_make_tb_vids(og_vids_dir_path, out_dir_path):
+    fsu.delete_if_exists(out_dir_path)
+    Path(out_dir_path).mkdir(parents=True,exist_ok=True)
 
     og_vid_path_l = fsu.get_dir_content_l(og_vids_dir_path, object_type = 'file', content_type = 'abs_path')
     print(og_vid_path_l)
