@@ -9,14 +9,14 @@ from sms.file_system_utils import file_system_utils as fsu
 from os.path import join
 
 # Working top vid paths
-TOP_VID_PATH__BLACK_BARS_REMOVED = os.path.join(cfg.BIG_DATA_WORKING_DIR_PATH, "top__black_bars_removed.mp4")
-TOP__VID_PATH__SCALED            = os.path.join(cfg.BIG_DATA_WORKING_DIR_PATH, "top__scaled.mp4")
-TOP_VID_PATH__CUSTOM_EDIT        = os.path.join(cfg.BIG_DATA_WORKING_DIR_PATH, "top__custom_edited.mp4")
+TOP_VID_PATH__BLACK_BARS_REMOVED = join(cfg.BIG_DATA_WORKING_DIR_PATH, "top__black_bars_removed.mp4")
+TOP__VID_PATH__SCALED            = join(cfg.BIG_DATA_WORKING_DIR_PATH, "top__scaled.mp4")
+TOP_VID_PATH__CUSTOM_EDIT        = join(cfg.BIG_DATA_WORKING_DIR_PATH, "top__custom_edited.mp4")
 
 # Working bottom vid paths
-BOTTOM_VID_PATH__CUSTOM_EDIT  = os.path.join(cfg.BIG_DATA_WORKING_DIR_PATH, "bottom__custom_edited.mp4")
-BOTTOM_VID_PATH__SCALED       = os.path.join(cfg.BIG_DATA_WORKING_DIR_PATH, "bottom__scaled.mp4")
-BOTTOM_VID_PATH__TIME_TRIMMED = os.path.join(cfg.BIG_DATA_WORKING_DIR_PATH, "bottom__time_trimmed.mp4")
+BOTTOM_VID_PATH__CUSTOM_EDIT  = join(cfg.BIG_DATA_WORKING_DIR_PATH, "bottom__custom_edited.mp4")
+BOTTOM_VID_PATH__SCALED       = join(cfg.BIG_DATA_WORKING_DIR_PATH, "bottom__scaled.mp4")
+BOTTOM_VID_PATH__TIME_TRIMMED = join(cfg.BIG_DATA_WORKING_DIR_PATH, "bottom__time_trimmed.mp4")
 
 
 def file_not_exist_msg(file_path):
@@ -206,7 +206,7 @@ def _custom_edit_bottom_vid(vid_dim_tup_to_match_aspect_ratio, in_vid_path, out_
 
 # def _crop_black_border_from_vid_if_needed(cur_top_vid_path):
 #     out_vid_path = get
-#     return veu.crop_black_border_from_vid_if_needed(cur_top_vid_path, os.path.join("top__black_bars_removed.mp4", "top") # PUT BACK!!!!!!!!!!!!!!
+#     return veu.crop_black_border_from_vid_if_needed(cur_top_vid_path, join("top__black_bars_removed.mp4", "top") # PUT BACK!!!!!!!!!!!!!!
 
 def _get_and_init_clip_wrk_dir_path(top_vid_path):
     clip_wrk_dir_path = join(cfg.BIG_DATA_WORKING_DIR_PATH, Path(top_vid_path).name)
@@ -284,7 +284,7 @@ def make_tb_vid(final_vid_dim_tup, out_dir_path, top_vid_path, bottom_vid_path, 
     #########################################################
     # Combine top and bottom vids to create final output vid
     #########################################################
-    cur_out_vid_path = os.path.join(out_dir_path, Path(cur_top_vid_path).name)
+    cur_out_vid_path = join(out_dir_path, Path(cur_top_vid_path).name)
 
     cur_out_vid_path = veu.stack_vids(cur_top_vid_path, cur_bottom_vid_path, cur_out_vid_path) # PUT BACK!!!!!!!!!
 
