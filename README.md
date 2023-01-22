@@ -1,5 +1,7 @@
 # tik_tb_vid
 
+Reddit - working instructions for cutting mkv and keeping cut embedded mkv subs for Xvideo Recode:  https://www.reddit.com/r/Naruto/comments/626bw4/editing_videos/
+
 
 **THIS WORKED FULL CUT RE-ENCODE looks FINE** - `ffmpeg -i "C:/Users/Brandon/Documents/Other/temp/S02E01__Family_Guy__This_House_is_Freakin__Sweet___Clip____TBS.mkv" -ss 00:00:06.605 -to 00:00:25.592 -acodec copy -vcodec libx264 -crf 0 -preset slow "C:/Users/Brandon/Documents/Other/temp/CUT_W_FFMPEG.mkv"`
   - ffmpeg -i "C:/Users/Brandon/Documents/Other/temp/ffmpeg_Test/S10E05__Family_Guy__Back_To_The_Pilot__Clip____TBS.mkv" -ss 00:00:44.111 -to 00:01:15.510 -acodec copy -vcodec libx264 -crf 0 -preset slow "C:/Users/Brandon/Documents/Other/temp/ffmpeg_Test/o.mkv"

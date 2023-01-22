@@ -448,9 +448,26 @@ def convert_vid_to_diff_format__no_subs(in_vid_path, out_vid_path):
     Path(out_vid_path).parent.mkdir(parents=True, exist_ok=True)
 
     # cmd = f'ffmpeg -i {in_mp4_path} -i {in_sub_path} -c copy -c:s mov_text {out_mkv_path}'
-    cmd = f'ffmpeg -i {in_vid_path} -c copy -c:s copy {out_vid_path}'
+    cmd = f'ffmpeg -i "{in_vid_path}" -c copy -c:s copy "{out_vid_path}"'
+    # cmd = f'ffmpeg -i "{in_vid_path}" -c copy "{out_vid_path}"'
     print(f"Running {cmd}...")
     sp.call(cmd, shell=True)
+
+def convert_to_mp4(mkv_file): # TODO remove?
+    name, ext = os.path.splitext(mkv_file)
+    out_name = name + ".mp4"
+    ffmpeg.input(mkv_file).output(out_name).run()
+    print("Finished converting {}".format(mkv_file))
+
+# def convert_vid_to_diff_format__w_subs(in_vid_path, out_vid_path):
+#     """ Can use to convert .mp4 to .mkv """
+#     fsu.delete_if_exists(out_vid_path)
+#     Path(out_vid_path).parent.mkdir(parents=True, exist_ok=True)
+
+#     # cmd = f'ffmpeg -i {in_mp4_path} -i {in_sub_path} -c copy -c:s mov_text {out_mkv_path}'
+#     cmd = f'ffmpeg -i {in_vid_path} -c copy -c:s "C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/YT_PL_DATA/Family_Guy__Muppets__Clip____TBS/f2_Family.Guy.S05E11.The.Tan.Aquatic.with.Steve.Zissou.REALLY.REAL.DVDRIp.XviD-FAMiLYGuY.eng.srt" {out_vid_path}'
+#     print(f"Running {cmd}...")
+#     sp.call(cmd, shell=True)
 
 def combine_mp4_and_sub_into_mkv(in_mp4_path, in_sub_path, out_mkv_path):
     """ sub may need to be .srt """
@@ -463,8 +480,24 @@ if __name__ == "__main__":
     # import make_tb_vid
     # make_tb_vid.make_tb_vid()
 
-    import batch_make_tb_vids
-    batch_make_tb_vids.main()
+    # import batch_make_tb_vids
+    # batch_make_tb_vids.main()
+
+    # scale_vid(new_vid_dim_tup = (1440,1080),
+    #  in_vid_path = "C:/tmp/S05E11__Family_Guy__Muppets__Clip____TBS.mkv",
+    #   out_vid_path = "C:/tmp/S05E11__Family_Guy__Muppets__Clip____TBS__SCALED.mkv")
+
+    convert_to_mp4("C:/tmp/S06E12__Family_Guy__Pirate_Talk__Clip____TBS.mkv")
+    # convert_vid_to_diff_format__no_subs("C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/man_edit_big_clips/S06E12__Family_Guy__Pirate_Talk__Clip____TBS (1).mkv",
+    # "C:/tmp/pirate_no_subs.mp4")
+    # # convert_vid_to_diff_format__no_subs("C:/tmp/S05E11__Family_Guy__Muppets__Clip____TBS__SCALED.mkv",
+    # # convert_vid_to_diff_format__no_subs("C:/tmp/S05E11__Family_Guy__Muppets__Clip____TBS.mkv",
+    # convert_vid_to_diff_format__w_subs("C:/tmp/S05E11__Family_Guy__Muppets__Clip____TBS.mkv",
+    # "C:/tmp/S05E11__Family_Guy__Muppets__Clip____TBS__SCALED.ts")
+
+    # combine_mp4_and_sub_into_mkv("C:/tmp/S05E11__Family_Guy__Muppets__Clip____TBS.mkv", 
+    # "C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/YT_PL_DATA/Family_Guy__Muppets__Clip____TBS/f2_Family.Guy.S05E11.The.Tan.Aquatic.with.Steve.Zissou.REALLY.REAL.DVDRIp.XviD-FAMiLYGuY.eng.srt",
+    # "C:/tmp/S05E11__Family_Guy__Muppets__Clip____TBS.ts")
 
     # print("start")
     # # burn_subs_into_vid(sub_file_path = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/test/sub_embed_test/og_clip.ttml",
