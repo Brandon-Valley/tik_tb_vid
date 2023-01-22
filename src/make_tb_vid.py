@@ -286,7 +286,8 @@ def make_tb_vid(final_vid_dim_tup, out_dir_path, top_vid_path, bottom_vid_path, 
     # Combine top and bottom vids to create final output vid
     #########################################################
     # Put top vid height in filename as ref. point if add subtitles
-    cur_out_vid_name_w_spaces = Path(top_vid_path).name.split(".")[0] + f"__tvh_{final_top_vid_dims_tup[1]}_" + '.' + '.'.join(Path(cur_top_vid_path).name.split(".")[1:])
+    vid_len_str = veu.get_vid_length(top_vid_path, return_type = "min_sec_str")
+    cur_out_vid_name_w_spaces = f"{vid_len_str}__" + Path(top_vid_path).name.split(".")[0] + f"__tvh_{final_top_vid_dims_tup[1]}_" + '.' + '.'.join(Path(cur_top_vid_path).name.split(".")[1:])
     cur_out_vid_name = cur_out_vid_name_w_spaces.replace(" ", "_")
     print(f"{cur_out_vid_name=}")
     cur_out_vid_path = str(Path(join(out_dir_path, cur_out_vid_name)))
