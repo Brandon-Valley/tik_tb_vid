@@ -18,5 +18,8 @@ NUM_CORES = 4 # personal laptop
 
 if __name__ == "__main__":
     print("init")
-    import batch_make_tb_vids
-    batch_make_tb_vids.main()
+    # import batch_make_tb_vids
+    # batch_make_tb_vids.main()
+    # from e
+    from eval_tb_vids import make_tb_vids_report
+    make_tb_vids_report._tmp_add_len_to_vid_titles("C:/p/tik_tb_vid_big_data/ignore/final_output")
