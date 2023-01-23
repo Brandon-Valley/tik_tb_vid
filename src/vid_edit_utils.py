@@ -500,9 +500,7 @@ def _ffprobe(file_path) -> FFProbeResult:
                      "-show_format",
                      "-show_streams",
                      file_path]
-    # result = subprocess.run(command_array, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
     result = subprocess.run(command_array, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
-    # print(result)
     return FFProbeResult(return_code=result.returncode,
                          json=result.stdout,
                          error=result.stderr)
@@ -523,6 +521,12 @@ def ffprobe_to_d(in_vid_path):
     else:
         raise ValueError(f"Return code does not equal 0: {ffprobe_result.return_code=}")
 
+def ffprobe_to_json(in_vid_path, out_json_path):
+    # fsu.delete_if_exists(out_json_path)
+    # Path(out_json_path).parent.mkdir(parents=True, exist_ok=True)
+    ffprobe_result_d = ffprobe_to_d(in_vid_path)
+    ju.write(ffprobe_result_d, out_json_path)
+
 
 
 if __name__ == "__main__":
@@ -534,6 +538,7 @@ if __name__ == "__main__":
 
     d = ffprobe_to_d("C:/tmp/S05E11__Family_Guy__Muppets__Clip____TBS.mkv")
     pprint(d)
+    ffprobe_to_json("C:/tmp/S05E11__Family_Guy__Muppets__Clip____TBS.mkv", "C:/tmp/ffprobe_test/S05E11__Family_Guy__Muppets__Clip____TBS__ffprobe.json")
 
     # scale_vid(new_vid_dim_tup = (1440,1080),
     #  in_vid_path = "C:/tmp/S05E11__Family_Guy__Muppets__Clip____TBS.mkv",
