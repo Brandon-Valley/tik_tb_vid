@@ -1,3 +1,12 @@
+import json
+from sms.logger import json_logger as ju
+# import argparse
+# import subprocess
+# import sys
+# from pathlib import Path
+from typing import NamedTuple
+
+
 import subprocess as sp
 
 import re
@@ -476,6 +485,46 @@ def combine_mp4_and_sub_into_mkv(in_mp4_path, in_sub_path, out_mkv_path):
     print(f"Running {cmd}...")
     sp.call(cmd, shell=True)
 
+
+
+class FFProbeResult(NamedTuple):
+    return_code: int
+    json: str
+    error: str
+
+
+def _ffprobe(file_path) -> FFProbeResult:
+    command_array = ["ffprobe",
+                     "-v", "quiet",
+                     "-print_format", "json",
+                     "-show_format",
+                     "-show_streams",
+                     file_path]
+    # result = subprocess.run(command_array, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
+    result = subprocess.run(command_array, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
+    # print(result)
+    return FFProbeResult(return_code=result.returncode,
+                         json=result.stdout,
+                         error=result.stderr)
+
+def ffprobe_to_d(in_vid_path):
+# def ffprobe_to_json(in_vid_path, out_json_path):
+    # fsu.delete_if_exists(out_json_path)
+    # Path(out_json_path).parent.mkdir(parents=True, exist_ok=True)
+
+    ffprobe_result = _ffprobe(in_vid_path)
+    if ffprobe_result.return_code == 0:
+        # # Print the raw json string
+        # print(ffprobe_result.json)
+
+        # or print a summary of each stream
+        d = json.loads(ffprobe_result.json)
+        return d
+    else:
+        raise ValueError(f"Return code does not equal 0: {ffprobe_result.return_code=}")
+
+
+
 if __name__ == "__main__":
     # import make_tb_vid
     # make_tb_vid.make_tb_vid()
@@ -483,11 +532,14 @@ if __name__ == "__main__":
     # import batch_make_tb_vids
     # batch_make_tb_vids.main()
 
+    d = ffprobe_to_d("C:/tmp/S05E11__Family_Guy__Muppets__Clip____TBS.mkv")
+    pprint(d)
+
     # scale_vid(new_vid_dim_tup = (1440,1080),
     #  in_vid_path = "C:/tmp/S05E11__Family_Guy__Muppets__Clip____TBS.mkv",
     #   out_vid_path = "C:/tmp/S05E11__Family_Guy__Muppets__Clip____TBS__SCALED.mkv")
 
-    convert_to_mp4("C:/tmp/S06E12__Family_Guy__Pirate_Talk__Clip____TBS.mkv")
+    # convert_to_mp4("C:/tmp/S06E12__Family_Guy__Pirate_Talk__Clip____TBS.mkv")
     # convert_vid_to_diff_format__no_subs("C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/man_edit_big_clips/S06E12__Family_Guy__Pirate_Talk__Clip____TBS (1).mkv",
     # "C:/tmp/pirate_no_subs.mp4")
     # # convert_vid_to_diff_format__no_subs("C:/tmp/S05E11__Family_Guy__Muppets__Clip____TBS__SCALED.mkv",
