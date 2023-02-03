@@ -536,9 +536,15 @@ if __name__ == "__main__":
     # import batch_make_tb_vids
     # batch_make_tb_vids.main()
 
-    d = ffprobe_to_d("C:/tmp/S05E11__Family_Guy__Muppets__Clip____TBS.mkv")
-    pprint(d)
-    ffprobe_to_json("C:/tmp/S05E11__Family_Guy__Muppets__Clip____TBS.mkv", "C:/tmp/ffprobe_test/S05E11__Family_Guy__Muppets__Clip____TBS__ffprobe.json")
+    combine_mp4_and_sub_into_mkv(in_mp4_path = "C:/tmp/embed_mp4/Family_Guy__Back_To_The_Pilot__Clip____TBS/Family_Guy__Back_To_The_Pilot__Clip____TBS.mp4",
+     in_sub_path = "C:/tmp/embed_mp4/Family_Guy__Back_To_The_Pilot__Clip____TBS/Family_Guy__Back_To_The_Pilot__Clip____TBS.en-orig.srt",
+      out_mkv_path = "C:/tmp/embed_mp4/Family_Guy__Back_To_The_Pilot__Clip____TBS/o.mp4")
+
+
+
+    # d = ffprobe_to_d("C:/tmp/S05E11__Family_Guy__Muppets__Clip____TBS.mkv")
+    # pprint(d)
+    # ffprobe_to_json("C:/tmp/S05E11__Family_Guy__Muppets__Clip____TBS.mkv", "C:/tmp/ffprobe_test/S05E11__Family_Guy__Muppets__Clip____TBS__ffprobe.json")
 
     # scale_vid(new_vid_dim_tup = (1440,1080),
     #  in_vid_path = "C:/tmp/S05E11__Family_Guy__Muppets__Clip____TBS.mkv",

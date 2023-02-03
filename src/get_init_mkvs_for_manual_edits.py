@@ -16,6 +16,7 @@ import cfg
 SERIES_NAME = "Family Guy"
 
 FINAL_MKVS_DIR_PATH = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "mkvs")
+FINAL_MP4_SRT_DIRS_DIR_PATH = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "o_mp4_srt_dirs")
 RUN_LOG_JSON_PATH = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "run_log_l.json")
 SSM_LOG_JSON_PATH = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "SSM_log.json")
 SSM_STATS_JSON_PATH = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "SSM_stats.json")
@@ -176,10 +177,24 @@ def write_final_stats(run_log_l, main_start_time):
     json_logger.write(stats_d, FINAL_STATS_JSON_PATH)
 
 
+
+def _copy_mp4_and_first_srt_to_dir(in_mp4_path, sub_path_lang_dl):
+    dir_path = os.path.join(FINAL_MP4_SRT_DIRS_DIR_PATH, Path(in_mp4_path).stem)
+    Path(dir_path).mkdir(parents=True, exist_ok=True)
+
+    if sub_path_lang_dl != None and len(sub_path_lang_dl) > 0:
+        sub_path = sub_path_lang_dl[0]["path"]
+        fsu.copy_objects_to_dest(sub_path, dir_path)
+
+    fsu.copy_objects_to_dest(in_mp4_path, dir_path)
+
+
 def main():
     main_start_time = time.time()
     fsu.delete_if_exists(FINAL_MKVS_DIR_PATH)
     Path(FINAL_MKVS_DIR_PATH).mkdir(parents=True, exist_ok=True)
+    fsu.delete_if_exists(FINAL_MP4_SRT_DIRS_DIR_PATH)
+    Path(FINAL_MP4_SRT_DIRS_DIR_PATH).mkdir(parents=True,exist_ok=True)
 
     # # Clean freshly downloaded subtitles
     # #   - Removes things like un-labeled spanish subs in english sub list (EX: Herbert Clip)
@@ -276,7 +291,11 @@ def main():
                                                                      out_mkv_path          = new_mkv_path,
                                                                      default_sub_track_num = 0)
         # subtitle_utils.make_embedded_mkv_sub_track_show_by_default(new_mkv_path)
-        fsu.delete_if_exists(tmp_srt_path)
+        # fsu.delete_if_exists(tmp_srt_path)
+
+        _copy_mp4_and_first_srt_to_dir(clip_dir_data.mp4_path, sub_path_lang_dl)
+
+
 
         # print("before normal_successful_clip_w_subs_created__get_log_d()")
         log_d = normal_successful_clip_w_subs_created__get_log_d(clip_dir_data, ep_sub_data, fuzz_ratio, clip_process_start_time, ep_sub_data_find_time, trim_and_re_time_real_sub_time, ep_sub_data_find_eval_key)
