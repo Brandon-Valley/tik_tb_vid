@@ -97,7 +97,7 @@ def fuzz_ratio_0__get_log_d(clip_dir_data, ep_sub_data, fuzz_ratio, clip_process
                 "process_time" : get_clip_process_time(clip_process_start_time)
             }
 
-def normal_successful_clip_w_subs_created__get_log_d(clip_dir_data, ep_sub_data, fuzz_ratio, clip_process_start_time, ep_sub_data_find_time, trim_and_re_time_real_sub_time, ep_sub_data_find_eval_key):
+def normal_successful_clip_w_subs_created__get_log_d(clip_dir_data, ep_sub_data, fuzz_ratio, clip_process_start_time, ep_sub_data_find_time, trim_and_re_time_real_sub_time, ep_sub_data_find_eval_key, sub_diff_ratio_sub_path_l_d):
     return {
                 "clip_name": clip_dir_data.clip_name,
                 "clip_mp4_path": clip_dir_data.mp4_path,
@@ -108,7 +108,8 @@ def normal_successful_clip_w_subs_created__get_log_d(clip_dir_data, ep_sub_data,
                 "ep_sub_data_find_time": ep_sub_data_find_time,
                 "trim_and_re_time_real_sub_time": trim_and_re_time_real_sub_time,
                 "ep_sub_data_find_eval_key": ep_sub_data_find_eval_key,
-                "process_time" : get_clip_process_time(clip_process_start_time)
+                "process_time" : get_clip_process_time(clip_process_start_time),
+                "sub_diff_ratio_sub_path_l_d" : sub_diff_ratio_sub_path_l_d
             }
 
 def write_final_stats(run_log_l, main_start_time):
@@ -339,7 +340,7 @@ def main():
 
 
         # print("before normal_successful_clip_w_subs_created__get_log_d()")
-        log_d = normal_successful_clip_w_subs_created__get_log_d(clip_dir_data, ep_sub_data, fuzz_ratio, clip_process_start_time, ep_sub_data_find_time, trim_and_re_time_real_sub_time, ep_sub_data_find_eval_key)
+        log_d = normal_successful_clip_w_subs_created__get_log_d(clip_dir_data, ep_sub_data, fuzz_ratio, clip_process_start_time, ep_sub_data_find_time, trim_and_re_time_real_sub_time, ep_sub_data_find_eval_key, sub_diff_ratio_sub_path_l_d)
         run_log_l.append(log_d)
         json_logger.write(run_log_l, RUN_LOG_JSON_PATH)
 
