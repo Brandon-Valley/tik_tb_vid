@@ -212,7 +212,12 @@ def _copy_mp4_and_best_sub_if_good_enough_to_dir(in_mp4_path, sub_diff_ratio_sub
     if best_sub_diff_ratio <= MAX_SUB_DIFF_RATIO:
         dir_path = os.path.join(FINAL_MP4_SRT_DIRS_DIR_PATH, "w_subs", Path(in_mp4_path).stem)
         Path(dir_path).mkdir(parents=True, exist_ok=True)
-        fsu.copy_objects_to_dest(sub_path, dir_path)
+        # fsu.copy_objects_to_dest(sub_path, dir_path)
+
+        # Rename srt to be same name as mp4 so VLC Media Player will play subs automatically
+        new_srt_file_name = f"{Path(in_mp4_path).stem}.srt"
+        new_srt_path = join(dir_path, new_srt_file_name)
+        fsu.copy_object_to_path(sub_path, new_srt_path)
     else:
         dir_path = os.path.join(FINAL_MP4_SRT_DIRS_DIR_PATH, "no_subs")
         Path(dir_path).mkdir(parents=True, exist_ok=True)
