@@ -21,6 +21,7 @@ import subtitle_utils
 import cfg
 import sub_diff_ratio_tools
 
+MAX_SUB_DIFF_RATIO = 0.4
 SERIES_NAME = "Family Guy"
 
 FINAL_MKVS_DIR_PATH = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "mkvs")
@@ -185,7 +186,7 @@ def write_final_stats(run_log_l, main_start_time):
     json_logger.write(stats_d, FINAL_STATS_JSON_PATH)
 
 
-
+# TODO remove?
 def _copy_mp4_and_first_srt_to_dir(in_mp4_path, sub_path_lang_dl):
     dir_path = os.path.join(FINAL_MP4_SRT_DIRS_DIR_PATH, Path(in_mp4_path).stem)
     Path(dir_path).mkdir(parents=True, exist_ok=True)
@@ -194,6 +195,26 @@ def _copy_mp4_and_first_srt_to_dir(in_mp4_path, sub_path_lang_dl):
         sub_path = sub_path_lang_dl[0]["path"]
         fsu.copy_objects_to_dest(sub_path, dir_path)
 
+    fsu.copy_objects_to_dest(in_mp4_path, dir_path)
+
+
+def _copy_mp4_and_best_sub_if_good_enough_to_dir(in_mp4_path, sub_diff_ratio_sub_path_l_d):
+    best_sub_diff_ratio = min(sub_diff_ratio_sub_path_l_d.keys())
+    print(f"{best_sub_diff_ratio=}")
+
+    sub_path_l = sub_diff_ratio_sub_path_l_d[best_sub_diff_ratio]
+    # print(f"{sub_path_l=}")
+    # print(f"{len(sub_path_l)=}")
+    sub_path = sub_path_l[0]
+
+    if best_sub_diff_ratio <= MAX_SUB_DIFF_RATIO:
+        dir_path = os.path.join(FINAL_MP4_SRT_DIRS_DIR_PATH, "w_subs", Path(in_mp4_path).stem)
+        Path(dir_path).mkdir(parents=True, exist_ok=True)
+        fsu.copy_objects_to_dest(sub_path, dir_path)
+    else:
+        dir_path = os.path.join(FINAL_MP4_SRT_DIRS_DIR_PATH, "no_subs")
+        Path(dir_path).mkdir(parents=True, exist_ok=True)
+    
     fsu.copy_objects_to_dest(in_mp4_path, dir_path)
 
 
@@ -300,17 +321,20 @@ def main():
         Path(filtered_auto_sub_path).parent.mkdir(parents=True, exist_ok=True)
         subtitle_utils.write_filtered_subs(clip_dir_data.auto_sub_path, filtered_auto_sub_path)
     
-        sub_diff_ratio_sub_path_l_d = sub_diff_ratio_tools.get_sub_diff_ratio_sub_path_l_d(filtered_auto_sub_path, unique_final_vid_sub_path_l, ep_sub_data.filtered_real_subs_dir_path)
+        sub_diff_ratio_sub_path_l_d = sub_diff_ratio_tools.get_sub_diff_ratio_sub_path_l_d(filtered_auto_sub_path,
+                                                                                           unique_final_vid_sub_path_l,
+                                                                                           ep_sub_data.filtered_real_subs_dir_path)
         print(f"{sub_diff_ratio_sub_path_l_d=}")
 
-        subtitle_utils.combine__mp4__and__sub_path_lang_dl__into_mkv(in_mp4_path           = clip_dir_data.mp4_path,
-                                                                     sub_path_lang_dl      = sub_path_lang_dl,
-                                                                     out_mkv_path          = new_mkv_path,
-                                                                     default_sub_track_num = 0)
-        # subtitle_utils.make_embedded_mkv_sub_track_show_by_default(new_mkv_path)
-        # fsu.delete_if_exists(tmp_srt_path)
+        # subtitle_utils.combine__mp4__and__sub_path_lang_dl__into_mkv(in_mp4_path           = clip_dir_data.mp4_path,
+        #                                                              sub_path_lang_dl      = sub_path_lang_dl,
+        #                                                              out_mkv_path          = new_mkv_path,
+        #                                                              default_sub_track_num = 0)
+        # # subtitle_utils.make_embedded_mkv_sub_track_show_by_default(new_mkv_path)
+        # # fsu.delete_if_exists(tmp_srt_path)
 
-        _copy_mp4_and_first_srt_to_dir(clip_dir_data.mp4_path, sub_path_lang_dl)
+        # _copy_mp4_and_first_srt_to_dir(clip_dir_data.mp4_path, sub_path_lang_dl)
+        _copy_mp4_and_best_sub_if_good_enough_to_dir(clip_dir_data.mp4_path, sub_diff_ratio_sub_path_l_d)
 
 
 
