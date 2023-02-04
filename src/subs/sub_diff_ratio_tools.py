@@ -12,6 +12,9 @@ import subtitle_utils as su
 
 
 def _get_num_ms_sub_1_non_matched_dialog(subs_1_path, subs_2_path):
+    print(f"in _get_num_ms_sub_1_non_matched_dialog()")
+    print(f"    {subs_1_path=}")
+    print(f"    {subs_2_path=}")
     subs_1 = pysubs2.load(subs_1_path, encoding="latin1")
     subs_2 = pysubs2.load(subs_2_path, encoding="latin1")
     s1_cur_i = 0
@@ -128,8 +131,11 @@ def get_sub_diff_ratio_sub_path_l_d(filtered_auto_sub_path, unique_final_vid_sub
     sub_match_score_sub_path_l_d = {}
     
     for unique_final_vid_sub_path in unique_final_vid_sub_path_l:
+        print(f"{unique_final_vid_sub_path=}")
+        # filtered_unique_final_vid_sub_path = join(filtered_real_subs_dir_path, f"FILTERED__{Path(unique_final_vid_sub_path).name}")
+        file_name = f"FILTERED__" + Path(unique_final_vid_sub_path).name.split("_")[0] + ".srt"
+        filtered_unique_final_vid_sub_path = join(filtered_real_subs_dir_path, file_name)
 
-        filtered_unique_final_vid_sub_path = join(filtered_real_subs_dir_path, f"FILTERED__{Path(unique_final_vid_sub_path).name}")
         su.write_filtered_subs(unique_final_vid_sub_path, filtered_unique_final_vid_sub_path)
 
         diff_ratio = get_sub_diff_ratio(filtered_auto_sub_path, filtered_unique_final_vid_sub_path)
@@ -146,13 +152,15 @@ if __name__ == "__main__":
     import os.path as path
     print("Running " , path.abspath(__file__) , '...')
 
-    # sub_match_score = get_sub_match_score(auto_sub_path = "C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/Family_Guy___TBS/Family_Guy__Back_To_The_Pilot__Clip____TBS/Family_Guy__Back_To_The_Pilot__Clip____TBS.en-orig.srt",
-    sub_match_score = get_sub_match_score(auto_sub_path = "C:/tmp/Family_Guy__Back_To_The_Pilot__Clip____TBS.en-orig__MANUAL_EDIT.srt",
-     real_sub_path = "C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/YT_PL_DATA/Family_Guy__Back_To_The_Pilot__Clip____TBS/f0_family.guy.s10e05.back.to.the.pilot.dvdrip.x264-demand.srt")
-    #  real_sub_path = "C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/YT_PL_DATA/Family_Guy__Back_To_The_Pilot__Clip____TBS/f1_Family.Guy.S10E05.720p.WEB-DL.DD5.1.H.264-CtrlHD.srt")
-    #  real_sub_path = "C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/YT_PL_DATA/Family_Guy__Back_To_The_Pilot__Clip____TBS/f3_Family.Guy.S10E05.720p.WEB-DL.DD5.1.H.264-CtrlHD.HI.srt")
+    import get_init_mkvs_for_manual_edits
+    get_init_mkvs_for_manual_edits.main()
+    # # sub_match_score = get_sub_match_score(auto_sub_path = "C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/Family_Guy___TBS/Family_Guy__Back_To_The_Pilot__Clip____TBS/Family_Guy__Back_To_The_Pilot__Clip____TBS.en-orig.srt",
+    # sub_match_score = get_sub_match_score(auto_sub_path = "C:/tmp/Family_Guy__Back_To_The_Pilot__Clip____TBS.en-orig__MANUAL_EDIT.srt",
+    #  real_sub_path = "C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/YT_PL_DATA/Family_Guy__Back_To_The_Pilot__Clip____TBS/f0_family.guy.s10e05.back.to.the.pilot.dvdrip.x264-demand.srt")
+    # #  real_sub_path = "C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/YT_PL_DATA/Family_Guy__Back_To_The_Pilot__Clip____TBS/f1_Family.Guy.S10E05.720p.WEB-DL.DD5.1.H.264-CtrlHD.srt")
+    # #  real_sub_path = "C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/YT_PL_DATA/Family_Guy__Back_To_The_Pilot__Clip____TBS/f3_Family.Guy.S10E05.720p.WEB-DL.DD5.1.H.264-CtrlHD.HI.srt")
 
-    # print(f"{sub_match_score=}")
+    # # print(f"{sub_match_score=}")
 
 
     print("End of Main") 

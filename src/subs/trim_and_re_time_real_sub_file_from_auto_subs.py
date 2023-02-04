@@ -144,26 +144,22 @@ def _make_final_vid_trimmed_re_timed_sub_from_real_sub(out_sub_path, clip_dir_da
     # init shift
     real_subs.shift(ms = neg_real_sub_shift_num_ms)
 
-    tmp_ms_shifted_sub_path        = os.path.join(clip_dir_data.trim_re_time_working_dir_path, f"MS_SHIFTED__{Path(real_sub_path).name}")
-    tmp_synced_ms_shifted_sub_path = os.path.join(clip_dir_data.trim_re_time_working_dir_path, f"MS_SHIFTED__SYNCED__{Path(real_sub_path).name}")
+    ms_shifted_sub_path        = os.path.join(clip_dir_data.trim_re_time_working_dir_path, f"MS_SHIFTED__{Path(real_sub_path).name}")
+    synced_ms_shifted_sub_path = os.path.join(clip_dir_data.trim_re_time_working_dir_path, f"MS_SHIFTED__SYNCED__{Path(real_sub_path).name}")
 
-    print(f"{tmp_ms_shifted_sub_path=}")
-    real_subs.save(tmp_ms_shifted_sub_path)
+    print(f"{ms_shifted_sub_path=}")
+    real_subs.save(ms_shifted_sub_path)
 
     # This will throw warning, this is normal:  WARNING: low quality of fit. Wrong subtitle file?
     # This happens b/c did not trim out the first part of re-timed srt which is all set to 0 (like the theme) and did not trim end
     su.sync_subs_with_vid(vid_path     = clip_dir_data.mp4_path,
-                          in_sub_path  = tmp_ms_shifted_sub_path,
-                          out_sub_path = tmp_synced_ms_shifted_sub_path)
+                          in_sub_path  = ms_shifted_sub_path,
+                          out_sub_path = synced_ms_shifted_sub_path)
     # rest of real subs still in final .srt, need to clean or it will mess with vid len once embedded to mkv
     vid_num_ms = veu.get_vid_length(clip_dir_data.mp4_path) * 1000
     print(f"{vid_num_ms=}")
 
-    _clean_trimmed_subs(tmp_synced_ms_shifted_sub_path, out_sub_path, vid_num_ms)
-
-    # # clean up
-    # fsu.delete_if_exists(tmp_ms_shifted_sub_path)
-    # fsu.delete_if_exists(tmp_synced_ms_shifted_sub_path)
+    _clean_trimmed_subs(synced_ms_shifted_sub_path, out_sub_path, vid_num_ms)
 
 
 def _get_best_match_non_main_subs_line(best_match_auto_sub_line, non_main_subs):
@@ -248,7 +244,23 @@ def _get_unique_final_vid_sub_path_l__and__rename_duplicates(final_vid_sub_path_
         new_file_name = f"DUPLICATE__{Path(dup_sub_path).name}"
         new_file_path = os.path.join(Path(dup_sub_path).parent.__str__(), new_file_name)
         fsu.rename_file_overwrite(dup_sub_path, new_file_path)
-    return unique_sub_path_l
+
+    # There is a very rare issue that can cause _clean_trimmed_subs() to write an empty file.
+    # It is caused by ms shifting including a first subtitle that is not actually spoken in the video
+    #   - Likely caused by the video being cut immediately after the dialog ends
+    # Example: S04E01 - Family_Guy__Comic_Book__Clip____TBS - "Family Guy - 04x01 - North by North Quahog.HDTV.Addic7ed.com.srt"
+    # Should probably dig deeper to find the root of this issue, but for now, just skip the sub if this happens
+    #   - (Kinda like how duplicates are treated)
+    unique_non_empty_sub_path_l = []
+    for unique_sub_path in unique_sub_path_l:
+        if os.path.getsize(unique_sub_path) == 0:
+            new_file_name = f"EMPTY__{Path(unique_sub_path).name}"
+            new_file_path = os.path.join(Path(unique_sub_path).parent.__str__(), new_file_name)
+            fsu.rename_file_overwrite(unique_sub_path, new_file_path)
+        else:
+            unique_non_empty_sub_path_l.append(unique_sub_path)
+
+    return unique_non_empty_sub_path_l
 
 def trim_and_re_time_real_sub_file_from_auto_subs(clip_dir_data, ep_sub_data, lang):
     """
@@ -300,7 +312,7 @@ def trim_and_re_time_real_sub_file_from_auto_subs(clip_dir_data, ep_sub_data, la
     print(f"{final_vid_sub_path_l=}")
 
     # sub_path_lang_dl = get_sub_path_lang_dl__from__final_vid_sub_path_l(final_vid_sub_path_l, lang)
-    sub_path_lang_dl = get_sub_path_lang_dl__from__final_vid_sub_path_l(unique_final_vid_sub_path_l, lang)
+    sub_path_lang_dl = get_sub_path_lang_dl__from__final_vid_sub_path_l(unique_final_vid_sub_path_l, lang) # TODO remove?
     print(f"{sub_path_lang_dl=}")
 
     total_time = time.time() - start_time
