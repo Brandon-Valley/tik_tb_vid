@@ -8,7 +8,7 @@ import re
 from typing import Optional, List, Tuple, Sequence
 from pysubs2.common import IntOrFloat
 
-
+from subtitle_filter import Subtitles
 
 
 from pathlib import Path
@@ -228,45 +228,78 @@ def remove_advertising_from_sub_file_path_l(sub_file_path_l):
     subprocess.call(cmd, shell=True)
 
 
+def write_filtered_subs(in_sub_path, out_sub_path):
+    ''' Removes effects like [Music] and other things '''
+    subs = Subtitles(in_sub_path)
+    subs.filter(
+        rm_fonts=True,
+        rm_ast=True,
+        rm_music=True,
+        rm_effects=True,
+        rm_names=True,
+        rm_author=True,
+    )
+    subs.save(out_sub_path)
+
+
+
+
+
+# # def write_auto_subs_for_vid(in_vid_path, out_sub_path, format_str = "srt", src_lang_str = "en", dest_lang_str = "en"):
+#     fsu.delete_if_exists(out_sub_path)
+#     Path(out_sub_path).parent.mkdir(parents=True, exist_ok=True)
+#     cmd = f'autosub -F {format_str} -o "{str(out_sub_path)}" -S {src_lang_str} -D {dest_lang_str} "{str(in_vid_path)}"'
+#     print(f"Running {cmd=}...")
+#     subprocess.call(cmd, shell=True)
+
 if __name__ == "__main__":
     import os.path as path
     print("Running ",  path.abspath(__file__),  '...')
-    # sync_subs_with_vid(vid_path = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/test/sub_match/Family_Guy__Back_To_The_Pilot_(Clip)___TBS.mp4",
-    #  in_sub_path = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/test/sub_match/init_shift.en.srt",
-    #   out_sub_path = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/test/sub_match/Family_Guy__Back_To_The_Pilot_(Clip)___TBS.en.srt")
 
-    in_vid_path = "C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/Family_Guy__TBS__alcho_and_pilot__SUB_SET_TEST/Family_Guy__Back_To_The_Pilot__Clip____TBS/Family_Guy__Back_To_The_Pilot__Clip____TBS.mp4"
+    write_filtered_subs("C:/tmp/auto_caption_test/Family_Guy__Back_To_The_Pilot__Clip____TBS.en-orig.srt",
+                        "C:/tmp/auto_caption_test/FILTERED.srt")
+
+    # write_auto_subs_for_vid(in_vid_path = "C:/tmp/auto_caption_test/Family_Guy__Back_To_The_Pilot__Clip____TBS.mp4",
+    #                          out_sub_path = "C:/tmp/auto_caption_test/Family_Guy__Back_To_The_Pilot__Clip____TBS.srt", format_str = "srt")
+
+
+
+    # # sync_subs_with_vid(vid_path = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/test/sub_match/Family_Guy__Back_To_The_Pilot_(Clip)___TBS.mp4",
+    # #  in_sub_path = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/test/sub_match/init_shift.en.srt",
+    # #   out_sub_path = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/test/sub_match/Family_Guy__Back_To_The_Pilot_(Clip)___TBS.en.srt")
+
+    # in_vid_path = "C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/Family_Guy__TBS__alcho_and_pilot__SUB_SET_TEST/Family_Guy__Back_To_The_Pilot__Clip____TBS/Family_Guy__Back_To_The_Pilot__Clip____TBS.mp4"
+    # # sub_file_l = ["C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en_s1_e1and2/s10/episode 5/Family.Guy.S10E05.HDTV.XviD-LOL.srt",
+    # # "C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en_s1_e1and2/s10/episode 5/Family.Guy.S10E05.HDTV.XviD-LOL.HI.srt"]
     # sub_file_l = ["C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en_s1_e1and2/s10/episode 5/Family.Guy.S10E05.HDTV.XviD-LOL.srt",
     # "C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en_s1_e1and2/s10/episode 5/Family.Guy.S10E05.HDTV.XviD-LOL.HI.srt"]
-    sub_file_l = ["C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en_s1_e1and2/s10/episode 5/Family.Guy.S10E05.HDTV.XviD-LOL.srt",
-    "C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en_s1_e1and2/s10/episode 5/Family.Guy.S10E05.HDTV.XviD-LOL.HI.srt"]
 
-    # sub_path_lang_dl = [
-    #                         {
-    #                             "path": "C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en_s1_e1and2/s10/episode 5/Family.Guy.S10E05.HDTV.XviD-LOL.srt",
-    #                             "lang": "en"
-    #                         },
-    #                         {
-    #                             "path": "C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en_s1_e1and2/s10/episode 5/Family.Guy.S10E05.HDTV.XviD-LOL.HI.srt",
-    #                             "lang": "en2"
-    #                         },
-    #                     ]
+    # # sub_path_lang_dl = [
+    # #                         {
+    # #                             "path": "C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en_s1_e1and2/s10/episode 5/Family.Guy.S10E05.HDTV.XviD-LOL.srt",
+    # #                             "lang": "en"
+    # #                         },
+    # #                         {
+    # #                             "path": "C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en_s1_e1and2/s10/episode 5/Family.Guy.S10E05.HDTV.XviD-LOL.HI.srt",
+    # #                             "lang": "en2"
+    # #                         },
+    # #                     ]
 
 
 
-    # out_mkv_path = "C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/Family_Guy__TBS__alcho_and_pilot__SUB_SET_TEST/Family_Guy__Back_To_The_Pilot__Clip____TBS/Family_Guy__Back_To_The_Pilot__Clip____TBS.mkv"
+    # # out_mkv_path = "C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/Family_Guy__TBS__alcho_and_pilot__SUB_SET_TEST/Family_Guy__Back_To_The_Pilot__Clip____TBS/Family_Guy__Back_To_The_Pilot__Clip____TBS.mkv"
 
-    # # combine__mp4__and__sub_path_lang_dl__into_mkv(in_vid_path, sub_path_lang_dl, out_mkv_path)
-
-
-    # combine__mp4__and__sub_path_l__into_mkv__set_file_name_as_lang(in_vid_path, sub_file_l, out_mkv_path)
-
-    make_embedded_mkv_sub_track_show_by_default(mkv_path = "C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/mkvs/S10E05__Family_Guy__Back_To_The_Pilot__Clip____TBS.mkv",
-     sub_track_num = 0)
+    # # # combine__mp4__and__sub_path_lang_dl__into_mkv(in_vid_path, sub_path_lang_dl, out_mkv_path)
 
 
-    # remove_advertising_from_sub_file("C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en_s5_e17/s05/episode 17/Modern.Family.S05E17.720p.WEB-DL.DD5.1.H.264-HWD.en.srt")
-    # make_single_embedded_mkv_sub_show_by_default("C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/mkvs/S04E16__Family_Guy__Google_Earth__Clip____TBS.mkv")
-    # remove_advertising_from_sub_file_path_l(["C:/p/tik_tb_vid_big_data/ignore/test/sub_adv_remove_test/Family.Guy.S10E20.720p.HDTV.X264-DIMENSION - Copy.srt",
-    # "C:/p/tik_tb_vid_big_data/ignore/test/sub_adv_remove_test/Family.Guy.S10E20.720p.HDTV.X264-DIMENSION - Copy - Copy.srt"])
+    # # combine__mp4__and__sub_path_l__into_mkv__set_file_name_as_lang(in_vid_path, sub_file_l, out_mkv_path)
+
+    # make_embedded_mkv_sub_track_show_by_default(mkv_path = "C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/mkvs/S10E05__Family_Guy__Back_To_The_Pilot__Clip____TBS.mkv",
+    #  sub_track_num = 0)
+
+
+    # # remove_advertising_from_sub_file("C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en_s5_e17/s05/episode 17/Modern.Family.S05E17.720p.WEB-DL.DD5.1.H.264-HWD.en.srt")
+    # # make_single_embedded_mkv_sub_show_by_default("C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/mkvs/S04E16__Family_Guy__Google_Earth__Clip____TBS.mkv")
+    # # remove_advertising_from_sub_file_path_l(["C:/p/tik_tb_vid_big_data/ignore/test/sub_adv_remove_test/Family.Guy.S10E20.720p.HDTV.X264-DIMENSION - Copy.srt",
+    # # "C:/p/tik_tb_vid_big_data/ignore/test/sub_adv_remove_test/Family.Guy.S10E20.720p.HDTV.X264-DIMENSION - Copy - Copy.srt"])
     print("End of Main")

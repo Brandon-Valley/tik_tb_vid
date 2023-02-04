@@ -116,7 +116,7 @@ def get_sub_match_score(auto_sub_path, real_sub_path):
     print(f"{total_diff_num_ms=}")
 
     total_auto_subs_num_ms = _get_num_ms_dialog_of_sub(auto_sub_path)
-    total_real_subs_num_ms__JUST_FOR_TEST = _get_num_ms_dialog_of_sub(real_sub_path)
+    total_real_subs_num_ms__JUST_FOR_TEST = _get_num_ms_dialog_of_sub(real_sub_path) 
     print(f"{total_real_subs_num_ms__JUST_FOR_TEST=}")
     print(f"{total_auto_subs_num_ms=}")
 
