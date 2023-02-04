@@ -51,6 +51,7 @@ pip install pytube
 # subtitle
 
 pip install pvleopard
+pip install subtitle-filter
 
 # Probably answer for yt dl but needs api key
 - https://www.geeksforgeeks.org/download-youtube-videos-or-whole-playlist-with-python/

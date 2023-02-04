@@ -2,7 +2,6 @@ from os.path import join
 from pathlib import Path
 import pysubs2
 
-
 if __name__ == "__main__":
     import sys, pathlib
     sys.path.append(str(pathlib.Path(__file__).parent.parent))
@@ -10,8 +9,6 @@ if __name__ == "__main__":
 from sms.file_system_utils import file_system_utils as fsu
 import vid_edit_utils as veu
 import subtitle_utils as su
-
-
 
 
 def _get_num_ms_sub_1_non_matched_dialog(subs_1_path, subs_2_path):

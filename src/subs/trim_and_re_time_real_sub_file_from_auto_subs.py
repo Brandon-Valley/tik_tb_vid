@@ -1,6 +1,5 @@
 from concurrent.futures import ThreadPoolExecutor
 from concurrent.futures import wait
-import cfg
 
 from collections import namedtuple
 from pprint import pprint
@@ -8,22 +7,24 @@ import re
 from typing import Optional, List, Tuple, Sequence
 from pysubs2.common import IntOrFloat
 
-
 import time
-
 import os
 import pysubs2
+from pathlib import Path
+from fuzzywuzzy import fuzz
+import time
+
+
+if __name__ == "__main__":
+    import sys, pathlib
+    sys.path.append(str(pathlib.Path(__file__).parent.parent))
+
+import cfg
 from sms.file_system_utils import file_system_utils as fsu
 from sms.logger import txt_logger
 import vid_edit_utils as veu
 import subtitle_utils as su
-from pathlib import Path
 
-from fuzzywuzzy import fuzz
-
-import time
-
-# NUM_CORES_PERSONAL_LAPTOP = 4
 FUZZ_STR_DELIM = ' '
 MKV_TOOL_NIX_FIRST_SUB_TRACK_ID = 2 
 
@@ -303,7 +304,7 @@ def trim_and_re_time_real_sub_file_from_auto_subs(clip_dir_data, ep_sub_data, la
     print(f"{sub_path_lang_dl=}")
 
     total_time = time.time() - start_time
-    return sub_path_lang_dl, total_time
+    return sub_path_lang_dl, unique_final_vid_sub_path_l, total_time
 
 
 

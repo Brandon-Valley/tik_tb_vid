@@ -1,13 +1,20 @@
 from pprint import pprint
-import fuzz_common
 import os
-from sms.file_system_utils import file_system_utils as fsu
-from sms.logger import json_logger
+
 # from sms.logger import txt
 from pathlib import Path
 import pysubs2
-import subtitle_utils as su
+
+if __name__ == "__main__":
+    import sys, pathlib
+    sys.path.append(str(pathlib.Path(__file__).parent.parent))
+
+import fuzz_common
+
 import cfg
+import subtitle_utils as su
+from sms.file_system_utils import file_system_utils as fsu
+from sms.logger import json_logger
 
 SSM_DATA_DIR_PATH = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "SSM_DATA")
 MIN_EP_SUB_FILE_NUM_BYTES = 3000 # 3KB, "normal" subs are ~ 15-40KB

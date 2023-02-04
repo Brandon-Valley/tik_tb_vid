@@ -2,15 +2,21 @@ import statistics
 import time
 import os
 from pathlib import Path
-from sms.file_system_utils import file_system_utils as fsu
-from sms.logger import json_logger
+from pprint import pprint
+
+if __name__ == "__main__":
+    import sys, pathlib
+    sys.path.append(str(pathlib.Path(__file__).parent.parent))
+
 from YT_PL_DL_Data import YT_PL_DL_Data
 from get_real_episode_sub_data_from_auto_sub import get_real_episode_sub_data_from_auto_sub
 from trim_and_re_time_real_sub_file_from_auto_subs import trim_and_re_time_real_sub_file_from_auto_subs
 from Series_Sub_Map import Series_Sub_map
-import subtitle_utils
-from pprint import pprint
+
+from sms.file_system_utils import file_system_utils as fsu
+from sms.logger import json_logger
 import vid_edit_utils as veu
+import subtitle_utils
 import cfg
 
 SERIES_NAME = "Family Guy"
@@ -282,8 +288,9 @@ def main():
         tmp_srt_path = new_srt_mkv_file_path_no_ext + f"{LANG}.srt"
         new_mkv_path = new_srt_mkv_file_path_no_ext + f".mkv"
 
-        sub_path_lang_dl, trim_and_re_time_real_sub_time = trim_and_re_time_real_sub_file_from_auto_subs(clip_dir_data, ep_sub_data, LANG)
+        sub_path_lang_dl, unique_final_vid_sub_path_l, trim_and_re_time_real_sub_time = trim_and_re_time_real_sub_file_from_auto_subs(clip_dir_data, ep_sub_data, LANG)
 
+        print(f"{unique_final_vid_sub_path_l=}") # TMP
         print(f"{trim_and_re_time_real_sub_time=}")
 
         subtitle_utils.combine__mp4__and__sub_path_lang_dl__into_mkv(in_mp4_path           = clip_dir_data.mp4_path,

@@ -243,15 +243,6 @@ def write_filtered_subs(in_sub_path, out_sub_path):
 
 
 
-
-
-# # def write_auto_subs_for_vid(in_vid_path, out_sub_path, format_str = "srt", src_lang_str = "en", dest_lang_str = "en"):
-#     fsu.delete_if_exists(out_sub_path)
-#     Path(out_sub_path).parent.mkdir(parents=True, exist_ok=True)
-#     cmd = f'autosub -F {format_str} -o "{str(out_sub_path)}" -S {src_lang_str} -D {dest_lang_str} "{str(in_vid_path)}"'
-#     print(f"Running {cmd=}...")
-#     subprocess.call(cmd, shell=True)
-
 if __name__ == "__main__":
     import os.path as path
     print("Running ",  path.abspath(__file__),  '...')

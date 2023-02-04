@@ -5,11 +5,15 @@ from pprint import pprint
 
 import re
 import time
-
 from fuzzywuzzy import fuzz
+import pysubs2
+
+if __name__ == "__main__":
+    import sys, pathlib
+    sys.path.append(str(pathlib.Path(__file__).parent.parent))
+
 from sms.file_system_utils import file_system_utils as fsu
 from sms.logger import txt_logger
-import pysubs2
 
 FUZZ_STR_DELIM = " "
 

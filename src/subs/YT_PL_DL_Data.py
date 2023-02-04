@@ -1,9 +1,16 @@
-
 import os
 from pathlib import Path
+
+if __name__ == "__main__":
+    import sys, pathlib
+    sys.path.append(str(pathlib.Path(__file__).parent.parent))
+
+import fuzz_common
+
 from sms.file_system_utils import file_system_utils as fsu
 from sms.logger import json_logger
-import fuzz_common
+
+
 class Clip_Dir_Data:
     mp4_path = False
     auto_sub_path = False

@@ -1,21 +1,24 @@
 from concurrent.futures import ThreadPoolExecutor
 from concurrent.futures import wait
-import cfg
-
 from pprint import pprint
-import fuzz_common as fc
 import os
 from pathlib import Path
-
 import re
 import time
-
+import pysubs2
 from fuzzywuzzy import fuzz
+
+if __name__ == "__main__":
+    import sys, pathlib
+    sys.path.append(str(pathlib.Path(__file__).parent.parent))
+
 from Series_Sub_Map import Series_Sub_map
+import fuzz_common as fc
+
+import cfg
 from sms.file_system_utils import file_system_utils as fsu
 from sms.logger import txt_logger
 from sms.logger import json_logger
-import pysubs2
 
 FUZZ_STR_DELIM = "\r"
 
