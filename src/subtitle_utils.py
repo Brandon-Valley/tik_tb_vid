@@ -230,6 +230,11 @@ def remove_advertising_from_sub_file_path_l(sub_file_path_l):
 
 def write_filtered_subs(in_sub_path, out_sub_path):
     ''' Removes effects like [Music] and other things '''
+    if in_sub_path != out_sub_path:
+        fsu.delete_if_exists(out_sub_path)
+    
+    Path(out_sub_path).parent.mkdir(parents=True, exist_ok=True)
+
     subs = Subtitles(in_sub_path)
     subs.filter(
         rm_fonts=True,

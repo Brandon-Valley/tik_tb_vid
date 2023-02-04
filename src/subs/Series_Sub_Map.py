@@ -46,6 +46,7 @@ class Episode_Sub_Data:
         self.ssm_data_ep_dir_path = self._get_and_init_ssm_data_ep_dir_path()
         self.total_fuzz_str_json_path     = os.path.join(self.ssm_data_ep_dir_path, f"{self.get_season_episode_str()}_total_fuzz_str.json")
         self.partial_fuzz_str_l_json_path = os.path.join(self.ssm_data_ep_dir_path, f"{self.get_season_episode_str()}_partial_fuzz_str_l.json")
+        self.filtered_real_subs_dir_path = os.path.join(self.ssm_data_ep_dir_path, "filtered_real_subs")
 
         self._set_series_name_match_l()
 

@@ -1,6 +1,7 @@
 import statistics
 import time
 import os
+from os.path import join
 from pathlib import Path
 from pprint import pprint
 
@@ -18,6 +19,7 @@ from sms.logger import json_logger
 import vid_edit_utils as veu
 import subtitle_utils
 import cfg
+import sub_diff_ratio_tools
 
 SERIES_NAME = "Family Guy"
 
@@ -292,6 +294,14 @@ def main():
 
         print(f"{unique_final_vid_sub_path_l=}") # TMP
         print(f"{trim_and_re_time_real_sub_time=}")
+
+        # TMP move
+        filtered_auto_sub_path = join(clip_dir_data.data_dir_path, "filtered_auto_subs.srt")
+        Path(filtered_auto_sub_path).parent.mkdir(parents=True, exist_ok=True)
+        subtitle_utils.write_filtered_subs(clip_dir_data.auto_sub_path, filtered_auto_sub_path)
+    
+        sub_diff_ratio_sub_path_l_d = sub_diff_ratio_tools.get_sub_diff_ratio_sub_path_l_d(filtered_auto_sub_path, unique_final_vid_sub_path_l, ep_sub_data.filtered_real_subs_dir_path)
+        print(f"{sub_diff_ratio_sub_path_l_d=}")
 
         subtitle_utils.combine__mp4__and__sub_path_lang_dl__into_mkv(in_mp4_path           = clip_dir_data.mp4_path,
                                                                      sub_path_lang_dl      = sub_path_lang_dl,

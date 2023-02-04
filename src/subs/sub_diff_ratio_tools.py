@@ -104,7 +104,7 @@ def _get_num_ms_dialog_of_sub(subs_path):
     return num_ms
 
 
-def get_sub_match_score(auto_sub_path, real_sub_path):
+def get_sub_diff_ratio(auto_sub_path, real_sub_path):
     num_ms_1 = _get_num_ms_sub_1_non_matched_dialog(auto_sub_path, real_sub_path)
     print(f"{num_ms_1=}")
     num_ms_2 = _get_num_ms_sub_1_non_matched_dialog(real_sub_path, auto_sub_path)
@@ -119,6 +119,27 @@ def get_sub_match_score(auto_sub_path, real_sub_path):
 
     diff_ratio = total_diff_num_ms / total_auto_subs_num_ms
     print(f"{diff_ratio=}")
+    return diff_ratio
+
+
+def get_sub_diff_ratio_sub_path_l_d(filtered_auto_sub_path, unique_final_vid_sub_path_l, filtered_real_subs_dir_path):
+    Path(filtered_real_subs_dir_path).mkdir(parents=True, exist_ok=True)
+
+    sub_match_score_sub_path_l_d = {}
+    
+    for unique_final_vid_sub_path in unique_final_vid_sub_path_l:
+
+        filtered_unique_final_vid_sub_path = join(filtered_real_subs_dir_path, f"FILTERED__{Path(unique_final_vid_sub_path).name}")
+        su.write_filtered_subs(unique_final_vid_sub_path, filtered_unique_final_vid_sub_path)
+
+        diff_ratio = get_sub_diff_ratio(filtered_auto_sub_path, filtered_unique_final_vid_sub_path)
+
+        if diff_ratio in sub_match_score_sub_path_l_d.keys():
+            sub_match_score_sub_path_l_d[diff_ratio].append(unique_final_vid_sub_path)
+        else:
+            sub_match_score_sub_path_l_d[diff_ratio] = [unique_final_vid_sub_path]
+
+    return sub_match_score_sub_path_l_d
 
 
 if __name__ == "__main__":
