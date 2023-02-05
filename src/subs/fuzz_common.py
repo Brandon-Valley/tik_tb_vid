@@ -17,17 +17,18 @@ from sms.logger import txt_logger
 
 FUZZ_STR_DELIM = " "
 
-def get_fuzz_str_from_sub_path(sub_path):
-    subs = pysubs2.load(sub_path, encoding="latin1")
 
-    subs_fuzz_str = ""
-    for line in subs:
-        # Get rid of everything from start of line until ":"
-        #  - "COMMENTATOR 1: They're just" --> " They're just"
-        #    - From S06E01 - Blue Harvest
-        after_colon_line = line.text.split(":")[-1]
-        
-        subs_fuzz_str = subs_fuzz_str + after_colon_line + FUZZ_STR_DELIM
+def get_cleaned_line_text_str__from__sub_line_text_str(line_str):
+    # Get rid of everything from start of line until ":"
+    #  - "COMMENTATOR 1: They're just" --> " They're just"
+    #    - From S06E01 - Blue Harvest
+    after_colon_line = line_str.split(":")[-1]
+    return after_colon_line
+
+
+def get_subs_fuzz_str__from__all_sub_lines_cleaned_text_str(all_sub_lines_cleaned_text_str):
+
+    subs_fuzz_str = all_sub_lines_cleaned_text_str
 
     # Remove anything between () or []
     subs_fuzz_str = re.sub("[\(\[].*?[\)\]]", "", subs_fuzz_str)
@@ -59,6 +60,58 @@ def get_fuzz_str_from_sub_path(sub_path):
     subs_fuzz_str = ''.join(subs_fuzz_str.split())
 
     return subs_fuzz_str.lower()
+
+
+def get_fuzz_str_from_sub_path(sub_path):
+    subs = pysubs2.load(sub_path, encoding="latin1")
+
+    subs_fuzz_str = ""
+    for line in subs:
+        cleaned_line_text_str = get_cleaned_line_text_str__from__sub_line_text_str(line.text)
+        # # fuzz_str = get_fuzz_str_from_line_text(line.text)
+
+        # # Get rid of everything from start of line until ":"
+        # #  - "COMMENTATOR 1: They're just" --> " They're just"
+        # #    - From S06E01 - Blue Harvest
+        # after_colon_line = line.text.split(":")[-1]
+        
+        # subs_fuzz_str = subs_fuzz_str + after_colon_line + FUZZ_STR_DELIM
+        # subs_fuzz_str = subs_fuzz_str + cleaned_line_text_str + FUZZ_STR_DELIM
+        all_sub_lines_cleaned_text_str = subs_fuzz_str + cleaned_line_text_str + FUZZ_STR_DELIM
+
+    subs_fuzz_str = get_subs_fuzz_str__from__all_sub_lines_cleaned_text_str(all_sub_lines_cleaned_text_str)
+    return subs_fuzz_str
+
+    # # Remove anything between () or []
+    # subs_fuzz_str = re.sub("[\(\[].*?[\)\]]", "", subs_fuzz_str)
+
+    # # Remove anything between {}
+    # subs_fuzz_str = re.sub(r' {[^}]*}','',subs_fuzz_str)
+
+    # subs_fuzz_str = subs_fuzz_str.replace("\\n", " ")
+    # subs_fuzz_str = subs_fuzz_str.replace("\\N", " ")
+    # subs_fuzz_str = subs_fuzz_str.replace("\\r", " ")
+
+    # subs_fuzz_str = subs_fuzz_str.replace("{\\i0}", " ")
+    # subs_fuzz_str = subs_fuzz_str.replace("{\\i1}", " ")
+
+    # subs_fuzz_str = subs_fuzz_str.replace(".", " ")
+    # subs_fuzz_str = subs_fuzz_str.replace("?", " ")
+    # subs_fuzz_str = subs_fuzz_str.replace("!", " ")
+
+    # subs_fuzz_str = subs_fuzz_str.replace("-", "")
+    # subs_fuzz_str = subs_fuzz_str.replace("'", "")
+    # subs_fuzz_str = subs_fuzz_str.replace('"', "")
+    # subs_fuzz_str = subs_fuzz_str.replace(":", "")
+    # subs_fuzz_str = subs_fuzz_str.replace(",", "")
+
+    # # Remove all other special chars except spaces
+    # subs_fuzz_str = re.sub('[^a-zA-Z.\d\s]', ' ', subs_fuzz_str)
+
+    # # Substitute multiple whitespace with single 0 whitespace
+    # subs_fuzz_str = ''.join(subs_fuzz_str.split())
+
+    # return subs_fuzz_str.lower()
 
 
 
