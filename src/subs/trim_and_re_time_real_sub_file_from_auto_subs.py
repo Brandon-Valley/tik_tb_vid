@@ -117,7 +117,15 @@ def _clean_trimmed_subs(in_sub_path, out_sub_path, vid_num_ms):
     # clean 0'ed start
     # will have subs like: 00:00:00,400 --> 00:00:00,400
     for line_num, line in enumerate(subs):
-        if line.start == line.end:
+
+        # line.start > line.end is caused by a very rare error with sync, not sure what causes it
+        # Example: S01E05 - Family.Guy.S01E05.DVDRip.XviD-SChiZO.srt
+        #   - After ms shift and sync:
+        #       218
+        #       00:00:59,850 --> 00:00:00,042
+        #       That's what kids want to play with.
+        #       Yeah. A Beanie Baby in a bubble.
+        if line.start == line.end or line.start > line.end:
             subs[line_num] == None
         else:
             print(f"Found first good subs text = {line.text=}")

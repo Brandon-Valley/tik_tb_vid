@@ -139,6 +139,8 @@ def get_sub_diff_ratio_sub_path_l_d(filtered_auto_sub_path, unique_final_vid_sub
         su.write_filtered_subs(unique_final_vid_sub_path, filtered_unique_final_vid_sub_path)
 
         diff_ratio = get_sub_diff_ratio(filtered_auto_sub_path, filtered_unique_final_vid_sub_path)
+        print(f"{unique_final_vid_sub_path=}")
+        print(f"{diff_ratio=}")
 
         if diff_ratio in sub_match_score_sub_path_l_d.keys():
             sub_match_score_sub_path_l_d[diff_ratio].append(unique_final_vid_sub_path)
