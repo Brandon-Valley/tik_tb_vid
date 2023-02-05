@@ -52,34 +52,16 @@ def write_run_log_l__sorted_by__best_sub_diff_ratio():
     print(f"Writing {RUN_LOG_L__SORTED_BY__BEST_SUB_DIFF_RATIOS_JSON_PATH}...")
     json_logger.write(sorted_run_log_l, RUN_LOG_L__SORTED_BY__BEST_SUB_DIFF_RATIOS_JSON_PATH)
 
+
 def write_run_log_l__sorted_by__best_sub_diff_ratio__w_sorted__sub_diff_ratio_sub_path_l_d():
-    # def _get_best_sub_dir_ratio(clip_data_d):
-    #     # print(f"clip_data_d")
-    #     # pprint(clip_data_d)
-    #     # print(f"{len(clip_data_d)=}")
-
-    #     best_sub_diff_ratio = 9999
-
-    #     if "sub_diff_ratio_sub_path_l_d" in clip_data_d.keys():
-    #         sub_diff_ratio_sub_path_l_d = clip_data_d["sub_diff_ratio_sub_path_l_d"]
-    #         best_sub_diff_ratio = 999
-            
-    #         if len(sub_diff_ratio_sub_path_l_d) != 0:
-    #             best_sub_diff_ratio_str = min(sub_diff_ratio_sub_path_l_d.keys())
-    #             best_sub_path_l = sub_diff_ratio_sub_path_l_d[best_sub_diff_ratio_str]
-    #             best_sub_diff_ratio = float(best_sub_diff_ratio_str)
-    #     return best_sub_diff_ratio
-
     sorted_run_log_l = json_logger.read(RUN_LOG_L__SORTED_BY__BEST_SUB_DIFF_RATIOS_JSON_PATH)
     new_log_l = []
 
     for clip_data_d in sorted_run_log_l:
         if "sub_diff_ratio_sub_path_l_d" in clip_data_d.keys():
-            # clip_data_d["sub_diff_ratio_sub_path_l_d"] = sorted(clip_data_d["sub_diff_ratio_sub_path_l_d"])
             clip_data_d["sub_diff_ratio_sub_path_l_d"] = collections.OrderedDict(sorted(clip_data_d["sub_diff_ratio_sub_path_l_d"].items()))
         new_log_l.append(clip_data_d)
 
-    # sorted_run_log_l = sorted(run_log_l, key=lambda clip_data_d: _get_best_sub_dir_ratio(clip_data_d))
     print(f"Writing {RUN_LOG_L__SORTED_BY__BEST_SUB_DIFF_RATIOS__W_SORTED__SUB_DIFF_RATIO_SUB_PATH_L_D_JSON_PATH}...")
     json_logger.write(sorted_run_log_l, RUN_LOG_L__SORTED_BY__BEST_SUB_DIFF_RATIOS__W_SORTED__SUB_DIFF_RATIO_SUB_PATH_L_D_JSON_PATH)
 
