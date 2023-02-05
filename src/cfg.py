@@ -13,6 +13,7 @@ INIT_MKVS_WORKING_DIR_PATH = "C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS"
 NUM_CORES = 4 # personal laptop
 # NUM_CORES = 1 # personal laptop
 
+RUN_LOG_JSON_PATH = join(INIT_MKVS_WORKING_DIR_PATH, "run_log_l.json")
 
 
 

@@ -26,7 +26,6 @@ SERIES_NAME = "Family Guy"
 
 FINAL_MKVS_DIR_PATH = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "mkvs")
 FINAL_MP4_SRT_DIRS_DIR_PATH = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "o_mp4_srt_dirs")
-RUN_LOG_JSON_PATH = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "run_log_l.json")
 SSM_LOG_JSON_PATH = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "SSM_log.json")
 SSM_STATS_JSON_PATH = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "SSM_stats.json")
 FINAL_STATS_JSON_PATH = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "final_stats.json")
@@ -287,7 +286,7 @@ def main():
             print(f"Downloaded youtube clip has no subs, creating .mkv without subtitles...")
             log_d = downloaded_yt_clip_has_no_subs__make_no_sub_mkv__and_get_log_d(clip_dir_data, clip_process_start_time)
             run_log_l.append(log_d)
-            json_logger.write(run_log_l, RUN_LOG_JSON_PATH)
+            json_logger.write(run_log_l, cfg.RUN_LOG_JSON_PATH)
             continue
 
         # Get sub data of episode that clip comes from (found by fuzzy searching w/ auto-subs)
@@ -309,7 +308,7 @@ def main():
             print("init_mkvs - After fuzzy-searching every episode's subs, did not find single episode with fuzz_ratio > 0, creating .mkv without subtitles...")
             log_d = no_episode_sub_fuzzy_match_found__make_no_sub_mkv__and_get_log_d(clip_dir_data, fuzz_ratio, clip_process_start_time, ep_sub_data_find_eval_key)
             run_log_l.append(log_d)
-            json_logger.write(run_log_l, RUN_LOG_JSON_PATH)
+            json_logger.write(run_log_l, cfg.RUN_LOG_JSON_PATH)
             continue
 
         print(f"Found real sub match for auto_sub: {ep_sub_data.main_sub_file_path=} is the real sub match to {clip_dir_data.auto_sub_path} w/ {fuzz_ratio=}")
@@ -319,7 +318,7 @@ def main():
         if fuzz_ratio == 0:
             log_d = fuzz_ratio_0__get_log_d(clip_dir_data, ep_sub_data, fuzz_ratio, clip_process_start_time, ep_sub_data_find_time, ep_sub_data_find_eval_key)
             run_log_l.append(log_d)
-            json_logger.write(run_log_l, RUN_LOG_JSON_PATH)
+            json_logger.write(run_log_l, cfg.RUN_LOG_JSON_PATH)
             continue
 
         new_srt_mkv_file_path_no_ext = os.path.join(FINAL_MKVS_DIR_PATH, f"{ep_sub_data.get_season_episode_str()}__{clip_dir_data.clip_name}")
@@ -356,7 +355,7 @@ def main():
         # print("before normal_successful_clip_w_subs_created__get_log_d()")
         log_d = normal_successful_clip_w_subs_created__get_log_d(clip_dir_data, ep_sub_data, fuzz_ratio, clip_process_start_time, ep_sub_data_find_time, trim_and_re_time_real_sub_time, ep_sub_data_find_eval_key, sub_diff_ratio_sub_path_l_d)
         run_log_l.append(log_d)
-        json_logger.write(run_log_l, RUN_LOG_JSON_PATH)
+        json_logger.write(run_log_l, cfg.RUN_LOG_JSON_PATH)
 
 
         print("run_log_l vv")
@@ -366,7 +365,7 @@ def main():
     print("final run_log_lvv")
     pprint(run_log_l)
 
-    json_logger.write(run_log_l, RUN_LOG_JSON_PATH)
+    json_logger.write(run_log_l, cfg.RUN_LOG_JSON_PATH)
     write_final_stats(run_log_l, main_start_time)
     print("Done")
 
