@@ -35,7 +35,7 @@ def trim_first_sub_text_if_needed(in_sub_path, in_vid_path, out_sub_path):
     # if subs[0].start != 0:
     #     return in_sub_path
 
-    # get transcript_str of spoken dialog in vid between start and end time of first sub
+    # get fuzz str of transcript_str of spoken dialog in vid between start and end time of first sub
     first_sub_line_start_time_sec = subs[0].start / 1000
     first_sub_line_end_time_sec   = subs[0].end   / 1000
     # print(f"{aeu.get_transcript_from_vid(in_vid_path, first_sub_line_start_time_sec, first_sub_line_end_time_sec, with_confidence=True)=}")
@@ -43,16 +43,37 @@ def trim_first_sub_text_if_needed(in_sub_path, in_vid_path, out_sub_path):
     transcript_str, transcript_str_confidence  = aeu.get_transcript_from_vid(in_vid_path, 0, first_sub_line_end_time_sec, with_confidence=True)
     print(f"{transcript_str=}")
     print(f"{transcript_str_confidence=}")
-
     # LATER do something with transcript_str_confidence?
+
+    cleaned_transcript_str = fc.get_cleaned_line_text_str__from__sub_line_text_str(transcript_str)
+    transcript_fuzz_str = fc.get_subs_fuzz_str__from__all_sub_lines_cleaned_text_str(cleaned_transcript_str)
+
 
     # first_sub_line_text = subs[0].text
     new_line_text_l = []
 
+
+
     # fill keys of new_line_text_l
-    s_space_first_sub_line_text_l = subs[0].text.split(" ")
+    fist_sub_line_text_str = subs[0].text
+    for newline_char in ["\\n", "\\N", "\\r"]:
+        fist_sub_line_text_str = fist_sub_line_text_str.replace(newline_char, " \\n")
+
+    # s_space_first_sub_line_text_l = subs[0].text.split(" ")
+    s_space_first_sub_line_text_l = fist_sub_line_text_str.split(" ")
     for i in range(len(s_space_first_sub_line_text_l)):
         new_line_text = " ".join(s_space_first_sub_line_text_l[i:])
+
+        # remove leading newlines
+        # new_line_text = new_line_text.replace("\\N", "\\n ")
+        new_line_text = new_line_text.lstrip(" \\n")
+        # for newline_char in ["\\n", "\\N", "\\r"]:
+        #     if new_line_text.startswith(newline_char):
+        #         new_line_text = new_line_text[len(newline_char):]
+        # subs_fuzz_str = subs_fuzz_str.replace("\\n", " ")
+        # subs_fuzz_str = subs_fuzz_str.replace("\\N", " ")
+        # subs_fuzz_str = subs_fuzz_str.replace("\\r", " ")
+
         # TODO Remove leading newlines from new_line_text
         # new_line_text = 
 
@@ -76,6 +97,8 @@ def trim_first_sub_text_if_needed(in_sub_path, in_vid_path, out_sub_path):
 
         print("fuzz_str_set:")
         pprint(fuzz_str_set)
+        exit()
+        print("here")
         # fill fuzz_ratio_s_space_first_sub_line_text_l_d
 
 
