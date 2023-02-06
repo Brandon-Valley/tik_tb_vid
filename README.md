@@ -41,7 +41,7 @@ https://pjreddie.com/media/files/yolov3.weights
 
 pip install opencv-python
 pip install opencv-contrib-python
-
+pip install SpeechRecognition
 
 # playlist dl test
 pip install bs4
