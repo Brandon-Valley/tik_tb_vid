@@ -2,33 +2,117 @@ from pprint import pprint
 from os.path import join
 from pathlib import Path
 import pysubs2
+from fuzzywuzzy import fuzz
+
+from time import sleep
+from random import random
+from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import wait
+
 
 if __name__ == "__main__":
     import sys, pathlib
     sys.path.append(str(pathlib.Path(__file__).parent.parent))
 
+import cfg
 from sms.file_system_utils import file_system_utils as fsu
+from sms.audio_edit_utils import audio_edit_utils as aeu
+from sms.logger import txt_logger
 import vid_edit_utils as veu
 import subtitle_utils as su
+import fuzz_common as fc
 
 
 
-def _get_line_dialog_fuzz_ratio(line):
+def _get_line_dialog_fuzz_ratio(in_vid_path, line):
     # return line.start
 
     line_start_time_sec = line.start / 1000
     line_end_time_sec   = line.end   / 1000
 
+    result = aeu.get_transcript_from_vid(in_vid_path, line_start_time_sec, line_end_time_sec, with_confidence = True)
 
-def get_thing(in_vid_path, unique_final_vid_sub_path_l):
+    if result == False:
+        return 0
+    
+    transcript_str, confidence = result
+
+    # LATER do something with confidence?
+
+    cleaned_transcript_str = fc.get_cleaned_line_text_str__from__sub_line_text_str(transcript_str)
+    transcript_fuzz_str = fc.get_subs_fuzz_str__from__all_sub_lines_cleaned_text_str(cleaned_transcript_str)
+
+    cleaned_line_text_str = fc.get_cleaned_line_text_str__from__sub_line_text_str(line.text)
+    line_text_fuzz_str = fc.get_subs_fuzz_str__from__all_sub_lines_cleaned_text_str(cleaned_line_text_str)
+
+    fuzz_ratio = fuzz.ratio(line_text_fuzz_str, transcript_fuzz_str)
+    return fuzz_ratio
+
+
+
+def _get_line_dialog_fuzz_ratio_l(in_vid_path, filtered_subs):
+    line_dialog_fuzz_ratio_l = []
+
+    def _get_and_append_line_dialog_fuzz_ratio(in_vid_path, line):
+        line_dialog_fuzz_ratio = _get_line_dialog_fuzz_ratio(in_vid_path, line)
+        print(f"{line_dialog_fuzz_ratio=}")
+        line_dialog_fuzz_ratio_l.append(line_dialog_fuzz_ratio)
+
+    with ThreadPoolExecutor(cfg.NUM_CORES) as executor:
+        futures = []
+
+        for line in filtered_subs[::int(len(filtered_subs) / 20)]: # TODO const
+
+            # submit tasks and collect futures
+            futures = [executor.submit(_get_and_append_line_dialog_fuzz_ratio, in_vid_path, line)]
+
+        # wait for all tasks to complete
+        print('Waiting for tasks to complete...')
+        wait(futures)
+        print('All tasks are done!')
+
+    return line_dialog_fuzz_ratio_l
+
+
+
+def get_avg_line_dialog_fuzz_ratio_sub_path_l_d(in_vid_path, unique_final_vid_sub_path_l, filtered_real_subs_dir_path):
+    fsu.delete_if_exists(filtered_real_subs_dir_path)
+    Path(filtered_real_subs_dir_path).mkdir(parents=True, exist_ok=True)
+
     print(unique_final_vid_sub_path_l)
 
+    avg_line_dialog_fuzz_ratio_sub_path_l_d = {}
     for sub_path in unique_final_vid_sub_path_l:
-        subs = pysubs2.load(sub_path, encoding="latin1")
 
-        for line in subs:
-            line_dialog_fuzz_ratio = _get_line_dialog_fuzz_ratio(line)
-            print(f"{line_dialog_fuzz_ratio=}")
+        # get filtered subs
+        file_name = f"FILTERED__" + Path(sub_path).name.split("_")[0] + ".srt"
+        filtered_sub_path = join(filtered_real_subs_dir_path, file_name)
+        su.write_filtered_subs(sub_path, filtered_sub_path)
+        filtered_subs = pysubs2.load(filtered_sub_path, encoding="latin1")
+        
+        # line_dialog_fuzz_ratio_l = []
+
+        line_dialog_fuzz_ratio_l = _get_line_dialog_fuzz_ratio_l(in_vid_path, filtered_subs)
+
+        # def _get_and_append_line_dialog_fuzz_ratio(in_vid_path, line):
+        #     line_dialog_fuzz_ratio = _get_line_dialog_fuzz_ratio(in_vid_path, line)
+        #     print(f"{line_dialog_fuzz_ratio=}")
+        #     line_dialog_fuzz_ratio_l.append(line_dialog_fuzz_ratio)
+
+        # for line in filtered_subs[::int(len(filtered_subs) / 10)]: # TODO const
+        # # for line in filtered_subs: # TODO const
+        #     line_dialog_fuzz_ratio = _get_line_dialog_fuzz_ratio(in_vid_path, line)
+        #     print(f"{line_dialog_fuzz_ratio=}")
+        #     line_dialog_fuzz_ratio_l.append(line_dialog_fuzz_ratio)
+
+        avg_line_dialog_fuzz_ratio = sum(line_dialog_fuzz_ratio_l) / len(line_dialog_fuzz_ratio_l)
+        
+        if avg_line_dialog_fuzz_ratio in avg_line_dialog_fuzz_ratio_sub_path_l_d.keys():
+            avg_line_dialog_fuzz_ratio_sub_path_l_d[avg_line_dialog_fuzz_ratio].append(sub_path)
+        else:
+            avg_line_dialog_fuzz_ratio_sub_path_l_d[avg_line_dialog_fuzz_ratio] = [sub_path]
+
+    return avg_line_dialog_fuzz_ratio_sub_path_l_d
 
 
 
@@ -36,7 +120,13 @@ def get_thing(in_vid_path, unique_final_vid_sub_path_l):
 if __name__ == "__main__":
     import os.path as path
     print("Running " , path.abspath(__file__) , '...')
-    get_thing(in_vid_path = "C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/Family_Guy___TBS/Family_Guy__Back_To_The_Pilot__Clip____TBS/Family_Guy__Back_To_The_Pilot__Clip____TBS.mp4",
-               unique_final_vid_sub_path_l = )
+    avg_line_dialog_fuzz_ratio_sub_path_l_d = get_avg_line_dialog_fuzz_ratio_sub_path_l_d(in_vid_path = "C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/Family_Guy___TBS/Family_Guy__Back_To_The_Pilot__Clip____TBS/Family_Guy__Back_To_The_Pilot__Clip____TBS.mp4",
+               unique_final_vid_sub_path_l =[
+        "C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/YT_PL_DATA/Family_Guy__Back_To_The_Pilot__Clip____TBS/f0_family.guy.s10e05.back.to.the.pilot.dvdrip.x264-demand.srt",
+        "C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/YT_PL_DATA/Family_Guy__Back_To_The_Pilot__Clip____TBS/f1_Family.Guy.S10E05.720p.WEB-DL.DD5.1.H.264-CtrlHD.srt"
+               ],
+                filtered_real_subs_dir_path = "C:/tmp/dialog_match_test/filtered")
+
+    print(f"{avg_line_dialog_fuzz_ratio_sub_path_l_d=}")
     
     print("End of Main") 

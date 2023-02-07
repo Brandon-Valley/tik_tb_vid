@@ -134,3 +134,5 @@ dmypy.json
 src/SECRETS.py
 src/ignore/*
 src/ignore__temp_frame_imgs/
+
+.vscode/launch.json
