@@ -29,7 +29,7 @@ import sub_diff_ratio_tools
 import real_sub_dialog_match_tools
 
 MAX_SUB_DIFF_RATIO = 0.4
-MIN_AVG_MOST_CONFIDENT_LINE_DIALOG_FUZZ_RATIO = 60
+MIN_AVG_MOST_CONFIDENT_LINE_DIALOG_FUZZ_RATIO = 70
 SERIES_NAME = "Family Guy"
 
 FINAL_MKVS_DIR_PATH = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "mkvs")
@@ -226,6 +226,7 @@ def _get_passing_sub_diff_ratio_sub_path_l(sub_diff_ratio_sub_path_l_d):
 
 def _copy_mp4_and_best_sub_if_good_enough_to_dir__line_dialog_fuzz_ratio__method(in_mp4_path, avg_most_confident_line_dialog_fuzz_ratio_sub_path_l_d):
     dir_path = os.path.join(FINAL_MP4_SRT_DIRS_DIR_PATH, "no_subs")
+    chosen_sub_path = None
 
     if len(avg_most_confident_line_dialog_fuzz_ratio_sub_path_l_d.keys()) != 0:
         best_fuzz_ratio = max(avg_most_confident_line_dialog_fuzz_ratio_sub_path_l_d.keys())
@@ -242,9 +243,11 @@ def _copy_mp4_and_best_sub_if_good_enough_to_dir__line_dialog_fuzz_ratio__method
             new_srt_file_name = f"{Path(in_mp4_path).stem}.srt"
             new_srt_path = join(dir_path, new_srt_file_name)
             fsu.copy_object_to_path(sub_path, new_srt_path)
+            chosen_sub_path = sub_path
     
     Path(dir_path).mkdir(parents=True, exist_ok=True)
     fsu.copy_objects_to_dest(in_mp4_path, dir_path)
+    return chosen_sub_path
 
 
 def _copy_mp4_and_best_sub_if_good_enough_to_dir__sub_diff_ratio_sub_path_l_d__method(in_mp4_path, sub_diff_ratio_sub_path_l_d):
@@ -405,12 +408,12 @@ def main():
 
         # _copy_mp4_and_first_srt_to_dir(clip_dir_data.mp4_path, sub_path_lang_dl)
         # _copy_mp4_and_best_sub_if_good_enough_to_dir__sub_diff_ratio_sub_path_l_d__method(clip_dir_data.mp4_path, sub_diff_ratio_sub_path_l_d)
-        _copy_mp4_and_best_sub_if_good_enough_to_dir__line_dialog_fuzz_ratio__method(clip_dir_data.mp4_path, avg_most_confident_line_dialog_fuzz_ratio_sub_path_l_d)
+        chosen_sub_path = _copy_mp4_and_best_sub_if_good_enough_to_dir__line_dialog_fuzz_ratio__method(clip_dir_data.mp4_path, avg_most_confident_line_dialog_fuzz_ratio_sub_path_l_d)
 
 
 
         # print("before normal_successful_clip_w_subs_created__get_log_d()")
-        log_d = normal_successful_clip_w_subs_created__get_log_d(clip_dir_data, ep_sub_data, fuzz_ratio, clip_process_start_time, ep_sub_data_find_time, trim_and_re_time_real_sub_time, ep_sub_data_find_eval_key, sub_diff_ratio_sub_path_l_d, passing_sub_diff_ratio_sub_path_l, avg_most_confident_line_dialog_fuzz_ratio_sub_path_l_d, line_dialog_fuzz_time)
+        log_d = normal_successful_clip_w_subs_created__get_log_d(clip_dir_data, ep_sub_data, fuzz_ratio, clip_process_start_time, ep_sub_data_find_time, trim_and_re_time_real_sub_time, ep_sub_data_find_eval_key, sub_diff_ratio_sub_path_l_d, passing_sub_diff_ratio_sub_path_l, avg_most_confident_line_dialog_fuzz_ratio_sub_path_l_d, line_dialog_fuzz_time, chosen_sub_path)
         run_log_l.append(log_d)
         json_logger.write(run_log_l, cfg.RUN_LOG_JSON_PATH)
 

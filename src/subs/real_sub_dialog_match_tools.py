@@ -24,6 +24,7 @@ import vid_edit_utils as veu
 import subtitle_utils as su
 import fuzz_common as fc
 
+IDEAL_NUM_SAMPLES_PER_SUB = 12
 
 
 def _get_line_dialog_fuzz_ratio_and_confidence(in_vid_audio_path, line):
@@ -65,8 +66,13 @@ def _get_line_dialog_fuzz_ratio_l(in_vid_audio_path, filtered_subs):
     with ThreadPoolExecutor(cfg.NUM_CORES) as executor:
         futures = []
 
+        # get step
+        step = 1
+        if len(filtered_subs) > IDEAL_NUM_SAMPLES_PER_SUB:
+            step = int(len(filtered_subs) / 12)
+
         # for line in filtered_subs[::int(len(filtered_subs) / 12)]: # TODO const
-        for line in filtered_subs[::int(len(filtered_subs) / 12)]: # TODO const
+        for line in filtered_subs[::step]:
 
             # submit tasks and collect futures
             futures = [executor.submit(_get_and_append_line_dialog_fuzz_ratio_and_confidence_tup, in_vid_audio_path, line)]
@@ -91,13 +97,26 @@ def get_avg_most_confident_line_dialog_fuzz_ratio_sub_path_l_d(in_vid_path, uniq
     aeu.get_audio_from_video(in_vid_path, tmp_vid_audio_path)
 
     avg_most_confident_line_dialog_fuzz_ratio_sub_path_l_d = {}
+
+    # before running line dialog fuzz ratio, filter all subs and remove any duplicates that appear after filtering
+    filtered_raw_sub_paths_d = {}
     for sub_path in unique_final_vid_sub_path_l:
 
         # get filtered subs
         file_name = f"FILTERED__" + Path(sub_path).name.split("_")[0] + ".srt"
         filtered_sub_path = join(filtered_real_subs_dir_path, file_name)
         su.write_filtered_subs(sub_path, filtered_sub_path)
-        filtered_subs = pysubs2.load(filtered_sub_path, encoding="latin1")
+
+        filtered_raw_sub_paths_d[filtered_sub_path] = sub_path
+
+    unique_filtered_sub_path_l, removed_l = fsu.get_file_path_l_w_duplicate_files_removed(list(filtered_raw_sub_paths_d.keys()), return_removed_file_path_l = True )
+    print(f"These filtered subs are duplicates so they have been removed: {len(removed_l)=} - {removed_l=}")
+
+    # _get_line_dialog_fuzz_ratio_l for all UNIQUE subs (minus sound effects)
+    for unique_filtered_sub_path in unique_filtered_sub_path_l:
+        sub_path = filtered_raw_sub_paths_d[unique_filtered_sub_path]
+
+        filtered_subs = pysubs2.load(unique_filtered_sub_path, encoding="latin1")
         
         line_dialog_fuzz_ratio_and_confidence_tup_l = _get_line_dialog_fuzz_ratio_l(tmp_vid_audio_path, filtered_subs)
         print(f"{line_dialog_fuzz_ratio_and_confidence_tup_l=}")

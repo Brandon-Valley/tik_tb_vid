@@ -25,15 +25,44 @@ import sub_diff_ratio_tools
 
 # SCRIPT_PARENT_DIR_PATH = os.path.abspath(os.path.dirname(__file__))
 POST_RUN_REPORT_JSON_PATH = join(cfg.INIT_MKVS_WORKING_DIR_PATH, "post_run_report.json")
+RUN_LOG_L__SORTED_BY__BEST_AVG_LINE_DIALOG_FUZZ_RATIO_JSON_PATH = join(cfg.INIT_MKVS_WORKING_DIR_PATH, "run_log_l__sorted_by__best_avg_line_dialog_fuzz_ratio.json")
 RUN_LOG_L__SORTED_BY__BEST_SUB_DIFF_RATIOS_JSON_PATH = join(cfg.INIT_MKVS_WORKING_DIR_PATH, "run_log_l__sorted_by__best_sub_diff_ratio.json")
 RUN_LOG_L__SORTED_BY__BEST_SUB_DIFF_RATIOS__W_SORTED__SUB_DIFF_RATIO_SUB_PATH_L_D_JSON_PATH = join(cfg.INIT_MKVS_WORKING_DIR_PATH, "run_log_l__sorted_by__best_sub_diff_ratio__w_sorted__sub_diff_ratio_sub_path_l_d.json")
 
+
+
+def write_run_log_l__sorted_by__best_avg_line_dialog_fuzz_ratio():
+    def _get_best_sub_dir_ratio(clip_data_d):
+        best_avg_line_dialog_fuzz_ratio = 0
+
+        if "avg_most_confident_line_dialog_fuzz_ratio_sub_path_l_d" in clip_data_d.keys():
+            avg_most_confident_line_dialog_fuzz_ratio_sub_path_l_d = clip_data_d["avg_most_confident_line_dialog_fuzz_ratio_sub_path_l_d"]
+            best_avg_line_dialog_fuzz_ratio = 1
+            
+            if len(avg_most_confident_line_dialog_fuzz_ratio_sub_path_l_d) != 0:
+                best_avg_line_dialog_fuzz_ratio_str = max(avg_most_confident_line_dialog_fuzz_ratio_sub_path_l_d.keys())
+                # best_sub_path_l = sub_diff_ratio_sub_path_l_d[best_avg_line_dialog_fuzz_ratio]
+                best_avg_line_dialog_fuzz_ratio = float(best_avg_line_dialog_fuzz_ratio_str)
+        return best_avg_line_dialog_fuzz_ratio
+
+    run_log_l = json_logger.read(cfg.RUN_LOG_JSON_PATH)
+
+    sorted_run_log_l = sorted(run_log_l, key=lambda clip_data_d: _get_best_sub_dir_ratio(clip_data_d), reverse = True)
+
+    # put keys in order
+    new_log_l = []
+    for clip_data_d in sorted_run_log_l:
+        if "sub_diff_ratio_sub_path_l_d" in clip_data_d.keys():
+            clip_data_d["sub_diff_ratio_sub_path_l_d"] = collections.OrderedDict(sorted(clip_data_d["sub_diff_ratio_sub_path_l_d"].items()))
+        if "avg_most_confident_line_dialog_fuzz_ratio_sub_path_l_d" in clip_data_d.keys():
+            clip_data_d["avg_most_confident_line_dialog_fuzz_ratio_sub_path_l_d"] = collections.OrderedDict(sorted(clip_data_d["avg_most_confident_line_dialog_fuzz_ratio_sub_path_l_d"].items(), reverse=True))
+        new_log_l.append(clip_data_d)
+
+    print(f"Writing {RUN_LOG_L__SORTED_BY__BEST_SUB_DIFF_RATIOS_JSON_PATH}...")
+    json_logger.write(sorted_run_log_l, RUN_LOG_L__SORTED_BY__BEST_AVG_LINE_DIALOG_FUZZ_RATIO_JSON_PATH)
+
 def write_run_log_l__sorted_by__best_sub_diff_ratio():
     def _get_best_sub_dir_ratio(clip_data_d):
-        # print(f"clip_data_d")
-        # pprint(clip_data_d)
-        # print(f"{len(clip_data_d)=}")
-
         best_sub_diff_ratio = 9999
 
         if "sub_diff_ratio_sub_path_l_d" in clip_data_d.keys():
@@ -66,9 +95,16 @@ def write_run_log_l__sorted_by__best_sub_diff_ratio__w_sorted__sub_diff_ratio_su
     json_logger.write(sorted_run_log_l, RUN_LOG_L__SORTED_BY__BEST_SUB_DIFF_RATIOS__W_SORTED__SUB_DIFF_RATIO_SUB_PATH_L_D_JSON_PATH)
 
 
+def write_correct_answers_json_from_run_log_l_json(run_log_l_json_path):
+    sorted_run_log_l = json_logger.read(run_log_l_json_path)
+    pass# TODO
+
+
 if __name__ == "__main__":
     import os.path as path
     print("Running " , path.abspath(__file__) , '...')
     write_run_log_l__sorted_by__best_sub_diff_ratio()
     write_run_log_l__sorted_by__best_sub_diff_ratio__w_sorted__sub_diff_ratio_sub_path_l_d()
+    write_run_log_l__sorted_by__best_avg_line_dialog_fuzz_ratio()
+    write_correct_answers_json_from_run_log_l_json(RUN_LOG_L__SORTED_BY__BEST_AVG_LINE_DIALOG_FUZZ_RATIO_JSON_PATH)
     print("End of Main") 

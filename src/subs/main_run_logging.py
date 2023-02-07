@@ -90,7 +90,7 @@ def fuzz_ratio_0__get_log_d(clip_dir_data, ep_sub_data, fuzz_ratio, clip_process
                 "process_time" : get_clip_process_time(clip_process_start_time)
             }
 
-def normal_successful_clip_w_subs_created__get_log_d(clip_dir_data, ep_sub_data, fuzz_ratio, clip_process_start_time, ep_sub_data_find_time, trim_and_re_time_real_sub_time, ep_sub_data_find_eval_key, sub_diff_ratio_sub_path_l_d, passing_sub_diff_ratio_sub_path_l, avg_most_confident_line_dialog_fuzz_ratio_sub_path_l_d, line_dialog_fuzz_time):
+def normal_successful_clip_w_subs_created__get_log_d(clip_dir_data, ep_sub_data, fuzz_ratio, clip_process_start_time, ep_sub_data_find_time, trim_and_re_time_real_sub_time, ep_sub_data_find_eval_key, sub_diff_ratio_sub_path_l_d, passing_sub_diff_ratio_sub_path_l, avg_most_confident_line_dialog_fuzz_ratio_sub_path_l_d, line_dialog_fuzz_time, chosen_sub_path):
     # get num_sub_evals_saved_by_sub_diff_ratio
     num_paths_in_sub_diff_ratio_sub_path_l_d = 0
     for sub_diff_ratio, sub_path_l in sub_diff_ratio_sub_path_l_d.items():
@@ -99,6 +99,7 @@ def normal_successful_clip_w_subs_created__get_log_d(clip_dir_data, ep_sub_data,
 
     return {
                 "clip_name": clip_dir_data.clip_name,
+                "chosen_sub_path": chosen_sub_path,
                 "clip_mp4_path": clip_dir_data.mp4_path,
                 "main_sub_file_path": ep_sub_data.main_sub_file_path,
                 "fuzz_ratio": fuzz_ratio,
