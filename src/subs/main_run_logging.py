@@ -90,7 +90,7 @@ def fuzz_ratio_0__get_log_d(clip_dir_data, ep_sub_data, fuzz_ratio, clip_process
                 "process_time" : get_clip_process_time(clip_process_start_time)
             }
 
-def normal_successful_clip_w_subs_created__get_log_d(clip_dir_data, ep_sub_data, fuzz_ratio, clip_process_start_time, ep_sub_data_find_time, trim_and_re_time_real_sub_time, ep_sub_data_find_eval_key, sub_diff_ratio_sub_path_l_d, passing_sub_diff_ratio_sub_path_l):
+def normal_successful_clip_w_subs_created__get_log_d(clip_dir_data, ep_sub_data, fuzz_ratio, clip_process_start_time, ep_sub_data_find_time, trim_and_re_time_real_sub_time, ep_sub_data_find_eval_key, sub_diff_ratio_sub_path_l_d, passing_sub_diff_ratio_sub_path_l, avg_most_confident_line_dialog_fuzz_ratio_sub_path_l_d, line_dialog_fuzz_time):
     # get num_sub_evals_saved_by_sub_diff_ratio
     num_paths_in_sub_diff_ratio_sub_path_l_d = 0
     for sub_diff_ratio, sub_path_l in sub_diff_ratio_sub_path_l_d.items():
@@ -111,7 +111,9 @@ def normal_successful_clip_w_subs_created__get_log_d(clip_dir_data, ep_sub_data,
                 "sub_diff_ratio_sub_path_l_d" : sub_diff_ratio_sub_path_l_d,
                 "passing_sub_diff_ratio_sub_path_l": passing_sub_diff_ratio_sub_path_l,
                 "num_paths_in_sub_diff_ratio_sub_path_l_d": num_paths_in_sub_diff_ratio_sub_path_l_d,
-                "num_sub_evals_saved_by_sub_diff_ratio": num_sub_evals_saved_by_sub_diff_ratio
+                "num_sub_evals_saved_by_sub_diff_ratio": num_sub_evals_saved_by_sub_diff_ratio,
+                "line_dialog_fuzz_time": line_dialog_fuzz_time,
+                "avg_most_confident_line_dialog_fuzz_ratio_sub_path_l_d": avg_most_confident_line_dialog_fuzz_ratio_sub_path_l_d
             }
 
 def write_final_stats(run_log_l, main_start_time):

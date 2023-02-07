@@ -122,7 +122,7 @@ def get_avg_most_confident_line_dialog_fuzz_ratio_sub_path_l_d(in_vid_path, uniq
 
     total_time = time.time() - start_time
     print(f"Finished get_avg_most_confident_line_dialog_fuzz_ratio_sub_path_l_d() - {total_time=}")
-    return avg_most_confident_line_dialog_fuzz_ratio_sub_path_l_d
+    return avg_most_confident_line_dialog_fuzz_ratio_sub_path_l_d, total_time
 
 
 
@@ -130,7 +130,7 @@ def get_avg_most_confident_line_dialog_fuzz_ratio_sub_path_l_d(in_vid_path, uniq
 if __name__ == "__main__":
     import os.path as path
     print("Running " , path.abspath(__file__) , '...')
-    avg_most_confident_line_dialog_fuzz_ratio_sub_path_l_d = get_avg_most_confident_line_dialog_fuzz_ratio_sub_path_l_d(in_vid_path = "C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/Family_Guy___TBS/Family_Guy__Back_To_The_Pilot__Clip____TBS/Family_Guy__Back_To_The_Pilot__Clip____TBS.mp4",
+    avg_most_confident_line_dialog_fuzz_ratio_sub_path_l_d, total_time = get_avg_most_confident_line_dialog_fuzz_ratio_sub_path_l_d(in_vid_path = "C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/Family_Guy___TBS/Family_Guy__Back_To_The_Pilot__Clip____TBS/Family_Guy__Back_To_The_Pilot__Clip____TBS.mp4",
                unique_final_vid_sub_path_l =[
         "C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/YT_PL_DATA/Family_Guy__Back_To_The_Pilot__Clip____TBS/f0_family.guy.s10e05.back.to.the.pilot.dvdrip.x264-demand.srt",
         "C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/YT_PL_DATA/Family_Guy__Back_To_The_Pilot__Clip____TBS/f1_Family.Guy.S10E05.720p.WEB-DL.DD5.1.H.264-CtrlHD.srt"
