@@ -93,30 +93,13 @@ def get_avg_most_confident_line_dialog_fuzz_ratio_sub_path_l_d(in_vid_path, uniq
         su.write_filtered_subs(sub_path, filtered_sub_path)
         filtered_subs = pysubs2.load(filtered_sub_path, encoding="latin1")
         
-        # line_dialog_fuzz_ratio_and_confidence_tup_l = []
-
         line_dialog_fuzz_ratio_and_confidence_tup_l = _get_line_dialog_fuzz_ratio_l(in_vid_path, filtered_subs)
         print(f"{line_dialog_fuzz_ratio_and_confidence_tup_l=}")
-        # def _get_and_append_line_dialog_fuzz_ratio_and_confidence_tup(in_vid_path, line):
-        #     line_dialog_fuzz_ratio = _get_line_dialog_fuzz_ratio_and_confidence(in_vid_path, line)
-        #     print(f"{line_dialog_fuzz_ratio=}")
-        #     line_dialog_fuzz_ratio_and_confidence_tup_l.append(line_dialog_fuzz_ratio)
-
-        # for line in filtered_subs[::int(len(filtered_subs) / 10)]: # TODO const
-        # # for line in filtered_subs: # TODO const
-        #     line_dialog_fuzz_ratio = _get_line_dialog_fuzz_ratio_and_confidence(in_vid_path, line)
-        #     print(f"{line_dialog_fuzz_ratio=}")
-        #     line_dialog_fuzz_ratio_and_confidence_tup_l.append(line_dialog_fuzz_ratio)
-
-
-        # line_dialog_fuzz_ratio_sorted_by_confidence = sorted(line_dialog_fuzz_ratio_and_confidence_tup_l, key= lambda tup: tup[1])
-        # print(f"{line_dialog_fuzz_ratio_sorted_by_confidence=}")
 
         # only evaluate the "most confident" fuzz ratios
         line_dialog_fuzz_ratio_sorted_by_confidence_l = [tup[0] for tup in sorted(line_dialog_fuzz_ratio_and_confidence_tup_l, key= lambda tup: tup[1], reverse=True)]
         print(f">>{line_dialog_fuzz_ratio_sorted_by_confidence_l=}")
-        # line_dialog_fuzz_ratio_sorted_by_confidence = sorted(line_dialog_fuzz_ratio_and_confidence_tup_l, key= lambda tup[0]: tup[1])
-        # # print(f"{line_dialog_fuzz_ratio_sorted_by_confidence=}")
+
         num_top_es_to_keep = int(len(line_dialog_fuzz_ratio_sorted_by_confidence_l) * 0.75)
         print(f"{num_top_es_to_keep=}")
         most_confident_line_dialog_fuzz_ratio_l = line_dialog_fuzz_ratio_sorted_by_confidence_l[:num_top_es_to_keep]
