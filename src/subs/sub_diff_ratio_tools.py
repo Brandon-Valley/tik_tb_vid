@@ -1,3 +1,4 @@
+from pprint import pprint
 from os.path import join
 from pathlib import Path
 import pysubs2
@@ -153,9 +154,9 @@ def get_sub_diff_ratio_sub_path_l_d(filtered_auto_sub_path, unique_final_vid_sub
 if __name__ == "__main__":
     import os.path as path
     print("Running " , path.abspath(__file__) , '...')
+    # import get_init_mkvs_for_manual_edits
+    # get_init_mkvs_for_manual_edits.main()
 
-    import get_init_mkvs_for_manual_edits
-    get_init_mkvs_for_manual_edits.main()
     # # sub_match_score = get_sub_match_score(auto_sub_path = "C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/Family_Guy___TBS/Family_Guy__Back_To_The_Pilot__Clip____TBS/Family_Guy__Back_To_The_Pilot__Clip____TBS.en-orig.srt",
     # sub_match_score = get_sub_match_score(auto_sub_path = "C:/tmp/Family_Guy__Back_To_The_Pilot__Clip____TBS.en-orig__MANUAL_EDIT.srt",
     #  real_sub_path = "C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/YT_PL_DATA/Family_Guy__Back_To_The_Pilot__Clip____TBS/f0_family.guy.s10e05.back.to.the.pilot.dvdrip.x264-demand.srt")
@@ -164,5 +165,16 @@ if __name__ == "__main__":
 
     # # print(f"{sub_match_score=}")
 
+
+    # 5
+    # 00:00:24,057 --> 00:00:25,790
+    # Can I please get
+    # collagen injections?
+
+    sub_match_score_sub_path_l_d = get_sub_diff_ratio_sub_path_l_d(filtered_auto_sub_path = "C:/tmp/subb_diff_ratio_test/og.srt",
+                                                                    unique_final_vid_sub_path_l = ["C:/tmp/subb_diff_ratio_test/edited.srt"],
+                                                                      filtered_real_subs_dir_path = "C:/tmp/subb_diff_ratio_test/tf")
+    print("sub_match_score_sub_path_l_d:")
+    pprint(sub_match_score_sub_path_l_d)
 
     print("End of Main") 

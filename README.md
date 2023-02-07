@@ -224,3 +224,12 @@ serted extra subs
 
 
 https://superuser.com/questions/1734087/how-to-do-automatically-transfer-subtitles-from-one-video-to-another-based-on - It take a subtitle and related frame from movie A and search the best matching frame in movie B. Once it find it, it adjust subtitle timings accordingly (it proceed like that for every subtitle). The search is limited to a certains number of frames in forward and backward direction. it over to a 2:30 hours movie (which contains many small differences with reference movie and over 2000 subtitles) and it worked very well.
+
+
+
+# wrong list
+Family_Guy__Steel_Vaginas__Clip____TBS
+Family_Guy__Peter___Alcohol___Trouble__Clip____TBS
+Family_Guy__Peter_s_New_Dad__Clip____TBS - long song that may have gotten cut out as [Music]
+Family_Guy__Mayoral_Debate__Clip____TBS - modern family
+Family_Guy__iPhone__Clip____TBS - both real subs seem timed wrong in different weekdays

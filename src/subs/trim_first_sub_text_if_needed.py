@@ -50,11 +50,9 @@ def trim_first_sub_text_if_needed(in_sub_path, in_vid_path, out_sub_path):
 
 
     # first_sub_line_text = subs[0].text
-    new_line_text_l = []
 
+    new_sub_line_text_l = []
 
-
-    # fill keys of new_line_text_l
     fist_sub_line_text_str = subs[0].text
     for newline_char in ["\\n", "\\N", "\\r"]:
         fist_sub_line_text_str = fist_sub_line_text_str.replace(newline_char, " \\n")
@@ -65,41 +63,48 @@ def trim_first_sub_text_if_needed(in_sub_path, in_vid_path, out_sub_path):
         new_line_text = " ".join(s_space_first_sub_line_text_l[i:])
 
         # remove leading newlines
-        # new_line_text = new_line_text.replace("\\N", "\\n ")
         new_line_text = new_line_text.lstrip(" \\n")
-        # for newline_char in ["\\n", "\\N", "\\r"]:
-        #     if new_line_text.startswith(newline_char):
-        #         new_line_text = new_line_text[len(newline_char):]
-        # subs_fuzz_str = subs_fuzz_str.replace("\\n", " ")
-        # subs_fuzz_str = subs_fuzz_str.replace("\\N", " ")
-        # subs_fuzz_str = subs_fuzz_str.replace("\\r", " ")
-
-        # TODO Remove leading newlines from new_line_text
-        # new_line_text = 
 
         print(f"{new_line_text=}")
-        new_line_text_l.append(new_line_text)
+        new_sub_line_text_l.append(new_line_text)
 
-    print(f"{new_line_text_l=}")
+    print(f"{new_sub_line_text_l=}")
 
-    fuzz_ratio_s_space_first_sub_line_text_l_d = {}
+    fuzz_ratio_new_sub_line_text_l_d = {}
 
     # fill line_text_l_fuzz_ratio_d
-    fuzz_str_set = set()
-    for s_space_first_sub_line_text in s_space_first_sub_line_text_l:
-        cleaned_line_text_str = fc.get_cleaned_line_text_str__from__sub_line_text_str(s_space_first_sub_line_text)
-        fuzz_str = fc.get_subs_fuzz_str__from__all_sub_lines_cleaned_text_str(cleaned_line_text_str)
+    new_sub_line_text_fuzz_str_l = []
+    # for s_space_first_sub_line_text in s_space_first_sub_line_text_l:
+    for new_sub_line_text in new_sub_line_text_l:
+        cleaned_new_sub_line_text_str = fc.get_cleaned_line_text_str__from__sub_line_text_str(new_sub_line_text)
+        new_sub_line_text_fuzz_str = fc.get_subs_fuzz_str__from__all_sub_lines_cleaned_text_str(cleaned_new_sub_line_text_str)
 
         # dont duplicate effort by checking if a prev. str gave the same fuzz_str
-        if fuzz_str in fuzz_str_set:
+        if new_sub_line_text_fuzz_str in new_sub_line_text_fuzz_str_l:
             continue
-        fuzz_str_set.add(fuzz_str)
+        print(f"adding {new_sub_line_text_fuzz_str=}")
+        new_sub_line_text_fuzz_str_l.append(new_sub_line_text_fuzz_str)
 
-        print("fuzz_str_set:")
-        pprint(fuzz_str_set)
-        exit()
-        print("here")
-        # fill fuzz_ratio_s_space_first_sub_line_text_l_d
+        # fill fuzz_ratio_new_sub_line_text_l_d
+        fuzz_ratio = fuzz.ratio(new_sub_line_text_fuzz_str, transcript_fuzz_str)
+
+        if fuzz_ratio in fuzz_ratio_new_sub_line_text_l_d.keys():
+            fuzz_ratio_new_sub_line_text_l_d[fuzz_ratio].append(new_sub_line_text)
+        else:
+            fuzz_ratio_new_sub_line_text_l_d[fuzz_ratio] = [new_sub_line_text]
+
+    print("fuzz_ratio_new_sub_line_text_l_d:")
+    pprint(fuzz_ratio_new_sub_line_text_l_d)
+
+    best_fuzz_ratio = max(fuzz_ratio_new_sub_line_text_l_d.keys())
+    raw_best_new_sub_line_text_str = fuzz_ratio_new_sub_line_text_l_d[best_fuzz_ratio][0]
+
+    capped_best_new_sub_line_text_str = raw_best_new_sub_line_text_str.capitalize()
+
+    subs[0].text = capped_best_new_sub_line_text_str
+
+    subs.save(out_sub_path)
+
 
 
 if __name__ == '__main__':
