@@ -24,7 +24,7 @@ import fuzz_common as fc
 
 
 
-def _get_line_dialog_fuzz_ratio(in_vid_path, line):
+def _get_line_dialog_fuzz_ratio_and_confidence(in_vid_path, line):
     # return line.start
 
     line_start_time_sec = line.start / 1000
@@ -33,7 +33,7 @@ def _get_line_dialog_fuzz_ratio(in_vid_path, line):
     result = aeu.get_transcript_from_vid(in_vid_path, line_start_time_sec, line_end_time_sec, with_confidence = True)
 
     if result == False:
-        return 0
+        return 0, 0 # TMP is 0 confidence correct? should it be 100? 50?
     
     transcript_str, confidence = result
 
@@ -46,42 +46,45 @@ def _get_line_dialog_fuzz_ratio(in_vid_path, line):
     line_text_fuzz_str = fc.get_subs_fuzz_str__from__all_sub_lines_cleaned_text_str(cleaned_line_text_str)
 
     fuzz_ratio = fuzz.ratio(line_text_fuzz_str, transcript_fuzz_str)
-    return fuzz_ratio
+    return fuzz_ratio, confidence
 
 
 
 def _get_line_dialog_fuzz_ratio_l(in_vid_path, filtered_subs):
-    line_dialog_fuzz_ratio_l = []
+    line_dialog_fuzz_ratio_and_confidence_tup_l = []
 
-    def _get_and_append_line_dialog_fuzz_ratio(in_vid_path, line):
-        line_dialog_fuzz_ratio = _get_line_dialog_fuzz_ratio(in_vid_path, line)
-        print(f"{line_dialog_fuzz_ratio=}")
-        line_dialog_fuzz_ratio_l.append(line_dialog_fuzz_ratio)
+    def _get_and_append_line_dialog_fuzz_ratio_and_confidence_tup(in_vid_path, line):
+        # line_dialog_fuzz_ratio, confidence = _get_line_dialog_fuzz_ratio_and_confidence(in_vid_path, line)
+        line_dialog_fuzz_ratio_and_confidence_tup = _get_line_dialog_fuzz_ratio_and_confidence(in_vid_path, line)
+        print(f"{line_dialog_fuzz_ratio_and_confidence_tup=}")
+        # line_dialog_fuzz_ratio_and_confidence_tup = 
+        line_dialog_fuzz_ratio_and_confidence_tup_l.append(line_dialog_fuzz_ratio_and_confidence_tup)
 
     with ThreadPoolExecutor(cfg.NUM_CORES) as executor:
         futures = []
 
-        for line in filtered_subs[::int(len(filtered_subs) / 20)]: # TODO const
+        # for line in filtered_subs[::int(len(filtered_subs) / 12)]: # TODO const
+        for line in filtered_subs[::int(len(filtered_subs) / 4)]: # TODO const
 
             # submit tasks and collect futures
-            futures = [executor.submit(_get_and_append_line_dialog_fuzz_ratio, in_vid_path, line)]
+            futures = [executor.submit(_get_and_append_line_dialog_fuzz_ratio_and_confidence_tup, in_vid_path, line)]
 
         # wait for all tasks to complete
         print('Waiting for tasks to complete...')
         wait(futures)
         print('All tasks are done!')
 
-    return line_dialog_fuzz_ratio_l
+    return line_dialog_fuzz_ratio_and_confidence_tup_l
 
 
 
-def get_avg_line_dialog_fuzz_ratio_sub_path_l_d(in_vid_path, unique_final_vid_sub_path_l, filtered_real_subs_dir_path):
+def get_avg_most_confident_line_dialog_fuzz_ratio_sub_path_l_d(in_vid_path, unique_final_vid_sub_path_l, filtered_real_subs_dir_path):
     fsu.delete_if_exists(filtered_real_subs_dir_path)
     Path(filtered_real_subs_dir_path).mkdir(parents=True, exist_ok=True)
 
     print(unique_final_vid_sub_path_l)
 
-    avg_line_dialog_fuzz_ratio_sub_path_l_d = {}
+    avg_most_confident_line_dialog_fuzz_ratio_sub_path_l_d = {}
     for sub_path in unique_final_vid_sub_path_l:
 
         # get filtered subs
@@ -90,29 +93,43 @@ def get_avg_line_dialog_fuzz_ratio_sub_path_l_d(in_vid_path, unique_final_vid_su
         su.write_filtered_subs(sub_path, filtered_sub_path)
         filtered_subs = pysubs2.load(filtered_sub_path, encoding="latin1")
         
-        # line_dialog_fuzz_ratio_l = []
+        # line_dialog_fuzz_ratio_and_confidence_tup_l = []
 
-        line_dialog_fuzz_ratio_l = _get_line_dialog_fuzz_ratio_l(in_vid_path, filtered_subs)
-
-        # def _get_and_append_line_dialog_fuzz_ratio(in_vid_path, line):
-        #     line_dialog_fuzz_ratio = _get_line_dialog_fuzz_ratio(in_vid_path, line)
+        line_dialog_fuzz_ratio_and_confidence_tup_l = _get_line_dialog_fuzz_ratio_l(in_vid_path, filtered_subs)
+        print(f"{line_dialog_fuzz_ratio_and_confidence_tup_l=}")
+        # def _get_and_append_line_dialog_fuzz_ratio_and_confidence_tup(in_vid_path, line):
+        #     line_dialog_fuzz_ratio = _get_line_dialog_fuzz_ratio_and_confidence(in_vid_path, line)
         #     print(f"{line_dialog_fuzz_ratio=}")
-        #     line_dialog_fuzz_ratio_l.append(line_dialog_fuzz_ratio)
+        #     line_dialog_fuzz_ratio_and_confidence_tup_l.append(line_dialog_fuzz_ratio)
 
         # for line in filtered_subs[::int(len(filtered_subs) / 10)]: # TODO const
         # # for line in filtered_subs: # TODO const
-        #     line_dialog_fuzz_ratio = _get_line_dialog_fuzz_ratio(in_vid_path, line)
+        #     line_dialog_fuzz_ratio = _get_line_dialog_fuzz_ratio_and_confidence(in_vid_path, line)
         #     print(f"{line_dialog_fuzz_ratio=}")
-        #     line_dialog_fuzz_ratio_l.append(line_dialog_fuzz_ratio)
+        #     line_dialog_fuzz_ratio_and_confidence_tup_l.append(line_dialog_fuzz_ratio)
 
-        avg_line_dialog_fuzz_ratio = sum(line_dialog_fuzz_ratio_l) / len(line_dialog_fuzz_ratio_l)
+
+        # line_dialog_fuzz_ratio_sorted_by_confidence = sorted(line_dialog_fuzz_ratio_and_confidence_tup_l, key= lambda tup: tup[1])
+        # print(f"{line_dialog_fuzz_ratio_sorted_by_confidence=}")
+
+        # only evaluate the "most confident" fuzz ratios
+        line_dialog_fuzz_ratio_sorted_by_confidence_l = [tup[0] for tup in sorted(line_dialog_fuzz_ratio_and_confidence_tup_l, key= lambda tup: tup[1], reverse=True)]
+        print(f">>{line_dialog_fuzz_ratio_sorted_by_confidence_l=}")
+        # line_dialog_fuzz_ratio_sorted_by_confidence = sorted(line_dialog_fuzz_ratio_and_confidence_tup_l, key= lambda tup[0]: tup[1])
+        # # print(f"{line_dialog_fuzz_ratio_sorted_by_confidence=}")
+        num_top_es_to_keep = int(len(line_dialog_fuzz_ratio_sorted_by_confidence_l) * 0.75)
+        print(f"{num_top_es_to_keep=}")
+        most_confident_line_dialog_fuzz_ratio_l = line_dialog_fuzz_ratio_sorted_by_confidence_l[:num_top_es_to_keep]
+
+        # Get avg and add to d
+        avg = sum(most_confident_line_dialog_fuzz_ratio_l) / len(most_confident_line_dialog_fuzz_ratio_l)
         
-        if avg_line_dialog_fuzz_ratio in avg_line_dialog_fuzz_ratio_sub_path_l_d.keys():
-            avg_line_dialog_fuzz_ratio_sub_path_l_d[avg_line_dialog_fuzz_ratio].append(sub_path)
+        if avg in avg_most_confident_line_dialog_fuzz_ratio_sub_path_l_d.keys():
+            avg_most_confident_line_dialog_fuzz_ratio_sub_path_l_d[avg].append(sub_path)
         else:
-            avg_line_dialog_fuzz_ratio_sub_path_l_d[avg_line_dialog_fuzz_ratio] = [sub_path]
+            avg_most_confident_line_dialog_fuzz_ratio_sub_path_l_d[avg] = [sub_path]
 
-    return avg_line_dialog_fuzz_ratio_sub_path_l_d
+    return avg_most_confident_line_dialog_fuzz_ratio_sub_path_l_d
 
 
 
@@ -120,13 +137,13 @@ def get_avg_line_dialog_fuzz_ratio_sub_path_l_d(in_vid_path, unique_final_vid_su
 if __name__ == "__main__":
     import os.path as path
     print("Running " , path.abspath(__file__) , '...')
-    avg_line_dialog_fuzz_ratio_sub_path_l_d = get_avg_line_dialog_fuzz_ratio_sub_path_l_d(in_vid_path = "C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/Family_Guy___TBS/Family_Guy__Back_To_The_Pilot__Clip____TBS/Family_Guy__Back_To_The_Pilot__Clip____TBS.mp4",
+    avg_most_confident_line_dialog_fuzz_ratio_sub_path_l_d = get_avg_most_confident_line_dialog_fuzz_ratio_sub_path_l_d(in_vid_path = "C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/Family_Guy___TBS/Family_Guy__Back_To_The_Pilot__Clip____TBS/Family_Guy__Back_To_The_Pilot__Clip____TBS.mp4",
                unique_final_vid_sub_path_l =[
         "C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/YT_PL_DATA/Family_Guy__Back_To_The_Pilot__Clip____TBS/f0_family.guy.s10e05.back.to.the.pilot.dvdrip.x264-demand.srt",
         "C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/YT_PL_DATA/Family_Guy__Back_To_The_Pilot__Clip____TBS/f1_Family.Guy.S10E05.720p.WEB-DL.DD5.1.H.264-CtrlHD.srt"
                ],
                 filtered_real_subs_dir_path = "C:/tmp/dialog_match_test/filtered")
 
-    print(f"{avg_line_dialog_fuzz_ratio_sub_path_l_d=}")
+    print(f"{avg_most_confident_line_dialog_fuzz_ratio_sub_path_l_d=}")
     
     print("End of Main") 
