@@ -1,3 +1,4 @@
+import speech_recognition as sr
 from pprint import pprint
 from os.path import join
 from pathlib import Path
@@ -24,7 +25,7 @@ import vid_edit_utils as veu
 import subtitle_utils as su
 import fuzz_common as fc
 
-IDEAL_NUM_SAMPLES_PER_SUB = 12
+IDEAL_NUM_SAMPLES_PER_SUB = 8
 
 
 def _get_line_dialog_fuzz_ratio_and_confidence(in_vid_audio_path, line):
@@ -69,7 +70,7 @@ def _get_line_dialog_fuzz_ratio_l(in_vid_audio_path, filtered_subs):
         # get step
         step = 1
         if len(filtered_subs) > IDEAL_NUM_SAMPLES_PER_SUB:
-            step = int(len(filtered_subs) / 12)
+            step = int(len(filtered_subs) / IDEAL_NUM_SAMPLES_PER_SUB)
 
         # for line in filtered_subs[::int(len(filtered_subs) / 12)]: # TODO const
         for line in filtered_subs[::step]:
@@ -83,6 +84,39 @@ def _get_line_dialog_fuzz_ratio_l(in_vid_audio_path, filtered_subs):
         print('All tasks are done!')
 
     return line_dialog_fuzz_ratio_and_confidence_tup_l
+
+# def _get_line_dialog_fuzz_ratio_l(in_vid_audio_path, filtered_subs):
+#     line_dialog_fuzz_ratio_and_confidence_tup_l = []
+
+#     def _get_and_append_line_dialog_fuzz_ratio_and_confidence_tup(in_vid_audio_path, line):
+#         line_dialog_fuzz_ratio_and_confidence_tup = _get_line_dialog_fuzz_ratio_and_confidence(in_vid_audio_path, line)
+#         print(f"{line_dialog_fuzz_ratio_and_confidence_tup=}")
+#         # line_dialog_fuzz_ratio_and_confidence_tup = 
+#         line_dialog_fuzz_ratio_and_confidence_tup_l.append(line_dialog_fuzz_ratio_and_confidence_tup)
+
+#     with ThreadPoolExecutor(cfg.NUM_CORES) as executor:
+#         futures = []
+
+#         # get step
+#         step = 1
+#         if len(filtered_subs) > IDEAL_NUM_SAMPLES_PER_SUB:
+#             step = int(len(filtered_subs) / 12)
+
+#         speech_recognizer = sr.Recognizer()
+#         with sr.AudioFile(in_vid_audio_path) as audio_source:
+
+#             # for line in filtered_subs[::int(len(filtered_subs) / 12)]: # TODO const
+#             for line in filtered_subs[::step]:
+
+#                 # submit tasks and collect futures
+#                 futures = [executor.submit(_get_and_append_line_dialog_fuzz_ratio_and_confidence_tup, in_vid_audio_path, line)]
+
+#         # wait for all tasks to complete
+#         print('Waiting for tasks to complete...')
+#         wait(futures)
+#         print('All tasks are done!')
+
+#     return line_dialog_fuzz_ratio_and_confidence_tup_l
 
 
 
