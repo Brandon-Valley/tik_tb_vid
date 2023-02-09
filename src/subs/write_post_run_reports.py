@@ -24,13 +24,14 @@ import cfg
 import sub_diff_ratio_tools
 
 # SCRIPT_PARENT_DIR_PATH = os.path.abspath(os.path.dirname(__file__))
-POST_RUN_REPORT_JSON_PATH = join(cfg.INIT_MKVS_WORKING_DIR_PATH, "post_run_report.json")
-WRONG_ANSWERS_JSON_PATH = join(cfg.INIT_MKVS_WORKING_DIR_PATH, "wrong_answers.json")
-CLIP_NAME_CHOSEN_SUB_PATH_OD__LAST_RUN__JSON_PATH = join(cfg.INIT_MKVS_WORKING_DIR_PATH, "clip_name_chosen_sub_path_od__last_run.json")
-CLIP_NAME_CHOSEN_SUB_PATH_OD__CORRECT_ANSWERS__JSON_PATH = join(cfg.INIT_MKVS_WORKING_DIR_PATH, "clip_name_chosen_sub_path_od__correct_answers.json")
-RUN_LOG_L__SORTED_BY__BEST_AVG_LINE_DIALOG_FUZZ_RATIO_JSON_PATH = join(cfg.INIT_MKVS_WORKING_DIR_PATH, "run_log_l__sorted_by__best_avg_line_dialog_fuzz_ratio.json")
-RUN_LOG_L__SORTED_BY__BEST_SUB_DIFF_RATIOS_JSON_PATH = join(cfg.INIT_MKVS_WORKING_DIR_PATH, "run_log_l__sorted_by__best_sub_diff_ratio.json")
-RUN_LOG_L__SORTED_BY__BEST_SUB_DIFF_RATIOS__W_SORTED__SUB_DIFF_RATIO_SUB_PATH_L_D_JSON_PATH = join(cfg.INIT_MKVS_WORKING_DIR_PATH, "run_log_l__sorted_by__best_sub_diff_ratio__w_sorted__sub_diff_ratio_sub_path_l_d.json")
+POST_RUN_REPORTS_DIR_PATH = join(cfg.INIT_MKVS_WORKING_DIR_PATH, "post_run_reports")
+POST_RUN_REPORT_JSON_PATH = join(POST_RUN_REPORTS_DIR_PATH, "post_run_report.json")
+WRONG_ANSWERS_JSON_PATH = join(POST_RUN_REPORTS_DIR_PATH, "wrong_answers.json")
+CLIP_NAME_CHOSEN_SUB_PATH_OD__LAST_RUN__JSON_PATH = join(POST_RUN_REPORTS_DIR_PATH, "clip_name_chosen_sub_path_od__last_run.json")
+CLIP_NAME_CHOSEN_SUB_PATH_OD__CORRECT_ANSWERS__JSON_PATH = join(POST_RUN_REPORTS_DIR_PATH, "clip_name_chosen_sub_path_od__correct_answers.json")
+RUN_LOG_L__SORTED_BY__BEST_AVG_LINE_DIALOG_FUZZ_RATIO_JSON_PATH = join(POST_RUN_REPORTS_DIR_PATH, "run_log_l__sorted_by__best_avg_line_dialog_fuzz_ratio.json")
+RUN_LOG_L__SORTED_BY__BEST_SUB_DIFF_RATIOS_JSON_PATH = join(POST_RUN_REPORTS_DIR_PATH, "run_log_l__sorted_by__best_sub_diff_ratio.json")
+RUN_LOG_L__SORTED_BY__BEST_SUB_DIFF_RATIOS__W_SORTED__SUB_DIFF_RATIO_SUB_PATH_L_D_JSON_PATH = join(POST_RUN_REPORTS_DIR_PATH, "run_log_l__sorted_by__best_sub_diff_ratio__w_sorted__sub_diff_ratio_sub_path_l_d.json")
 
 
 
@@ -149,10 +150,10 @@ def write_wrong_answers_d_json(clip_name_chosen_sub_path_od__last_run__json_path
 if __name__ == "__main__":
     import os.path as path
     print("Running " , path.abspath(__file__) , '...')
-    # write_run_log_l__sorted_by__best_sub_diff_ratio()
-    # write_run_log_l__sorted_by__best_sub_diff_ratio__w_sorted__sub_diff_ratio_sub_path_l_d()
-    # write_run_log_l__sorted_by__best_avg_line_dialog_fuzz_ratio()
-    # write_clip_name_chosen_sub_path_od__from__run_log_l_json(RUN_LOG_L__SORTED_BY__BEST_AVG_LINE_DIALOG_FUZZ_RATIO_JSON_PATH, CLIP_NAME_CHOSEN_SUB_PATH_OD__LAST_RUN__JSON_PATH)
-    # # write_clip_name_chosen_sub_path_od__from__run_log_l_json(RUN_LOG_L__SORTED_BY__BEST_AVG_LINE_DIALOG_FUZZ_RATIO_JSON_PATH, CLIP_NAME_CHOSEN_SUB_PATH_OD__CORRECT_ANSWERS__JSON_PATH)
+    write_run_log_l__sorted_by__best_sub_diff_ratio()
+    write_run_log_l__sorted_by__best_sub_diff_ratio__w_sorted__sub_diff_ratio_sub_path_l_d()
+    write_run_log_l__sorted_by__best_avg_line_dialog_fuzz_ratio()
+    write_clip_name_chosen_sub_path_od__from__run_log_l_json(RUN_LOG_L__SORTED_BY__BEST_AVG_LINE_DIALOG_FUZZ_RATIO_JSON_PATH, CLIP_NAME_CHOSEN_SUB_PATH_OD__LAST_RUN__JSON_PATH)
+    # write_clip_name_chosen_sub_path_od__from__run_log_l_json(RUN_LOG_L__SORTED_BY__BEST_AVG_LINE_DIALOG_FUZZ_RATIO_JSON_PATH, CLIP_NAME_CHOSEN_SUB_PATH_OD__CORRECT_ANSWERS__JSON_PATH)
     write_wrong_answers_d_json(CLIP_NAME_CHOSEN_SUB_PATH_OD__LAST_RUN__JSON_PATH, CLIP_NAME_CHOSEN_SUB_PATH_OD__CORRECT_ANSWERS__JSON_PATH)
     print("End of Main") 
