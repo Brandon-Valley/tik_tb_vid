@@ -28,7 +28,8 @@ POST_RUN_REPORTS_DIR_PATH = join(cfg.INIT_MKVS_WORKING_DIR_PATH, "post_run_repor
 POST_RUN_REPORT_JSON_PATH = join(POST_RUN_REPORTS_DIR_PATH, "post_run_report.json")
 WRONG_ANSWERS_JSON_PATH = join(POST_RUN_REPORTS_DIR_PATH, "wrong_answers.json")
 CLIP_NAME_CHOSEN_SUB_PATH_OD__LAST_RUN__JSON_PATH = join(POST_RUN_REPORTS_DIR_PATH, "clip_name_chosen_sub_path_od__last_run.json")
-CLIP_NAME_CHOSEN_SUB_PATH_l_OD__CORRECT_ANSWERS__JSON_PATH = join(POST_RUN_REPORTS_DIR_PATH, "clip_name_chosen_sub_path_l_od__correct_answers.json")
+CLIP_NAME_CHOSEN_SUB_PATH_l_OD__CORRECT_ANSWERS__JSON_PATH             = join(POST_RUN_REPORTS_DIR_PATH, "clip_name_chosen_sub_path_l_od__correct_answers.json")
+CLIP_NAME_CHOSEN_SUB_PATH_l_OD__CORRECT_ANSWERS__SORTED_ABC__JSON_PATH = join(POST_RUN_REPORTS_DIR_PATH, "clip_name_chosen_sub_path_l_od__correct_answers__sorted_abc.json")
 RUN_LOG_L__SORTED_BY__BEST_AVG_LINE_DIALOG_FUZZ_RATIO_JSON_PATH = join(POST_RUN_REPORTS_DIR_PATH, "run_log_l__sorted_by__best_avg_line_dialog_fuzz_ratio.json")
 RUN_LOG_L__SORTED_BY__BEST_SUB_DIFF_RATIOS_JSON_PATH = join(POST_RUN_REPORTS_DIR_PATH, "run_log_l__sorted_by__best_sub_diff_ratio.json")
 RUN_LOG_L__SORTED_BY__BEST_SUB_DIFF_RATIOS__W_SORTED__SUB_DIFF_RATIO_SUB_PATH_L_D_JSON_PATH = join(POST_RUN_REPORTS_DIR_PATH, "run_log_l__sorted_by__best_sub_diff_ratio__w_sorted__sub_diff_ratio_sub_path_l_d.json")
@@ -152,6 +153,13 @@ def write_clip_name_chosen_sub_path_l_od__correct_answers__from__run_log_l_json(
     json_logger.write(new_correct_answers__clip_name_chosen_sub_path_l_od, out_json_path)
 
 
+def write_clip_name_chosen_sub_path_l_od__correct_answers__sorted_abc(og_correct_answers__clip_name_chosen_sub_path_l_od__json_path, out_json_path):
+    og_correct_answers__clip_name_chosen_sub_path_l_od = json_logger.read(og_correct_answers__clip_name_chosen_sub_path_l_od__json_path)
+    sorted_abc__correct_answers__clip_name_chosen_sub_path_l_od = dict(sorted(og_correct_answers__clip_name_chosen_sub_path_l_od.items()))
+    print("Writing sorted_abc__correct_answers__clip_name_chosen_sub_path_l_od to {out_json_path}...")
+    json_logger.write(sorted_abc__correct_answers__clip_name_chosen_sub_path_l_od, out_json_path)
+
+
 def write_wrong_answers_d_json(clip_name_chosen_sub_path_od__last_run__json_path, clip_name_chosen_sub_path_l_od__correct_answers__json_path):
     clip_name_chosen_sub_path_od__last_run = json_logger.read(clip_name_chosen_sub_path_od__last_run__json_path)
     clip_name_chosen_sub_path_l_od__correct_answers = json_logger.read(clip_name_chosen_sub_path_l_od__correct_answers__json_path)
@@ -186,14 +194,16 @@ def write_wrong_answers_d_json(clip_name_chosen_sub_path_od__last_run__json_path
 if __name__ == "__main__":
     import os.path as path
     print("Running " , path.abspath(__file__) , '...')
-    write_run_log_l__sorted_by__best_sub_diff_ratio()
-    write_run_log_l__sorted_by__best_sub_diff_ratio__w_sorted__sub_diff_ratio_sub_path_l_d()
-    write_run_log_l__sorted_by__best_avg_line_dialog_fuzz_ratio()
-    write_clip_name_chosen_sub_path_od__last_run__from__run_log_l_json(RUN_LOG_L__SORTED_BY__BEST_AVG_LINE_DIALOG_FUZZ_RATIO_JSON_PATH, CLIP_NAME_CHOSEN_SUB_PATH_OD__LAST_RUN__JSON_PATH)
+    # write_run_log_l__sorted_by__best_sub_diff_ratio()
+    # write_run_log_l__sorted_by__best_sub_diff_ratio__w_sorted__sub_diff_ratio_sub_path_l_d()
+    # write_run_log_l__sorted_by__best_avg_line_dialog_fuzz_ratio()
+    # write_clip_name_chosen_sub_path_od__last_run__from__run_log_l_json(RUN_LOG_L__SORTED_BY__BEST_AVG_LINE_DIALOG_FUZZ_RATIO_JSON_PATH, CLIP_NAME_CHOSEN_SUB_PATH_OD__LAST_RUN__JSON_PATH)
 
-    write_clip_name_chosen_sub_path_l_od__correct_answers__from__run_log_l_json(run_log_l_json_path = RUN_LOG_L__SORTED_BY__BEST_AVG_LINE_DIALOG_FUZZ_RATIO_JSON_PATH,
-                                                                                prev_correct_answers_json_path = CLIP_NAME_CHOSEN_SUB_PATH_l_OD__CORRECT_ANSWERS__JSON_PATH,
-                                                                                out_json_path = CLIP_NAME_CHOSEN_SUB_PATH_l_OD__CORRECT_ANSWERS__JSON_PATH)
+    # # write_clip_name_chosen_sub_path_l_od__correct_answers__from__run_log_l_json(run_log_l_json_path = RUN_LOG_L__SORTED_BY__BEST_AVG_LINE_DIALOG_FUZZ_RATIO_JSON_PATH,
+    # #                                                                             prev_correct_answers_json_path = CLIP_NAME_CHOSEN_SUB_PATH_l_OD__CORRECT_ANSWERS__JSON_PATH,
+    # #                                                                             out_json_path = CLIP_NAME_CHOSEN_SUB_PATH_l_OD__CORRECT_ANSWERS__JSON_PATH)
+    
+    write_clip_name_chosen_sub_path_l_od__correct_answers__sorted_abc(CLIP_NAME_CHOSEN_SUB_PATH_l_OD__CORRECT_ANSWERS__JSON_PATH, CLIP_NAME_CHOSEN_SUB_PATH_l_OD__CORRECT_ANSWERS__SORTED_ABC__JSON_PATH)
 
-    write_wrong_answers_d_json(CLIP_NAME_CHOSEN_SUB_PATH_OD__LAST_RUN__JSON_PATH, CLIP_NAME_CHOSEN_SUB_PATH_l_OD__CORRECT_ANSWERS__JSON_PATH)
+    # write_wrong_answers_d_json(CLIP_NAME_CHOSEN_SUB_PATH_OD__LAST_RUN__JSON_PATH, CLIP_NAME_CHOSEN_SUB_PATH_l_OD__CORRECT_ANSWERS__JSON_PATH)
     print("End of Main") 
