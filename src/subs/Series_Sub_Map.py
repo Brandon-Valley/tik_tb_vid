@@ -1,5 +1,7 @@
 from pprint import pprint
 import os
+from os.path import join
+from tempfile import mkdtemp
 
 from time import sleep
 from random import random
@@ -15,6 +17,7 @@ if __name__ == "__main__":
     sys.path.append(str(pathlib.Path(__file__).parent.parent))
 
 import fuzz_common
+import thread_utils
 
 import cfg
 import subtitle_utils as su
@@ -22,7 +25,8 @@ from sms.file_system_utils import file_system_utils as fsu
 from sms.logger import json_logger
 from sms.logger import txt_logger
 
-SSM_DATA_DIR_PATH = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "SSM_DATA")
+ENABLE_THREADING = True
+SSM_DATA_DIR_PATH = join(cfg.INIT_MKVS_WORKING_DIR_PATH, "SSM_DATA")
 MIN_EP_SUB_FILE_NUM_BYTES = 3000 # 3KB, "normal" subs are ~ 15-40KB
 
 SERIES_NAME_SEP_CHAR_L = [" ", ".", "_", "-"]
@@ -50,9 +54,9 @@ class Episode_Sub_Data:
         self.series_name_lower  = series_name.lower()
 
         self.ssm_data_ep_dir_path = self._get_and_init_ssm_data_ep_dir_path()
-        self.total_fuzz_str_json_path     = os.path.join(self.ssm_data_ep_dir_path, f"{self.get_season_episode_str()}_total_fuzz_str.json")
-        self.partial_fuzz_str_l_json_path = os.path.join(self.ssm_data_ep_dir_path, f"{self.get_season_episode_str()}_partial_fuzz_str_l.json")
-        self.filtered_real_subs_dir_path = os.path.join(self.ssm_data_ep_dir_path, "filtered_real_subs")
+        self.total_fuzz_str_json_path     = join(self.ssm_data_ep_dir_path, f"{self.get_season_episode_str()}_total_fuzz_str.json")
+        self.partial_fuzz_str_l_json_path = join(self.ssm_data_ep_dir_path, f"{self.get_season_episode_str()}_partial_fuzz_str_l.json")
+        self.filtered_real_subs_dir_path = join(self.ssm_data_ep_dir_path, "filtered_real_subs")
 
         self._set_series_name_match_l()
 
@@ -87,7 +91,7 @@ class Episode_Sub_Data:
         json_logger.write(total_fuzz_str, self.total_fuzz_str_json_path)
 
     def _get_and_init_ssm_data_ep_dir_path(self):
-        dir_path = os.path.join(SSM_DATA_DIR_PATH, f"S{str(self.season_num).zfill(2)}/{self.get_season_episode_str()}")
+        dir_path = join(SSM_DATA_DIR_PATH, f"S{str(self.season_num).zfill(2)}/{self.get_season_episode_str()}")
         fsu.delete_if_exists(dir_path)
         Path(dir_path).mkdir(parents=True, exist_ok=True)
         return dir_path
@@ -143,6 +147,13 @@ class Episode_Sub_Data:
         remaining_sub_file_path_l = []
 
         for sub_file_path in self.sub_file_path_l:
+            # Remove anything that is not .srt
+            # LATER might not need this, but makes things easier for now, could be removed with minor effort (will break write_filtered_subs() w/ .txt)
+            if Path(sub_file_path).suffix != ".srt":
+                print(f"Cleaning - Deleting sub file b/c it is not a .srt: {sub_file_path}...")
+                fsu.delete_if_exists(sub_file_path)
+                continue
+
             # # Remove files that are way too small
             # # LATER if still get problems with small files, maybe should compare file size against avg file size in dir/series?
             if os.path.getsize(sub_file_path) < MIN_EP_SUB_FILE_NUM_BYTES:
@@ -162,9 +173,11 @@ class Episode_Sub_Data:
                 fsu.delete_if_exists(sub_file_path)
                 continue
 
-            # Remove effects like [Music] and other things
-            print(f"Cleaning - Filtering sub path: {sub_file_path}...")
-            su.write_filtered_subs(sub_file_path, sub_file_path)
+            # # TMP REMOVED b/c it would make worse fuzz strings by doing stuff like:
+            # # TMP   ANNOUNCER [On TV]: --> ANNOUNCER 
+            # # Remove effects like [Music] and other things
+            # print(f"Cleaning - Filtering sub path: {sub_file_path}...")
+            # su.write_filtered_subs(sub_file_path, sub_file_path)
 
             # Remove all non-ascii chars and leading/trailing spaces after
             # LATER if want musical note chars back, remove this and find diff fixture
@@ -179,6 +192,31 @@ class Episode_Sub_Data:
         # Remove advertising from subs
         print(f"Cleaning - Removing advertising from all remaining sub files for {self.get_season_episode_str()}...")
         su.remove_advertising_from_sub_file_path_l(remaining_sub_file_path_l)
+
+        # Remove lower-in-order subs that would be duplicates if filtered all subs, but leave all final remaining subs un-filtered
+        filtered_sub_path_og_sub_path_d = {} # TODO change to d
+        filtered_sub_path_l = []
+        # tmp_ep_filtered_subs_dir_path = join(tmp_filtered_subs_dir_path, self.get_season_episode_str())
+        tmp_filtered_subs_dir_path = join(self.ssm_data_ep_dir_path, "tmp_filtered_subs_for_clean")
+        Path(tmp_filtered_subs_dir_path).mkdir(parents=True, exist_ok=True)
+        for sub_path in remaining_sub_file_path_l:
+            filtered_sub_path = join(tmp_filtered_subs_dir_path, f"filtered_{Path(sub_path).name}")
+            su.write_filtered_subs(sub_path, filtered_sub_path)
+            print(f"{Path(filtered_sub_path).is_file()=}")# TMP
+            if not Path(filtered_sub_path).is_file():
+                raise FileNotFoundError(f"filtered_sub not written? {filtered_sub_path=}")
+            filtered_sub_path_og_sub_path_d[filtered_sub_path] = sub_path
+            filtered_sub_path_l.append(filtered_sub_path)
+        unique_filtered_sub_path_l, dup_filtered_sub_path_l = fsu.get_file_path_l_w_duplicate_files_removed(filtered_sub_path_l, return_removed_file_path_l = True)
+        for dup_filtered_sub_path in dup_filtered_sub_path_l:
+            og_sub_path_to_delete = filtered_sub_path_og_sub_path_d[dup_filtered_sub_path]
+            print(f"Cleaning - Removing {og_sub_path_to_delete} b/c it's filtered version is a duplicate of a higher-in-list sub's filtered version...")
+            fsu.delete_if_exists(og_sub_path_to_delete)
+        fsu.delete_if_exists(tmp_filtered_subs_dir_path)
+        # re-set remaining_sub_file_path_l
+        remaining_sub_file_path_l = []
+        for unique_filtered_sub_path in unique_filtered_sub_path_l:
+            remaining_sub_file_path_l.append(filtered_sub_path_og_sub_path_d[unique_filtered_sub_path])
 
         # Remove any duplicates
         print("Cleaning - Removing duplicates...")
@@ -381,20 +419,34 @@ class Series_Sub_map():
                 - Make new SSM after this
         """
         def _clean_lang_ep_sub_data_l(lang):
+            # print(f"  Cleaning Lang: {lang}...")
+            # # start the thread pool
+            # with ThreadPoolExecutor(cfg.NUM_CORES) as executor:
+            #     futures = []
+            #     for ep_sub_data in self.ep_sub_data_ld[lang]:
+
+            #         if ENABLE_THREADING:
+            #             # submit tasks and collect futures
+            #             futures = [executor.submit(ep_sub_data.clean_episode_subs_after_fresh_download)]
+            #         else:
+            #             ep_sub_data.clean_episode_subs_after_fresh_download()
+
+            #     if ENABLE_THREADING:
+            #         print('Waiting for tasks to complete...')
+            #         wait(futures)
+            #         print('All tasks are done, checking for any raised exceptions...')
+            #         for fut in futures:
+            #             _ = fut.result()
+            #         print("Confirmed no exceptions were raised by any thread.")
             print(f"  Cleaning Lang: {lang}...")
             # start the thread pool
-            with ThreadPoolExecutor(cfg.NUM_CORES) as executor:
-            # with ThreadPoolExecutor(1) as executor:
-                futures = []
-                for ep_sub_data in self.ep_sub_data_ld[lang]:
-                    # submit tasks and collect futures
-                    futures = [executor.submit(ep_sub_data.clean_episode_subs_after_fresh_download)]
-                    # ep_sub_data.clean_episode_subs_after_fresh_download()
 
-                # wait for all tasks to complete
-                print('Waiting for tasks to complete...')
-                wait(futures)
-                print('All tasks are done!')
+            with thread_utils.Thread_Manager(ENABLE_THREADING, cfg.NUM_CORES) as tm:
+                for ep_sub_data in self.ep_sub_data_ld[lang]:
+                    tm.thread_func_if_enabled(ep_sub_data.clean_episode_subs_after_fresh_download)
+
+
+
 
         if lang == "ALL_LANGS":
             print("Cleaning all Langs...")

@@ -235,7 +235,7 @@ def write_filtered_subs(in_sub_path, out_sub_path):
     
     Path(out_sub_path).parent.mkdir(parents=True, exist_ok=True)
 
-    subs = Subtitles(in_sub_path)
+    subs = Subtitles(in_sub_path) # will break on .txt
     subs.filter(
         rm_fonts=True,
         rm_ast=True,

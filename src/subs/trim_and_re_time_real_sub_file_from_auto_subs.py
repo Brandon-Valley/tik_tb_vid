@@ -101,9 +101,12 @@ def _get_best_sub_slot_offset_and_best_line_match_index(real_subs, auto_subs):
 
 
 def _get_real_sub_shift_num_ms(best_match_real_sub_line, best_match_auto_sub_line):
+    print("       in _get_real_sub_shift_num_ms()")
 
     if best_match_auto_sub_line.start > best_match_real_sub_line.start:
-        raise Exception(f"ERROR: {best_match_auto_sub_line.start=} > {best_match_real_sub_line.start=} - This should never be possible. Last time this happened it was caused by picking wrong real subs episode.")
+        # raise Exception(f"ERROR: {best_match_auto_sub_line.start=} > {best_match_real_sub_line.start=} - This should never be possible. Last time this happened it was caused by picking wrong real subs episode.")
+        print(f"WARNING: {best_match_auto_sub_line.start=} > {best_match_real_sub_line.start=}, This should not be possible, assuming this is a bad match, skipping this sub...")
+        return False
 
     real_sub_shift_num_ms = best_match_real_sub_line.start - best_match_auto_sub_line.start
 
@@ -111,6 +114,7 @@ def _get_real_sub_shift_num_ms(best_match_real_sub_line, best_match_auto_sub_lin
 
 
 def _clean_trimmed_subs(in_sub_path, out_sub_path, vid_num_ms):
+    print("           At top of _clean_trimmed_subs()")
     clean_sub_line_l = []
     subs = pysubs2.load(in_sub_path, encoding="latin1")
 
@@ -140,12 +144,30 @@ def _clean_trimmed_subs(in_sub_path, out_sub_path, vid_num_ms):
             clean_sub_line_l = clean_sub_line_l[:line_num]
             print(f"found first line past end of vid: {line.text=}")
             break
-
+    
+    print(f"           At end of _clean_trimmed_subs() - about to write final cleaned subs to path - {Path(out_sub_path).name=}")
+    # print(f"             {clean_sub_line_l=}")
+    print(f"               {len(clean_sub_line_l)=}")
+    print(f"                  {out_sub_path=}")
     su.write_manual_sub_line_l(clean_sub_line_l, out_sub_path)
+
+    if not Path(out_sub_path).is_file():
+        raise Exception(f"ERROR: Files does not exist {out_sub_path=}, This means _clean_trimmed_subs() failed to write to output")
+    
+    if "PROBLEM" in Path(out_sub_path).name:
+        print("here")
 
 
 def _make_final_vid_trimmed_re_timed_sub_from_real_sub(out_sub_path, clip_dir_data, real_sub_path, real_subs, best_match_auto_sub_line, best_match_real_sub_line):
+    print(f"                in _make_final_vid_trimmed_re_timed_sub_from_real_sub() - {real_sub_path=} - Exists: {Path(real_sub_path).is_file()}\n") # FIX PRINTS FOR PROBLEM!!!
+    print(f"{best_match_auto_sub_line=}")
+    print(f"{best_match_real_sub_line=}")
     real_sub_shift_num_ms = _get_real_sub_shift_num_ms(best_match_real_sub_line, best_match_auto_sub_line)
+
+    # if bad match to the point where best_match_auto_sub_line.start > best_match_real_sub_line.start, just skip this sub
+    if not real_sub_shift_num_ms:
+        return False
+
     print(f"{real_sub_shift_num_ms=}")
     neg_real_sub_shift_num_ms = real_sub_shift_num_ms * -1
 
@@ -156,7 +178,14 @@ def _make_final_vid_trimmed_re_timed_sub_from_real_sub(out_sub_path, clip_dir_da
     synced_ms_shifted_sub_path = os.path.join(clip_dir_data.trim_re_time_working_dir_path, f"MS_SHIFTED__SYNCED__{Path(real_sub_path).name}")
 
     print(f"{ms_shifted_sub_path=}")
-    real_subs.save(ms_shifted_sub_path)
+    print("GGGGGGGGGGGGGGG")
+
+    if "PROBLEM.srt" in real_sub_path:
+        print("HERE")
+    real_subs.save(ms_shifted_sub_path) # FIX is this what fails?
+
+    if not Path(ms_shifted_sub_path).is_file():
+        raise Exception(f"ERROR: Failed to create ms shifted sub: {ms_shifted_sub_path=}")
 
     # This will throw warning, this is normal:  WARNING: low quality of fit. Wrong subtitle file?
     # This happens b/c did not trim out the first part of re-timed srt which is all set to 0 (like the theme) and did not trim end
@@ -167,6 +196,7 @@ def _make_final_vid_trimmed_re_timed_sub_from_real_sub(out_sub_path, clip_dir_da
     vid_num_ms = veu.get_vid_length(clip_dir_data.mp4_path) * 1000
     print(f"{vid_num_ms=}")
 
+    print(f"    About to run _clean_trimmed_subs() - {Path(out_sub_path).name=}") # FIX seems like will never print for PROBLEM
     _clean_trimmed_subs(synced_ms_shifted_sub_path, out_sub_path, vid_num_ms)
 
 
@@ -185,8 +215,9 @@ def _get_best_match_non_main_subs_line(best_match_auto_sub_line, non_main_subs):
 
 
 def _make_non_main_final_vid_subs__and__get_final_vid_sub_path_l(main_final_vid_sub_path, clip_dir_data, ep_sub_data, best_match_auto_sub_line):
+    print("  in _make_non_main_final_vid_subs__and__get_final_vid_sub_path_l()")
     def _single_thread_non_main_final_vid_subs(non_main_final_vid_sub_path, non_main_sub_path, best_match_auto_sub_line, clip_dir_data):
-        print(f"in _single_thread_non_main_final_vid_subs() - {non_main_final_vid_sub_path=}")
+        print(f"    in _single_thread_non_main_final_vid_subs() - {non_main_final_vid_sub_path=}")
         # get best_match_non_main_subs_line
         non_main_subs = pysubs2.load(non_main_sub_path, encoding="latin1")
         best_match_non_main_subs_line = _get_best_match_non_main_subs_line(best_match_auto_sub_line, non_main_subs)
@@ -195,12 +226,19 @@ def _make_non_main_final_vid_subs__and__get_final_vid_sub_path_l(main_final_vid_
         print(f"{non_main_final_vid_sub_path=}")
 
         # LATER thread this? syncing tipples runtime
+        print("    About to run _make_final_vid_trimmed_re_timed_sub_from_real_sub() from inside thread...")
         _make_final_vid_trimmed_re_timed_sub_from_real_sub(out_sub_path             = non_main_final_vid_sub_path,
                                                            clip_dir_data            = clip_dir_data,
                                                            real_sub_path            = non_main_sub_path,
                                                            real_subs                = non_main_subs,
                                                            best_match_auto_sub_line = best_match_auto_sub_line,
                                                            best_match_real_sub_line = best_match_non_main_subs_line)
+        print("     After _make_final_vid_trimmed_re_timed_sub_from_real_sub()")
+        print(f"      out_sub_path was set to {non_main_final_vid_sub_path=}, so it should exist?")
+        print(f"        {Path(non_main_final_vid_sub_path).is_file()=}")
+
+        if not Path(non_main_final_vid_sub_path).is_file():
+            raise Exception(f"ERROR: Files does not exist {non_main_final_vid_sub_path=}")
 
     final_vid_sub_path_l = [main_final_vid_sub_path]
 
@@ -210,8 +248,15 @@ def _make_non_main_final_vid_subs__and__get_final_vid_sub_path_l(main_final_vid_
     with ThreadPoolExecutor(cfg.NUM_CORES) as executor:
         futures = []
         for non_main_sub_num, non_main_sub_path in enumerate(ep_sub_data.non_main_sub_file_path_l):
+            print(f"    {non_main_sub_path=}")
             non_main_final_vid_sub_path = clip_dir_data.get_final_vid_sub_path(non_main_sub_path, non_main_sub_num + 1)
+            print(f"         {non_main_final_vid_sub_path=} - EXISTS: {Path(non_main_final_vid_sub_path).is_file()}")
+            # if not Path(non_main_final_vid_sub_path).is_file():
+            #     raise Exception(f"ERROR: Files does not exist {non_main_final_vid_sub_path=}")
+
+            print(f"      adding {non_main_final_vid_sub_path=} to final_vid_sub_path_l...")
             final_vid_sub_path_l.append(non_main_final_vid_sub_path)
+            print(f"          {final_vid_sub_path_l=}")
             # submit tasks and collect futures
             futures = [executor.submit(_single_thread_non_main_final_vid_subs, non_main_final_vid_sub_path, non_main_sub_path, best_match_auto_sub_line, clip_dir_data)]
 
@@ -220,7 +265,19 @@ def _make_non_main_final_vid_subs__and__get_final_vid_sub_path_l(main_final_vid_
         wait(futures)
         print('All tasks are done!')
 
-    return final_vid_sub_path_l
+    surviving_final_vid_sub_path_l = []
+    print("   Checking for any final_sub_paths that were not created due to bad match...")
+    for sub_path in final_vid_sub_path_l:
+        # print(f"{file_path=} - Exists: {Path(file_path).is_file()}")
+        if Path(sub_path).is_file():
+            surviving_final_vid_sub_path_l.append(sub_path)
+            # print(f"       {ep_sub_data.main_sub_file_path=}")
+            # print(f"       {ep_sub_data.sub_file_path_l=}")
+            # print(f"       {ep_sub_data.non_main_sub_file_path_l=}")
+            # raise Exception(f"ERROR: File does not exist: {file_path=}")
+
+    # return final_vid_sub_path_l
+    return surviving_final_vid_sub_path_l
 
 
 def get_sub_path_lang_dl__from__final_vid_sub_path_l(final_vid_sub_path_l, lang):
@@ -315,6 +372,17 @@ def trim_and_re_time_real_sub_file_from_auto_subs(clip_dir_data, ep_sub_data, la
     # Make final sub file for every non-main-sub as well
     # final_vid_sub_path_l[0] == main_final_vid_sub_path
     final_vid_sub_path_l = _make_non_main_final_vid_subs__and__get_final_vid_sub_path_l(main_final_vid_sub_path, clip_dir_data, ep_sub_data, best_match_auto_sub_line)
+
+    # print("   Before checking for duplicates, confirm all files exist...")
+    # for file_path_num, file_path in enumerate(final_vid_sub_path_l):
+    #     print(f"{file_path=} - Exists: {Path(file_path).is_file()}")
+    #     if not Path(file_path).is_file():
+    #         print(f"       {ep_sub_data.main_sub_file_path=}")
+    #         print(f"       {ep_sub_data.sub_file_path_l=}")
+    #         print(f"       {ep_sub_data.non_main_sub_file_path_l=}")
+    #         raise Exception(f"ERROR: File does not exist: {file_path=}")
+
+    print(f"    Checking for duplicates after cleaning from {final_vid_sub_path_l=}...")
     unique_final_vid_sub_path_l = _get_unique_final_vid_sub_path_l__and__rename_duplicates(final_vid_sub_path_l)
 
     print(f"{final_vid_sub_path_l=}")

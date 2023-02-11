@@ -233,3 +233,9 @@ Family_Guy__Peter___Alcohol___Trouble__Clip____TBS
 Family_Guy__Peter_s_New_Dad__Clip____TBS - long song that may have gotten cut out as [Music]
 Family_Guy__Mayoral_Debate__Clip____TBS - modern family
 Family_Guy__iPhone__Clip____TBS - both real subs seem timed wrong in different weekdays
+
+
+# TMP wrong answer switch
+Family_Guy__Peter_Joins_the_Tea_Party__Clip____TBS
+Family_Guy__Peter_Convinces_Tom_Tucker_to_Return_to_Hollywood__Clip____TBS - either
+Family_Guy__Peter___Alcohol___Trouble__Clip____TBS

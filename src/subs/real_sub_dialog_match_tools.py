@@ -25,7 +25,7 @@ import vid_edit_utils as veu
 import subtitle_utils as su
 import fuzz_common as fc
 
-IDEAL_NUM_SAMPLES_PER_SUB = 12
+IDEAL_NUM_SAMPLES_PER_SUB = 10000
 
 
 def _get_line_dialog_fuzz_ratio_and_confidence(in_vid_audio_path, line):
