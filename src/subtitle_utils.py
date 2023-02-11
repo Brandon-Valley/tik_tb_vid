@@ -230,8 +230,8 @@ def remove_advertising_from_sub_file_path_l(sub_file_path_l):
 
 def write_filtered_subs(in_sub_path, out_sub_path):
     ''' Removes effects like [Music] and other things '''
-    if in_sub_path != out_sub_path:
-        fsu.delete_if_exists(out_sub_path)
+    # if in_sub_path != out_sub_path:
+    #     fsu.delete_if_exists(out_sub_path)
     
     Path(out_sub_path).parent.mkdir(parents=True, exist_ok=True)
 
@@ -244,16 +244,38 @@ def write_filtered_subs(in_sub_path, out_sub_path):
         rm_names=True,
         rm_author=True,
     )
+    fsu.delete_if_exists(out_sub_path)
     subs.save(out_sub_path)
-
 
 
 if __name__ == "__main__":
     import os.path as path
     print("Running ",  path.abspath(__file__),  '...')
 
-    write_filtered_subs("C:/tmp/auto_caption_test/Family_Guy__Back_To_The_Pilot__Clip____TBS.en-orig.srt",
-                        "C:/tmp/auto_caption_test/FILTERED.srt")
+    # write_filtered_subs("C:/tmp/filter_test/family.guy.s09e02.dvdrip.xvid-reward-eng.srt",
+    #                     "C:/tmp/filter_test/FILTERED.srt")
+
+    write_filtered_subs("C:/tmp/filter_test/family.guy.s09e02.dvdrip.xvid-reward-eng.srt",
+                        "C:/tmp/filter_test/family.guy.s09e02.dvdrip.xvid-reward-eng.srt")
+    
+    # subs = pysubs2.load("C:/tmp/filter_test/OLD_Family_Guy__Brian_Goes_Republican_for_Rush_Limbaugh__Season_9_Clip____TBS.srt", encoding="latin1")
+    # subs.save("C:/tmp/filter_test/Family_Guy__Brian_Goes_Republican_for_Rush_Limbaugh__Season_9_Clip____TBS.srt", encoding="utf-8")
+    
+
+    # nonascii = bytearray(range(0x80, 0x100))
+    # with open('"C:/tmp/filter_test/OLD_Family_Guy__Brian_Goes_Republican_for_Rush_Limbaugh__Season_9_Clip____TBS.srt"','rb') as infile, open('d_parsed.txt','wb') as outfile:
+    #     for line in infile: # b'\n'-separated lines (Linux, OSX, Windows)
+    #         outfile.write(line.translate(None, nonascii))
+
+    # nonascii = bytearray(range(0x80, 0x100))
+    # with open("C:/tmp/filter_test/OLD_Family_Guy__Brian_Goes_Republican_for_Rush_Limbaugh__Season_9_Clip____TBS.srt",'wb') as infile:
+    #     for line in infile: # b'\n'-separated lines (Linux, OSX, Windows)
+    #         infile.write(line.translate(None, nonascii))
+
+
+    # lines = txt_logger.read("C:/tmp/filter_test/FAILED_FILTER__Family_Guy__Brian_Goes_Republican_for_Rush_Limbaugh__Season_9_Clip____TBS.srt")
+    # # txt_logger.write(lines, "C:/tmp/filter_test/Family_Guy__Brian_Goes_Republican_for_Rush_Limbaugh__Season_9_Clip____TBS.srt",encoding="ascii", decode=True)
+    # txt_logger.write(lines, "C:/tmp/filter_test/Family_Guy__Brian_Goes_Republican_for_Rush_Limbaugh__Season_9_Clip____TBS.srt", decoding="ascii")
 
     # write_auto_subs_for_vid(in_vid_path = "C:/tmp/auto_caption_test/Family_Guy__Back_To_The_Pilot__Clip____TBS.mp4",
     #                          out_sub_path = "C:/tmp/auto_caption_test/Family_Guy__Back_To_The_Pilot__Clip____TBS.srt", format_str = "srt")

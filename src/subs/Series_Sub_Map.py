@@ -1,6 +1,11 @@
 from pprint import pprint
 import os
 
+from time import sleep
+from random import random
+from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import wait
+
 # from sms.logger import txt
 from pathlib import Path
 import pysubs2
@@ -15,6 +20,7 @@ import cfg
 import subtitle_utils as su
 from sms.file_system_utils import file_system_utils as fsu
 from sms.logger import json_logger
+from sms.logger import txt_logger
 
 SSM_DATA_DIR_PATH = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "SSM_DATA")
 MIN_EP_SUB_FILE_NUM_BYTES = 3000 # 3KB, "normal" subs are ~ 15-40KB
@@ -57,7 +63,7 @@ class Episode_Sub_Data:
             if self.sub_file_path_l != None:
                 self.main_sub_file_path = self.sub_file_path_l[0]
 
-                self.non_main_sub_file_path_l = self.sub_file_path_l
+                self.non_main_sub_file_path_l = self.sub_file_path_l.copy()
                 self.non_main_sub_file_path_l.remove(self.main_sub_file_path)
 
             self._get_total_fuzz_str___then___set_len___then___write_total_fuzz_str_to_json()
@@ -132,37 +138,53 @@ class Episode_Sub_Data:
                 - Make new SSM after this
         """
         print(f"Cleaning {self.get_season_episode_str()}...")
+        print(f"{self.get_season_episode_str()} - {self.sub_file_path_l=}")
 
         remaining_sub_file_path_l = []
 
         for sub_file_path in self.sub_file_path_l:
-
-            # Remove files that are way too small
-            # LATER if still get problems with small files, maybe should compare file size against avg file size in dir/series?
+            # # Remove files that are way too small
+            # # LATER if still get problems with small files, maybe should compare file size against avg file size in dir/series?
             if os.path.getsize(sub_file_path) < MIN_EP_SUB_FILE_NUM_BYTES:
                 print(f"Cleaning - Deleting sub file b/c it is too small: {sub_file_path} - {os.path.getsize(sub_file_path)=} bytes...")
                 fsu.delete_if_exists(sub_file_path)
                 continue
 
             # Delete anything that isn't a readable .srt file (no MicroDVD files allowed)
-            # print(f"{sub_file_path=}")
             if not su.sub_file_readable_srt(sub_file_path):
                 print(f"Cleaning - Deleting sub file b/c it is not readable .srt file: {sub_file_path}...")
                 fsu.delete_if_exists(sub_file_path)
                 continue
 
             # Delete any sub files that aren't the correct lang
-            # print(f"  Checking {sub_file_path}...")
             if not su.sub_file_is_correct_lang(sub_file_path, self.lang):
                 print(f"Cleaning - Deleting sub file b/c it is the wrong lang: {sub_file_path}...")
                 fsu.delete_if_exists(sub_file_path)
                 continue
+
+            # Remove effects like [Music] and other things
+            print(f"Cleaning - Filtering sub path: {sub_file_path}...")
+            su.write_filtered_subs(sub_file_path, sub_file_path)
+
+            # Remove all non-ascii chars and leading/trailing spaces after
+            # LATER if want musical note chars back, remove this and find diff fixture
+            print(f"Cleaning - Re-Writing file with ASCII chars only {sub_file_path}...")
+            sub_file_line_l = txt_logger.read(sub_file_path)
+            for line_num, sub_file_line in sub_file_line_l:
+                sub_file_line_l[line_num] = bytes(sub_file_line, "utf-8").decode("ascii", 'ignore').strip(" ")
+            txt_logger.write(sub_file_line_l, sub_file_path)
             
             remaining_sub_file_path_l.append(sub_file_path)
 
         # Remove advertising from subs
         print(f"Cleaning - Removing advertising from all remaining sub files for {self.get_season_episode_str()}...")
         su.remove_advertising_from_sub_file_path_l(remaining_sub_file_path_l)
+
+        # Remove any duplicates
+        print("Cleaning - Removing duplicates...")
+        remaining_sub_file_path_l, duplicate_sub_file_path_l = fsu.get_file_path_l_w_duplicate_files_removed(remaining_sub_file_path_l, return_removed_file_path_l = True)
+        print(f"  Deleting the following {duplicate_sub_file_path_l=}...")
+        fsu.delete_if_exists(duplicate_sub_file_path_l)
         
         # Do not allow any empty dirs (may have been created by deleting wrong-lang-subs)
         if len(fsu.get_dir_content_l(self.episode_subs_dir_path, "all")) == 0:
@@ -360,10 +382,19 @@ class Series_Sub_map():
         """
         def _clean_lang_ep_sub_data_l(lang):
             print(f"  Cleaning Lang: {lang}...")
-            # ep_sub_data_l = self.ep_sub_data_ld[lang]
-            # for ep_sub_data in ep_sub_data_l:
-            for ep_sub_data in self.ep_sub_data_ld[lang]:
-                ep_sub_data.clean_episode_subs_after_fresh_download()
+            # start the thread pool
+            with ThreadPoolExecutor(cfg.NUM_CORES) as executor:
+            # with ThreadPoolExecutor(1) as executor:
+                futures = []
+                for ep_sub_data in self.ep_sub_data_ld[lang]:
+                    # submit tasks and collect futures
+                    futures = [executor.submit(ep_sub_data.clean_episode_subs_after_fresh_download)]
+                    # ep_sub_data.clean_episode_subs_after_fresh_download()
+
+                # wait for all tasks to complete
+                print('Waiting for tasks to complete...')
+                wait(futures)
+                print('All tasks are done!')
 
         if lang == "ALL_LANGS":
             print("Cleaning all Langs...")
