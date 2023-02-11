@@ -28,7 +28,7 @@ POST_RUN_REPORTS_DIR_PATH = join(cfg.INIT_MKVS_WORKING_DIR_PATH, "post_run_repor
 POST_RUN_REPORT_JSON_PATH = join(POST_RUN_REPORTS_DIR_PATH, "post_run_report.json")
 WRONG_ANSWERS_JSON_PATH = join(POST_RUN_REPORTS_DIR_PATH, "wrong_answers.json")
 CLIP_NAME_CHOSEN_SUB_PATH_OD__LAST_RUN__JSON_PATH = join(POST_RUN_REPORTS_DIR_PATH, "clip_name_chosen_sub_path_od__last_run.json")
-CLIP_NAME_CHOSEN_SUB_PATH_OD__CORRECT_ANSWERS__JSON_PATH = join(POST_RUN_REPORTS_DIR_PATH, "clip_name_chosen_sub_path_od__correct_answers.json")
+CLIP_NAME_CHOSEN_SUB_PATH_l_OD__CORRECT_ANSWERS__JSON_PATH = join(POST_RUN_REPORTS_DIR_PATH, "clip_name_chosen_sub_path_l_od__correct_answers.json")
 RUN_LOG_L__SORTED_BY__BEST_AVG_LINE_DIALOG_FUZZ_RATIO_JSON_PATH = join(POST_RUN_REPORTS_DIR_PATH, "run_log_l__sorted_by__best_avg_line_dialog_fuzz_ratio.json")
 RUN_LOG_L__SORTED_BY__BEST_SUB_DIFF_RATIOS_JSON_PATH = join(POST_RUN_REPORTS_DIR_PATH, "run_log_l__sorted_by__best_sub_diff_ratio.json")
 RUN_LOG_L__SORTED_BY__BEST_SUB_DIFF_RATIOS__W_SORTED__SUB_DIFF_RATIO_SUB_PATH_L_D_JSON_PATH = join(POST_RUN_REPORTS_DIR_PATH, "run_log_l__sorted_by__best_sub_diff_ratio__w_sorted__sub_diff_ratio_sub_path_l_d.json")
@@ -99,10 +99,9 @@ def write_run_log_l__sorted_by__best_sub_diff_ratio__w_sorted__sub_diff_ratio_su
     json_logger.write(sorted_run_log_l, RUN_LOG_L__SORTED_BY__BEST_SUB_DIFF_RATIOS__W_SORTED__SUB_DIFF_RATIO_SUB_PATH_L_D_JSON_PATH)
 
 
-# def write_correct_answers_json_from_run_log_l_json(run_log_l_json_path):
-def write_clip_name_chosen_sub_path_od__from__run_log_l_json(run_log_l_json_path, out_json_path):
+# def write_clip_name_chosen_sub_path_od__from__run_log_l_json(run_log_l_json_path, out_json_path):
+def _get_clip_name_chosen_sub_path_od__from__run_log_l_json(run_log_l_json_path):
     sorted_run_log_l = json_logger.read(run_log_l_json_path)
-
     clip_name_chosen_sub_path_od = collections.OrderedDict()
 
     for clip_data_d in sorted_run_log_l:
@@ -112,16 +111,53 @@ def write_clip_name_chosen_sub_path_od__from__run_log_l_json(run_log_l_json_path
        
         clip_name = clip_data_d["clip_name"]
         clip_name_chosen_sub_path_od[clip_name] = chosen_sub_path
+    return clip_name_chosen_sub_path_od
 
+    # json_logger.write(clip_name_chosen_sub_path_od, out_json_path)
+
+def write_clip_name_chosen_sub_path_od__last_run__from__run_log_l_json(run_log_l_json_path, out_json_path):
+    clip_name_chosen_sub_path_od = clip_name_chosen_sub_path_od(run_log_l_json_path)
     json_logger.write(clip_name_chosen_sub_path_od, out_json_path)
 
+def write_clip_name_chosen_sub_path_l_od__correct_answers__from__run_log_l_json(run_log_l_json_path, prev_correct_answers_json_path = None, out_json_path = None):
+    if prev_correct_answers_json_path == None and out_json_path == None:
+        raise ValueError("Error: invalid params")
+    
+    if out_json_path == None:
+        out_json_path == prev_correct_answers_json_path
 
-def write_wrong_answers_d_json(clip_name_chosen_sub_path_od__last_run__json_path, clip_name_chosen_sub_path_od__correct_answers__json_path):
+    run_log__clip_name_chosen_sub_path_od = _get_clip_name_chosen_sub_path_od__from__run_log_l_json(run_log_l_json_path)
+
+    # Build new_correct_answers__clip_name_chosen_sub_path_l_od
+    new_correct_answers__clip_name_chosen_sub_path_l_od = collections.OrderedDict()
+    # No prev correct answers json given
+    if prev_correct_answers_json_path == None:
+        for clip_name, chosen_sub_path in run_log__clip_name_chosen_sub_path_od.items():
+            new_correct_answers__clip_name_chosen_sub_path_l_od[clip_name] = [chosen_sub_path]
+    # Prev correct answers json given
+    else:
+        prev_correct_answers__clip_name_chosen_sub_path_l_od = json_logger.read(prev_correct_answers_json_path)
+        for clip_name, chosen_sub_path in run_log__clip_name_chosen_sub_path_od:
+
+            if clip_name not in prev_correct_answers__clip_name_chosen_sub_path_l_od.keys():
+                raise ValueError(f"{run_log_l_json_path=} contains {clip_name=} which does not exist in in {prev_correct_answers_json_path=}, meaning that comparison is not valid.")
+
+            prev_correct_answers_chosen_sub_path_l = prev_correct_answers__clip_name_chosen_sub_path_l_od[clip_name]
+
+            if chosen_sub_path not in prev_correct_answers_chosen_sub_path_l:
+                prev_correct_answers_chosen_sub_path_l.append(chosen_sub_path)
+
+            new_correct_answers__clip_name_chosen_sub_path_l_od[clip_name] = prev_correct_answers_chosen_sub_path_l
+
+    json_logger.write(new_correct_answers__clip_name_chosen_sub_path_l_od, out_json_path)
+
+
+def write_wrong_answers_d_json(clip_name_chosen_sub_path_od__last_run__json_path, clip_name_chosen_sub_path_l_od__correct_answers__json_path):
     clip_name_chosen_sub_path_od__last_run = json_logger.read(clip_name_chosen_sub_path_od__last_run__json_path)
-    clip_name_chosen_sub_path_od__correct_answers = json_logger.read(clip_name_chosen_sub_path_od__correct_answers__json_path)
+    clip_name_chosen_sub_path_l_od__correct_answers = json_logger.read(clip_name_chosen_sub_path_l_od__correct_answers__json_path)
 
-    if len(clip_name_chosen_sub_path_od__last_run) != len(clip_name_chosen_sub_path_od__correct_answers):
-        raise Exception(f"ERROR: {len(clip_name_chosen_sub_path_od__last_run)=} != {len(clip_name_chosen_sub_path_od__correct_answers)}, so the comparison will not be valid")
+    if len(clip_name_chosen_sub_path_od__last_run) != len(clip_name_chosen_sub_path_l_od__correct_answers):
+        raise Exception(f"ERROR: {len(clip_name_chosen_sub_path_od__last_run)=} != {len(clip_name_chosen_sub_path_l_od__correct_answers)}, so the comparison will not be valid")
 
     wrong_answers_d = collections.OrderedDict()
     wrong_answers_d["num_correct"] = 0
@@ -129,16 +165,16 @@ def write_wrong_answers_d_json(clip_name_chosen_sub_path_od__last_run__json_path
     wrong_answers_d["wrong"] = []
 
     for clip_name, chosen_sub_path in clip_name_chosen_sub_path_od__last_run.items():
-        if clip_name not in clip_name_chosen_sub_path_od__correct_answers.keys():
+        if clip_name not in clip_name_chosen_sub_path_l_od__correct_answers.keys():
             raise Exception("ERROR: last run contains a clip name not found in correct answers: ", clip_name)
         
-        correct_chosen_sub_path = clip_name_chosen_sub_path_od__correct_answers[clip_name]
+        correct_chosen_sub_path_l = clip_name_chosen_sub_path_l_od__correct_answers[clip_name]
 
-        if chosen_sub_path != correct_chosen_sub_path:
+        if chosen_sub_path not in correct_chosen_sub_path_l:
             wrong_answers_d["wrong"].append({
                 "clip_name": clip_name,
                 "wrong_chosen_sub_path": chosen_sub_path,
-                "correct_chosen_sub_path": correct_chosen_sub_path
+                "correct_chosen_sub_path_l": correct_chosen_sub_path_l
             })
 
     num_wrong = len(wrong_answers_d["wrong"])
@@ -153,7 +189,12 @@ if __name__ == "__main__":
     write_run_log_l__sorted_by__best_sub_diff_ratio()
     write_run_log_l__sorted_by__best_sub_diff_ratio__w_sorted__sub_diff_ratio_sub_path_l_d()
     write_run_log_l__sorted_by__best_avg_line_dialog_fuzz_ratio()
-    write_clip_name_chosen_sub_path_od__from__run_log_l_json(RUN_LOG_L__SORTED_BY__BEST_AVG_LINE_DIALOG_FUZZ_RATIO_JSON_PATH, CLIP_NAME_CHOSEN_SUB_PATH_OD__LAST_RUN__JSON_PATH)
+    write_clip_name_chosen_sub_path_od__last_run__from__run_log_l_json(RUN_LOG_L__SORTED_BY__BEST_AVG_LINE_DIALOG_FUZZ_RATIO_JSON_PATH, CLIP_NAME_CHOSEN_SUB_PATH_OD__LAST_RUN__JSON_PATH)
     # write_clip_name_chosen_sub_path_od__from__run_log_l_json(RUN_LOG_L__SORTED_BY__BEST_AVG_LINE_DIALOG_FUZZ_RATIO_JSON_PATH, CLIP_NAME_CHOSEN_SUB_PATH_OD__CORRECT_ANSWERS__JSON_PATH)
-    write_wrong_answers_d_json(CLIP_NAME_CHOSEN_SUB_PATH_OD__LAST_RUN__JSON_PATH, CLIP_NAME_CHOSEN_SUB_PATH_OD__CORRECT_ANSWERS__JSON_PATH)
+
+    write_clip_name_chosen_sub_path_l_od__correct_answers__from__run_log_l_json(run_log_l_json_path = RUN_LOG_L__SORTED_BY__BEST_AVG_LINE_DIALOG_FUZZ_RATIO_JSON_PATH,
+                                                                                prev_correct_answers_json_path = CLIP_NAME_CHOSEN_SUB_PATH_l_OD__CORRECT_ANSWERS__JSON_PATH,
+                                                                                out_json_path = CLIP_NAME_CHOSEN_SUB_PATH_l_OD__CORRECT_ANSWERS__JSON_PATH)
+
+    write_wrong_answers_d_json(CLIP_NAME_CHOSEN_SUB_PATH_OD__LAST_RUN__JSON_PATH, CLIP_NAME_CHOSEN_SUB_PATH_l_OD__CORRECT_ANSWERS__JSON_PATH)
     print("End of Main") 
