@@ -12,13 +12,13 @@ if __name__ == "__main__":
     sys.path.append(str(pathlib.Path(__file__).parent.parent))
 
 import fuzz_common
-import thread_utils
 
 import cfg
 import subtitle_utils as su
 from sms.file_system_utils import file_system_utils as fsu
 from sms.logger import json_logger
 from sms.logger import txt_logger
+from sms.thread_tools import Simple_Thread_Manager
 
 ENABLE_THREADING = True
 SSM_DATA_DIR_PATH = join(cfg.INIT_MKVS_WORKING_DIR_PATH, "SSM_DATA")
@@ -436,9 +436,9 @@ class Series_Sub_map():
             print(f"  Cleaning Lang: {lang}...")
             # start the thread pool
 
-            with thread_utils.Thread_Manager(ENABLE_THREADING, cfg.NUM_CORES) as tm:
+            with Simple_Thread_Manager(ENABLE_THREADING, cfg.NUM_CORES) as stm:
                 for ep_sub_data in self.ep_sub_data_ld[lang]:
-                    tm.thread_func_if_enabled(ep_sub_data.clean_episode_subs_after_fresh_download)
+                    stm.thread_func_if_enabled(ep_sub_data.clean_episode_subs_after_fresh_download)
 
 
 
