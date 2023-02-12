@@ -59,6 +59,18 @@ def _get_worth_and_not_worth_checking__matched_vid_sub_dir_lists(matched_vid_sub
 
 
 def _trim_first_sub_text_if_needed(in_sub_path, in_vid_path, out_sub_path):
+    def _cap_only_1st_letter_of_str(in_str):
+        if len(in_str) == 0:
+            raise ValueError(f"{len(in_str)=}, should not be possible")
+        
+        if not in_str[0].isalpha():
+            return in_str
+        
+        if len(in_str) == 1:
+            return in_str.capitalize()
+        else:
+            return in_str[0].capitalize() + in_str[1:]
+        
     start_time = time.time()
 
     def _log_run(outcome_str, fuzz_ratio_new_sub_line_text_l_d = None):
@@ -120,6 +132,9 @@ def _trim_first_sub_text_if_needed(in_sub_path, in_vid_path, out_sub_path):
         print(f"{new_line_text=}")
         new_sub_line_text_l.append(new_line_text)
 
+        if "worried" in new_line_text:
+            print("here")
+
     print(f"{new_sub_line_text_l=}")
 
     fuzz_ratio_new_sub_line_text_l_d = {}
@@ -127,6 +142,11 @@ def _trim_first_sub_text_if_needed(in_sub_path, in_vid_path, out_sub_path):
     # fill line_text_l_fuzz_ratio_d
     new_sub_line_text_fuzz_str_l = []
     for new_sub_line_text in new_sub_line_text_l:
+
+        if "worried" in new_sub_line_text:
+            print("here")
+
+
         cleaned_new_sub_line_text_str = fc.get_cleaned_line_text_str__from__sub_line_text_str(new_sub_line_text)
         new_sub_line_text_fuzz_str = fc.get_subs_fuzz_str__from__all_sub_lines_cleaned_text_str(cleaned_new_sub_line_text_str)
 
@@ -151,7 +171,13 @@ def _trim_first_sub_text_if_needed(in_sub_path, in_vid_path, out_sub_path):
     best_fuzz_ratio = max(fuzz_ratio_new_sub_line_text_l_d.keys())
     raw_best_new_sub_line_text_str = fuzz_ratio_new_sub_line_text_l_d[best_fuzz_ratio][0]
 
-    capped_best_new_sub_line_text_str = raw_best_new_sub_line_text_str.capitalize()
+    # if "worried" in raw_best_new_sub_line_text_str:
+    #     print("here")
+
+    # TODO
+
+    # capped_best_new_sub_line_text_str = raw_best_new_sub_line_text_str.capitalize()
+    capped_best_new_sub_line_text_str = _cap_only_1st_letter_of_str(raw_best_new_sub_line_text_str)
 
     # If go through whole process and turns out best fuzz came from OG, say so and do nothing if in_sub_path == in_sub_path
     if subs[0].text == capped_best_new_sub_line_text_str:
@@ -160,8 +186,8 @@ def _trim_first_sub_text_if_needed(in_sub_path, in_vid_path, out_sub_path):
             _log_run("OG_WAS_BEST_MATCH", fuzz_ratio_new_sub_line_text_l_d)
             return
 
-    subs[0].text = capped_best_new_sub_line_text_str
     print(f"Trimming first sub line, \n    OG:  {subs[0].text}\n    New: {capped_best_new_sub_line_text_str}\n    Writing too: {out_sub_path}...")
+    subs[0].text = capped_best_new_sub_line_text_str
     # subs.save(out_sub_path) # TODO PUT BACK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     _log_run("SUCCESS", fuzz_ratio_new_sub_line_text_l_d)
 
@@ -213,13 +239,13 @@ def trim_first_sub_text_if_needed__for_matched_vid_sub_dir_l(matched_vid_sub_dir
     start_time = time.time()
     worth_checking_mvsd_l, not_worth_checking_mvsd_l = _get_worth_and_not_worth_checking__matched_vid_sub_dir_lists(matched_vid_sub_dir_l)
 
-    # fsu.delete_if_exists(INDIV_RUN_LOGS_DIR_PATH)
-    # fsu.delete_if_exists(LOG_JSON_PATH)
+    fsu.delete_if_exists(INDIV_RUN_LOGS_DIR_PATH)
+    fsu.delete_if_exists(LOG_JSON_PATH)
 
-    # with Simple_Thread_Manager(THREADING_ENABLED, cfg.NUM_CORES) as stm:
-    #     for mvsd in worth_checking_mvsd_l:
-    #         # fix in-place
-    #         stm.thread_func_if_enabled(_trim_first_sub_text_if_needed, mvsd.sub_path, mvsd.vid_path, mvsd.sub_path)
+    with Simple_Thread_Manager(THREADING_ENABLED, cfg.NUM_CORES) as stm:
+        for mvsd in worth_checking_mvsd_l:
+            # fix in-place
+            stm.thread_func_if_enabled(_trim_first_sub_text_if_needed, mvsd.sub_path, mvsd.vid_path, mvsd.sub_path)
 
     _log_total(start_time, worth_checking_mvsd_l, not_worth_checking_mvsd_l)
 
