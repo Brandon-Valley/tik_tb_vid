@@ -53,7 +53,7 @@ def _get_worth_and_not_worth_checking__matched_vid_sub_dir_lists(matched_vid_sub
         if _worth_checking(mvsd.sub_path):
             worth_checking_mvsd_l.append(mvsd)
         else:
-            not_worth_checking_mvsd_l.append(worth_checking_mvsd_l)
+            not_worth_checking_mvsd_l.append(mvsd)
 
     return worth_checking_mvsd_l, not_worth_checking_mvsd_l
 
@@ -161,7 +161,7 @@ def _trim_first_sub_text_if_needed(in_sub_path, in_vid_path, out_sub_path):
             return
 
     subs[0].text = capped_best_new_sub_line_text_str
-    print(f"Trimming first sub line, writing too: {out_sub_path}...")
+    print(f"Trimming first sub line, \n    OG:  {subs[0].text}\n    New: {capped_best_new_sub_line_text_str}\n    Writing too: {out_sub_path}...")
     # subs.save(out_sub_path) # TODO PUT BACK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     _log_run("SUCCESS", fuzz_ratio_new_sub_line_text_l_d)
 
@@ -194,13 +194,12 @@ def _log_total(start_time, worth_checking_mvsd_l, not_worth_checking_mvsd_l):
 
     log_od = collections.OrderedDict()
     log_od["Total_Time"] = time.time() - start_time
-    log_od["run_outcome_str_occ_d"] = _get_run_outcome_str_occ_d(run_od_l)
     log_od["Total_matched_vid_sub_dirs"] = len(worth_checking_mvsd_l) + len(not_worth_checking_mvsd_l)
     log_od["len(worth_checking_mvsd_l)"] = len(worth_checking_mvsd_l)
     log_od["len(not_worth_checking_mvsd_l)"] = len(not_worth_checking_mvsd_l)
+    log_od["run_outcome_str_occ_d"] = _get_run_outcome_str_occ_d(run_od_l)
     log_od["run_od_l"] = run_od_l
-    # log_od["worth_checking_mvsd__sub_path_l"]     = [mvsd.sub_path for mvsd in worth_checking_mvsd_l]
-    # log_od["not_worth_checking_mvsd__sub_path_l"] = [mvsd.sub_path for mvsd in not_worth_checking_mvsd_l]
+    log_od["not_worth_checking_mvsd__sub_path_l"] = [mvsd.sub_path for mvsd in not_worth_checking_mvsd_l]
 
     print(f"Writing total log of trim first sub text to {LOG_JSON_PATH}...")
     json_logger.write(log_od, LOG_JSON_PATH)
@@ -216,7 +215,7 @@ def trim_first_sub_text_if_needed__for_matched_vid_sub_dir_l(matched_vid_sub_dir
 
     # fsu.delete_if_exists(INDIV_RUN_LOGS_DIR_PATH)
     # fsu.delete_if_exists(LOG_JSON_PATH)
-    
+
     # with Simple_Thread_Manager(THREADING_ENABLED, cfg.NUM_CORES) as stm:
     #     for mvsd in worth_checking_mvsd_l:
     #         # fix in-place
