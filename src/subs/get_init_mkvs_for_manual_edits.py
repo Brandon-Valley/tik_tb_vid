@@ -33,7 +33,7 @@ MIN_AVG_MOST_CONFIDENT_LINE_DIALOG_FUZZ_RATIO = 70
 SERIES_NAME = "Family Guy"
 
 FINAL_MKVS_DIR_PATH = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "mkvs")
-FINAL_MP4_SRT_DIRS_DIR_PATH = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "o_mp4_srt_dirs")
+# cfg.FINAL_MP4_SRT_DIRS_DIR_PATH = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "o_mp4_srt_dirs")
 SSM_LOG_JSON_PATH = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "SSM_log.json")
 SSM_STATS_JSON_PATH = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "SSM_stats.json")
 FINAL_STATS_JSON_PATH = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "final_stats.json")
@@ -61,7 +61,7 @@ LANG = "en"
 
 # TODO remove?
 def _copy_mp4_and_first_srt_to_dir(in_mp4_path, sub_path_lang_dl):
-    dir_path = os.path.join(FINAL_MP4_SRT_DIRS_DIR_PATH, Path(in_mp4_path).stem)
+    dir_path = os.path.join(cfg.FINAL_MP4_SRT_DIRS_DIR_PATH, Path(in_mp4_path).stem)
     Path(dir_path).mkdir(parents=True, exist_ok=True)
 
     if sub_path_lang_dl != None and len(sub_path_lang_dl) > 0:
@@ -79,7 +79,8 @@ def _get_passing_sub_diff_ratio_sub_path_l(sub_diff_ratio_sub_path_l_d):
     return passing_sub_diff_ratio_sub_path_l
 
 def _copy_mp4_and_best_sub_if_good_enough_to_dir__line_dialog_fuzz_ratio__method(in_mp4_path, avg_most_confident_line_dialog_fuzz_ratio_sub_path_l_d):
-    dir_path = os.path.join(FINAL_MP4_SRT_DIRS_DIR_PATH, "no_subs")
+    # dir_path = os.path.join(cfg.FINAL_MP4_SRT_DIRS_DIR_PATH, "no_subs")
+    dir_path = cfg.FINAL_MP4_SRT_DIRS__NO_SUBS__DIR_PATH
     chosen_sub_path = None
 
     if len(avg_most_confident_line_dialog_fuzz_ratio_sub_path_l_d.keys()) != 0:
@@ -90,7 +91,8 @@ def _copy_mp4_and_best_sub_if_good_enough_to_dir__line_dialog_fuzz_ratio__method
         sub_path = sub_path_l[0]
 
         if best_fuzz_ratio >= MIN_AVG_MOST_CONFIDENT_LINE_DIALOG_FUZZ_RATIO:
-            dir_path = os.path.join(FINAL_MP4_SRT_DIRS_DIR_PATH, "w_subs", Path(in_mp4_path).stem)
+            # dir_path = os.path.join(cfg.FINAL_MP4_SRT_DIRS_DIR_PATH, "w_subs", Path(in_mp4_path).stem)
+            dir_path = os.path.join(cfg.FINAL_MP4_SRT_DIRS__W_SUBS__DIR_PATH, Path(in_mp4_path).stem)
             Path(dir_path).mkdir(parents=True, exist_ok=True)
 
             # Rename srt to be same name as mp4 so VLC Media Player will play subs automatically
@@ -105,7 +107,8 @@ def _copy_mp4_and_best_sub_if_good_enough_to_dir__line_dialog_fuzz_ratio__method
 
 
 def _copy_mp4_and_best_sub_if_good_enough_to_dir__sub_diff_ratio_sub_path_l_d__method(in_mp4_path, sub_diff_ratio_sub_path_l_d):
-    dir_path = os.path.join(FINAL_MP4_SRT_DIRS_DIR_PATH, "no_subs")
+    # dir_path = os.path.join(cfg.FINAL_MP4_SRT_DIRS_DIR_PATH, "no_subs")
+    dir_path = cfg.FINAL_MP4_SRT_DIRS__NO_SUBS__DIR_PATH
 
     if len(sub_diff_ratio_sub_path_l_d.keys()) != 0:
 
@@ -118,7 +121,7 @@ def _copy_mp4_and_best_sub_if_good_enough_to_dir__sub_diff_ratio_sub_path_l_d__m
         sub_path = sub_path_l[0]
 
         if best_sub_diff_ratio <= MAX_SUB_DIFF_RATIO:
-            dir_path = os.path.join(FINAL_MP4_SRT_DIRS_DIR_PATH, "w_subs", Path(in_mp4_path).stem)
+            dir_path = os.path.join(cfg.FINAL_MP4_SRT_DIRS__W_SUBS__DIR_PATH, Path(in_mp4_path).stem)
             Path(dir_path).mkdir(parents=True, exist_ok=True)
             # fsu.copy_objects_to_dest(sub_path, dir_path)
 
@@ -127,7 +130,7 @@ def _copy_mp4_and_best_sub_if_good_enough_to_dir__sub_diff_ratio_sub_path_l_d__m
             new_srt_path = join(dir_path, new_srt_file_name)
             fsu.copy_object_to_path(sub_path, new_srt_path)
         # else:
-        #     dir_path = os.path.join(FINAL_MP4_SRT_DIRS_DIR_PATH, "no_subs")
+        #     dir_path = os.path.join(cfg.FINAL_MP4_SRT_DIRS_DIR_PATH, "no_subs")
         #     Path(dir_path).mkdir(parents=True, exist_ok=True)
     
     Path(dir_path).mkdir(parents=True, exist_ok=True)
@@ -138,8 +141,8 @@ def main():
     main_start_time = time.time()
     fsu.delete_if_exists(FINAL_MKVS_DIR_PATH)
     Path(FINAL_MKVS_DIR_PATH).mkdir(parents=True, exist_ok=True)
-    fsu.delete_if_exists(FINAL_MP4_SRT_DIRS_DIR_PATH)
-    Path(FINAL_MP4_SRT_DIRS_DIR_PATH).mkdir(parents=True,exist_ok=True)
+    fsu.delete_if_exists(cfg.FINAL_MP4_SRT_DIRS_DIR_PATH)
+    Path(cfg.FINAL_MP4_SRT_DIRS_DIR_PATH).mkdir(parents=True,exist_ok=True)
 
     # # Clean freshly downloaded subtitles
     # #   - Removes things like un-labeled spanish subs in english sub list (EX: Herbert Clip)

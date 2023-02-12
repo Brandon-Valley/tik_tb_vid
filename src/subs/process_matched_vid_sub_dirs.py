@@ -27,5 +27,29 @@ import subtitle_utils
 import cfg
 import sub_diff_ratio_tools
 import real_sub_dialog_match_tools
+from Matched_Vid_Sub_Dir import Matched_Vid_Sub_Dir
 
 
+def _get_matched_vid_sub_dir_l():
+    vid_sub_dir_path_l = fsu.get_dir_content_l(cfg.FINAL_MP4_SRT_DIRS__W_SUBS__DIR_PATH, "dir")
+    mvsd_l = []
+    for dir_path in vid_sub_dir_path_l:
+        mvsd_l.append(Matched_Vid_Sub_Dir(dir_path))
+    return mvsd_l
+
+
+
+def process_matched_vid_sub_dirs():
+    get_matched_vid_sub_dir_l = _get_matched_vid_sub_dir_l()
+    print(f"{len(get_matched_vid_sub_dir_l)=}")
+
+
+
+
+
+
+if __name__ == "__main__":
+    import os.path as path
+    print("Running " , path.abspath(__file__) , '...')
+    process_matched_vid_sub_dirs()
+    print("End of Main") 

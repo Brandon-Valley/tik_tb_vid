@@ -3,7 +3,6 @@ import os
 from os.path import join
 from tempfile import mkdtemp
 
-# from sms.logger import txt
 from pathlib import Path
 import pysubs2
 
@@ -11,8 +10,6 @@ if __name__ == "__main__":
     import sys, pathlib
     sys.path.append(str(pathlib.Path(__file__).parent.parent))
 
-import fuzz_common
-import thread_utils
 
 import cfg
 import subtitle_utils as su
