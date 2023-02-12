@@ -31,11 +31,11 @@ import vid_edit_utils as veu
 import subtitle_utils as su
 import fuzz_common as fc
 
-THREADING_ENABLED = False
+THREADING_ENABLED = True
 
 MAX_NUM_MS__FIRST_SUB_END__WORTH_CHECKING = 5000
 
-RUNS_LOG_JSON_PATH = join(cfg.PROCESS_MATCHED_VID_SUB_DIRS_LOGS_DIR_PATH, "trim_first_sub_text_runs_log.json")
+LOG_JSON_PATH = join(cfg.PROCESS_MATCHED_VID_SUB_DIRS_LOGS_DIR_PATH, "trim_first_sub_text_log.json")
 INDIV_RUN_LOGS_DIR_PATH = join(cfg.PROCESS_MATCHED_VID_SUB_DIRS_LOGS_DIR_PATH, "trim_first_sub_text_indiv_runs")
 
 
@@ -162,21 +162,67 @@ def _trim_first_sub_text_if_needed(in_sub_path, in_vid_path, out_sub_path):
 
     subs[0].text = capped_best_new_sub_line_text_str
     print(f"Trimming first sub line, writing too: {out_sub_path}...")
-    # subs.save(out_sub_path) # TODO PUT BACK
+    # subs.save(out_sub_path) # TODO PUT BACK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     _log_run("SUCCESS", fuzz_ratio_new_sub_line_text_l_d)
 
 
+def _log_total(start_time, worth_checking_mvsd_l, not_worth_checking_mvsd_l):
+    def _get_trim_first_sub_text_run_od_l__from__indiv_run_jsons():
+        json_path_l = fsu.get_dir_content_l(INDIV_RUN_LOGS_DIR_PATH, "file")
+        run_od_l = []
+        for json_path in json_path_l:
+            run_od = json_logger.read(json_path)
+            run_od_l.append(run_od)
+        return run_od_l
+    
+    def _get_run_outcome_str_occ_d(run_od_l):
+        run_outcome_str_occ_d = {}
+
+        for run_od in run_od_l:
+            print(f"{run_od=}")
+            outcome_str = run_od["outcome_str"]
+            if outcome_str in run_outcome_str_occ_d.keys():
+                run_outcome_str_occ_d[outcome_str] += 1
+            else:
+                run_outcome_str_occ_d[outcome_str] = 1
+
+        sorted_d = {k: v for k, v in sorted(run_outcome_str_occ_d.items(), key=lambda item: item[1])}
+        return sorted_d
+
+
+    run_od_l = _get_trim_first_sub_text_run_od_l__from__indiv_run_jsons()
+
+    log_od = collections.OrderedDict()
+    log_od["Total_Time"] = time.time() - start_time
+    log_od["run_outcome_str_occ_d"] = _get_run_outcome_str_occ_d(run_od_l)
+    log_od["Total_matched_vid_sub_dirs"] = len(worth_checking_mvsd_l) + len(not_worth_checking_mvsd_l)
+    log_od["len(worth_checking_mvsd_l)"] = len(worth_checking_mvsd_l)
+    log_od["len(not_worth_checking_mvsd_l)"] = len(not_worth_checking_mvsd_l)
+    log_od["run_od_l"] = run_od_l
+    # log_od["worth_checking_mvsd__sub_path_l"]     = [mvsd.sub_path for mvsd in worth_checking_mvsd_l]
+    # log_od["not_worth_checking_mvsd__sub_path_l"] = [mvsd.sub_path for mvsd in not_worth_checking_mvsd_l]
+
+    print(f"Writing total log of trim first sub text to {LOG_JSON_PATH}...")
+    json_logger.write(log_od, LOG_JSON_PATH)
+
+
+####################################################################################################
+# MAIN
+####################################################################################################
 def trim_first_sub_text_if_needed__for_matched_vid_sub_dir_l(matched_vid_sub_dir_l):
     print("Trimming 1st sub text if needed for matched_vid_sub_dir_l...")
     start_time = time.time()
     worth_checking_mvsd_l, not_worth_checking_mvsd_l = _get_worth_and_not_worth_checking__matched_vid_sub_dir_lists(matched_vid_sub_dir_l)
-    # print(f"{len(worth_checking_mvsd_l)=}")
-    # print(f"{len(not_worth_checking_mvsd_l)=}")
 
-    with Simple_Thread_Manager(THREADING_ENABLED, cfg.NUM_CORES) as stm:
-        for mvsd in worth_checking_mvsd_l:
-            # fix in-place
-            stm.thread_func_if_enabled(_trim_first_sub_text_if_needed, mvsd.sub_path, mvsd.vid_path, mvsd.sub_path)
+    # fsu.delete_if_exists(INDIV_RUN_LOGS_DIR_PATH)
+    # fsu.delete_if_exists(LOG_JSON_PATH)
+    
+    # with Simple_Thread_Manager(THREADING_ENABLED, cfg.NUM_CORES) as stm:
+    #     for mvsd in worth_checking_mvsd_l:
+    #         # fix in-place
+    #         stm.thread_func_if_enabled(_trim_first_sub_text_if_needed, mvsd.sub_path, mvsd.vid_path, mvsd.sub_path)
+
+    _log_total(start_time, worth_checking_mvsd_l, not_worth_checking_mvsd_l)
 
 
 if __name__ == '__main__':
