@@ -9,6 +9,8 @@ from pysubs2.common import IntOrFloat
 
 import time
 import os
+from os.path import join
+
 import pysubs2
 from pathlib import Path
 from fuzzywuzzy import fuzz
@@ -174,8 +176,8 @@ def _make_final_vid_trimmed_re_timed_sub_from_real_sub(out_sub_path, clip_dir_da
     # init shift
     real_subs.shift(ms = neg_real_sub_shift_num_ms)
 
-    ms_shifted_sub_path        = os.path.join(clip_dir_data.trim_re_time_working_dir_path, f"MS_SHIFTED__{Path(real_sub_path).name}")
-    synced_ms_shifted_sub_path = os.path.join(clip_dir_data.trim_re_time_working_dir_path, f"MS_SHIFTED__SYNCED__{Path(real_sub_path).name}")
+    ms_shifted_sub_path        = join(clip_dir_data.trim_re_time_working_dir_path, f"MS_SHIFTED__{Path(real_sub_path).name}")
+    synced_ms_shifted_sub_path = join(clip_dir_data.trim_re_time_working_dir_path, f"MS_SHIFTED__SYNCED__{Path(real_sub_path).name}")
 
     print(f"{ms_shifted_sub_path=}")
     print("GGGGGGGGGGGGGGG")
@@ -307,7 +309,7 @@ def _get_unique_final_vid_sub_path_l__and__rename_duplicates(final_vid_sub_path_
     # Want to keep duplicate subs for record-keeping/testing purposes
     for dup_sub_path in dup_sub_path_l:
         new_file_name = f"DUPLICATE__{Path(dup_sub_path).name}"
-        new_file_path = os.path.join(Path(dup_sub_path).parent.__str__(), new_file_name)
+        new_file_path = join(Path(dup_sub_path).parent.__str__(), new_file_name)
         fsu.rename_file_overwrite(dup_sub_path, new_file_path)
 
     # There is a very rare issue that can cause _clean_trimmed_subs() to write an empty file.
@@ -320,7 +322,7 @@ def _get_unique_final_vid_sub_path_l__and__rename_duplicates(final_vid_sub_path_
     for unique_sub_path in unique_sub_path_l:
         if os.path.getsize(unique_sub_path) == 0:
             new_file_name = f"EMPTY__{Path(unique_sub_path).name}"
-            new_file_path = os.path.join(Path(unique_sub_path).parent.__str__(), new_file_name)
+            new_file_path = join(Path(unique_sub_path).parent.__str__(), new_file_name)
             fsu.rename_file_overwrite(unique_sub_path, new_file_path)
         else:
             unique_non_empty_sub_path_l.append(unique_sub_path)

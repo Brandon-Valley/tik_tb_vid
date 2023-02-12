@@ -2,6 +2,7 @@ from concurrent.futures import ThreadPoolExecutor
 from concurrent.futures import wait
 from pprint import pprint
 import os
+from os.path import join
 from pathlib import Path
 import re
 import time
@@ -152,7 +153,7 @@ def get_eval_of__fuzz_ratio_ep_sub_data_l_d(fuzz_ratio_ep_sub_data_l_d, ssm, lan
 
 def _search_and_log(clip_dir_data, auto_sub_fuzz_str, ssm, lang, method_key, partial_fuzz_str_len = None):
 
-    fuzz_ratio_ep_sub_data_l_d_json_path = os.path.join(clip_dir_data.data_dir_path, f"fuzz_ratio_ep_sub_data_l_d.json")
+    fuzz_ratio_ep_sub_data_l_d_json_path = join(clip_dir_data.data_dir_path, f"fuzz_ratio_ep_sub_data_l_d.json")
 
     print(f"Getting fuzz_ratio_ep_sub_data_l_d for {clip_dir_data.auto_sub_path=}...")
     fuzz_ratio_ep_sub_data_l_d = _get_fuzz_ratio_ep_sub_data_l_d(auto_sub_fuzz_str, ssm, lang, method_key, partial_fuzz_str_len)

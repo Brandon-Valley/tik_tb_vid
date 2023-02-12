@@ -32,12 +32,12 @@ MAX_SUB_DIFF_RATIO = 0.4
 MIN_AVG_MOST_CONFIDENT_LINE_DIALOG_FUZZ_RATIO = 70
 SERIES_NAME = "Family Guy"
 
-FINAL_MKVS_DIR_PATH = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "mkvs")
-# cfg.FINAL_MP4_SRT_DIRS_DIR_PATH = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "o_mp4_srt_dirs")
-SSM_LOG_JSON_PATH = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "SSM_log.json")
-SSM_STATS_JSON_PATH = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "SSM_stats.json")
-FINAL_STATS_JSON_PATH = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "final_stats.json")
-PL_DATA_DIR_PATH = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "YT_PL_DATA")
+FINAL_MKVS_DIR_PATH = join(cfg.INIT_MKVS_WORKING_DIR_PATH, "mkvs")
+# cfg.FINAL_MP4_SRT_DIRS_DIR_PATH = join(cfg.INIT_MKVS_WORKING_DIR_PATH, "o_mp4_srt_dirs")
+SSM_LOG_JSON_PATH = join(cfg.INIT_MKVS_WORKING_DIR_PATH, "SSM_log.json")
+SSM_STATS_JSON_PATH = join(cfg.INIT_MKVS_WORKING_DIR_PATH, "SSM_stats.json")
+FINAL_STATS_JSON_PATH = join(cfg.INIT_MKVS_WORKING_DIR_PATH, "final_stats.json")
+PL_DATA_DIR_PATH = join(cfg.INIT_MKVS_WORKING_DIR_PATH, "YT_PL_DATA")
 # SERIES_SUB_EN_DIR_PATH = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en"
 # SERIES_SUB_EN_DIR_PATH = "C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en_s4_16_and_17"
 SERIES_SUB_EN_DIR_PATH = "C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en"
@@ -61,7 +61,7 @@ LANG = "en"
 
 # TODO remove?
 def _copy_mp4_and_first_srt_to_dir(in_mp4_path, sub_path_lang_dl):
-    dir_path = os.path.join(cfg.FINAL_MP4_SRT_DIRS_DIR_PATH, Path(in_mp4_path).stem)
+    dir_path = join(cfg.FINAL_MP4_SRT_DIRS_DIR_PATH, Path(in_mp4_path).stem)
     Path(dir_path).mkdir(parents=True, exist_ok=True)
 
     if sub_path_lang_dl != None and len(sub_path_lang_dl) > 0:
@@ -79,7 +79,7 @@ def _get_passing_sub_diff_ratio_sub_path_l(sub_diff_ratio_sub_path_l_d):
     return passing_sub_diff_ratio_sub_path_l
 
 def _copy_mp4_and_best_sub_if_good_enough_to_dir__line_dialog_fuzz_ratio__method(in_mp4_path, avg_most_confident_line_dialog_fuzz_ratio_sub_path_l_d):
-    # dir_path = os.path.join(cfg.FINAL_MP4_SRT_DIRS_DIR_PATH, "no_subs")
+    # dir_path = join(cfg.FINAL_MP4_SRT_DIRS_DIR_PATH, "no_subs")
     dir_path = cfg.FINAL_MP4_SRT_DIRS__NO_SUBS__DIR_PATH
     chosen_sub_path = None
 
@@ -91,8 +91,8 @@ def _copy_mp4_and_best_sub_if_good_enough_to_dir__line_dialog_fuzz_ratio__method
         sub_path = sub_path_l[0]
 
         if best_fuzz_ratio >= MIN_AVG_MOST_CONFIDENT_LINE_DIALOG_FUZZ_RATIO:
-            # dir_path = os.path.join(cfg.FINAL_MP4_SRT_DIRS_DIR_PATH, "w_subs", Path(in_mp4_path).stem)
-            dir_path = os.path.join(cfg.FINAL_MP4_SRT_DIRS__W_SUBS__DIR_PATH, Path(in_mp4_path).stem)
+            # dir_path = join(cfg.FINAL_MP4_SRT_DIRS_DIR_PATH, "w_subs", Path(in_mp4_path).stem)
+            dir_path = join(cfg.FINAL_MP4_SRT_DIRS__W_SUBS__DIR_PATH, Path(in_mp4_path).stem)
             Path(dir_path).mkdir(parents=True, exist_ok=True)
 
             # Rename srt to be same name as mp4 so VLC Media Player will play subs automatically
@@ -107,7 +107,7 @@ def _copy_mp4_and_best_sub_if_good_enough_to_dir__line_dialog_fuzz_ratio__method
 
 
 def _copy_mp4_and_best_sub_if_good_enough_to_dir__sub_diff_ratio_sub_path_l_d__method(in_mp4_path, sub_diff_ratio_sub_path_l_d):
-    # dir_path = os.path.join(cfg.FINAL_MP4_SRT_DIRS_DIR_PATH, "no_subs")
+    # dir_path = join(cfg.FINAL_MP4_SRT_DIRS_DIR_PATH, "no_subs")
     dir_path = cfg.FINAL_MP4_SRT_DIRS__NO_SUBS__DIR_PATH
 
     if len(sub_diff_ratio_sub_path_l_d.keys()) != 0:
@@ -121,7 +121,7 @@ def _copy_mp4_and_best_sub_if_good_enough_to_dir__sub_diff_ratio_sub_path_l_d__m
         sub_path = sub_path_l[0]
 
         if best_sub_diff_ratio <= MAX_SUB_DIFF_RATIO:
-            dir_path = os.path.join(cfg.FINAL_MP4_SRT_DIRS__W_SUBS__DIR_PATH, Path(in_mp4_path).stem)
+            dir_path = join(cfg.FINAL_MP4_SRT_DIRS__W_SUBS__DIR_PATH, Path(in_mp4_path).stem)
             Path(dir_path).mkdir(parents=True, exist_ok=True)
             # fsu.copy_objects_to_dest(sub_path, dir_path)
 
@@ -130,7 +130,7 @@ def _copy_mp4_and_best_sub_if_good_enough_to_dir__sub_diff_ratio_sub_path_l_d__m
             new_srt_path = join(dir_path, new_srt_file_name)
             fsu.copy_object_to_path(sub_path, new_srt_path)
         # else:
-        #     dir_path = os.path.join(cfg.FINAL_MP4_SRT_DIRS_DIR_PATH, "no_subs")
+        #     dir_path = join(cfg.FINAL_MP4_SRT_DIRS_DIR_PATH, "no_subs")
         #     Path(dir_path).mkdir(parents=True, exist_ok=True)
     
     Path(dir_path).mkdir(parents=True, exist_ok=True)
@@ -154,22 +154,22 @@ def main():
 
     # TODO download yt playlist with youtube_utils.dl_yt_playlist__fix_sub_times_convert_to__mp4_srt()
     # Init std youtube playlist download data
-    yt_pl_dl_dir_path = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "Family_Guy___TBS")
-    # yt_pl_dl_dir_path = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "Family_Guy__TBS__pilot")
-    # yt_pl_dl_dir_path = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "Family_Guy__steel_v_test")
-    # yt_pl_dl_dir_path = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "Family_Guy__iPhane_test")
-    # yt_pl_dl_dir_path = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "Family_Guy___TBS__comic_book_test")
-    # yt_pl_dl_dir_path = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "Family_Guy__TBS__How_joe_became")
-    # yt_pl_dl_dir_path = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "Family_Guy__TBS__star_trek")
-    # yt_pl_dl_dir_path = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "Family_Guy__TBS__alcho_and_pilot")
-    # yt_pl_dl_dir_path = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "Family_Guy__TBS__alcho")
-    # yt_pl_dl_dir_path = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "Family_Guy__TBS__pilot_and_tea_party")
-    # yt_pl_dl_dir_path = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "Family_Guy__TBS__blue_harvest_and_pilot_test")
-    # yt_pl_dl_dir_path = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "Family_Guy__TBS__blue_harvest_and_pilot_and_herbert_test")
-    # yt_pl_dl_dir_path = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "Family_Guy__TBS__pilot_and_herbert_test")
-    # yt_pl_dl_dir_path = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "Family_Guy__TBS__blue_harvest_test")
-    # yt_pl_dl_dir_path = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "Family_Guy___TBS__google_earth_test__and__pilot")
-    # yt_pl_dl_dir_path = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "Family_Guy___TBS__google_earth_test")
+    yt_pl_dl_dir_path = join(cfg.INIT_MKVS_WORKING_DIR_PATH, "Family_Guy___TBS")
+    # yt_pl_dl_dir_path = join(cfg.INIT_MKVS_WORKING_DIR_PATH, "Family_Guy__TBS__pilot")
+    # yt_pl_dl_dir_path = join(cfg.INIT_MKVS_WORKING_DIR_PATH, "Family_Guy__steel_v_test")
+    # yt_pl_dl_dir_path = join(cfg.INIT_MKVS_WORKING_DIR_PATH, "Family_Guy__iPhane_test")
+    # yt_pl_dl_dir_path = join(cfg.INIT_MKVS_WORKING_DIR_PATH, "Family_Guy___TBS__comic_book_test")
+    # yt_pl_dl_dir_path = join(cfg.INIT_MKVS_WORKING_DIR_PATH, "Family_Guy__TBS__How_joe_became")
+    # yt_pl_dl_dir_path = join(cfg.INIT_MKVS_WORKING_DIR_PATH, "Family_Guy__TBS__star_trek")
+    # yt_pl_dl_dir_path = join(cfg.INIT_MKVS_WORKING_DIR_PATH, "Family_Guy__TBS__alcho_and_pilot")
+    # yt_pl_dl_dir_path = join(cfg.INIT_MKVS_WORKING_DIR_PATH, "Family_Guy__TBS__alcho")
+    # yt_pl_dl_dir_path = join(cfg.INIT_MKVS_WORKING_DIR_PATH, "Family_Guy__TBS__pilot_and_tea_party")
+    # yt_pl_dl_dir_path = join(cfg.INIT_MKVS_WORKING_DIR_PATH, "Family_Guy__TBS__blue_harvest_and_pilot_test")
+    # yt_pl_dl_dir_path = join(cfg.INIT_MKVS_WORKING_DIR_PATH, "Family_Guy__TBS__blue_harvest_and_pilot_and_herbert_test")
+    # yt_pl_dl_dir_path = join(cfg.INIT_MKVS_WORKING_DIR_PATH, "Family_Guy__TBS__pilot_and_herbert_test")
+    # yt_pl_dl_dir_path = join(cfg.INIT_MKVS_WORKING_DIR_PATH, "Family_Guy__TBS__blue_harvest_test")
+    # yt_pl_dl_dir_path = join(cfg.INIT_MKVS_WORKING_DIR_PATH, "Family_Guy___TBS__google_earth_test__and__pilot")
+    # yt_pl_dl_dir_path = join(cfg.INIT_MKVS_WORKING_DIR_PATH, "Family_Guy___TBS__google_earth_test")
     yt_pl_dl_dir_data = YT_PL_DL_Data(yt_pl_dl_dir_path, PL_DATA_DIR_PATH)
     print(f"{yt_pl_dl_dir_data.max_fuzz_str_len=}")
  
@@ -230,7 +230,7 @@ def main():
             json_logger.write(run_log_l, cfg.RUN_LOG_JSON_PATH)
             continue
 
-        new_srt_mkv_file_path_no_ext = os.path.join(FINAL_MKVS_DIR_PATH, f"{ep_sub_data.get_season_episode_str()}__{clip_dir_data.clip_name}")
+        new_srt_mkv_file_path_no_ext = join(FINAL_MKVS_DIR_PATH, f"{ep_sub_data.get_season_episode_str()}__{clip_dir_data.clip_name}")
         tmp_srt_path = new_srt_mkv_file_path_no_ext + f"{LANG}.srt"
         new_mkv_path = new_srt_mkv_file_path_no_ext + f".mkv"
 

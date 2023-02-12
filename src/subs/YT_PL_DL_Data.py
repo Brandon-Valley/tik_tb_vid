@@ -1,4 +1,6 @@
 import os
+from os.path import join
+
 from pathlib import Path
 
 if __name__ == "__main__":
@@ -19,9 +21,9 @@ class Clip_Dir_Data:
     def __init__(self, clip_dir_path, pl_data_dir_path):
         self.clip_dir_path = clip_dir_path
         self.clip_name = Path(clip_dir_path).name
-        self.data_dir_path = os.path.join(pl_data_dir_path, self.clip_name)
-        self.trim_re_time_working_dir_path = os.path.join(self.data_dir_path, "trim_re_time_wrk")
-        self.fuzz_str_json_path = os.path.join(self.data_dir_path, "fuzz_str.json")
+        self.data_dir_path = join(pl_data_dir_path, self.clip_name)
+        self.trim_re_time_working_dir_path = join(self.data_dir_path, "trim_re_time_wrk")
+        self.fuzz_str_json_path = join(self.data_dir_path, "fuzz_str.json")
 
         fsu.delete_if_exists(self.data_dir_path)
         Path(self.data_dir_path).mkdir(parents=True, exist_ok=True)
@@ -43,7 +45,7 @@ class Clip_Dir_Data:
 
 
     def get_final_vid_sub_path(self, sub_path, sub_num):
-        return os.path.join(self.data_dir_path, f"f{sub_num}_{Path(sub_path).name}")
+        return join(self.data_dir_path, f"f{sub_num}_{Path(sub_path).name}")
 
     def has_subs(self):
         return not (self.auto_sub_path == None)
@@ -59,7 +61,7 @@ class Clip_Dir_Data:
         if len(clip_dir_dir_path_l) > 0:
             raise Exception(f"ERROR: {len(clip_dir_dir_path_l)} > 0, dir can contain no dirs")
 
-        clip_mp4_path = os.path.join(self.clip_dir_path, self.clip_name + ".mp4")
+        clip_mp4_path = join(self.clip_dir_path, self.clip_name + ".mp4")
 
         # .mp4 with same name required
         if not Path(clip_mp4_path).is_file():

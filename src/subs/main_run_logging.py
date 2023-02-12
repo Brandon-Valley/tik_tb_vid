@@ -28,12 +28,12 @@ MAX_SUB_DIFF_RATIO = 0.4
 MIN_AVG_MOST_CONFIDENT_LINE_DIALOG_FUZZ_RATIO = 60
 SERIES_NAME = "Family Guy"
 
-FINAL_MKVS_DIR_PATH = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "mkvs")
-FINAL_MP4_SRT_DIRS_DIR_PATH = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "o_mp4_srt_dirs")
-SSM_LOG_JSON_PATH = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "SSM_log.json")
-SSM_STATS_JSON_PATH = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "SSM_stats.json")
-FINAL_STATS_JSON_PATH = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "final_stats.json")
-PL_DATA_DIR_PATH = os.path.join(cfg.INIT_MKVS_WORKING_DIR_PATH, "YT_PL_DATA")
+FINAL_MKVS_DIR_PATH = join(cfg.INIT_MKVS_WORKING_DIR_PATH, "mkvs")
+FINAL_MP4_SRT_DIRS_DIR_PATH = join(cfg.INIT_MKVS_WORKING_DIR_PATH, "o_mp4_srt_dirs")
+SSM_LOG_JSON_PATH = join(cfg.INIT_MKVS_WORKING_DIR_PATH, "SSM_log.json")
+SSM_STATS_JSON_PATH = join(cfg.INIT_MKVS_WORKING_DIR_PATH, "SSM_stats.json")
+FINAL_STATS_JSON_PATH = join(cfg.INIT_MKVS_WORKING_DIR_PATH, "final_stats.json")
+PL_DATA_DIR_PATH = join(cfg.INIT_MKVS_WORKING_DIR_PATH, "YT_PL_DATA")
 # SERIES_SUB_EN_DIR_PATH = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en"
 # SERIES_SUB_EN_DIR_PATH = "C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en_s4_16_and_17"
 # SERIES_SUB_EN_DIR_PATH = "C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl_by_season/en"
@@ -41,7 +41,7 @@ SERIES_SUB_EN_DIR_PATH = "C:/p/tik_tb_vid_big_data/ignore/subs/fg/og_bulk_sub_dl
 
 
 def make_no_subs_mkv(clip_dir_data):
-    no_subs_mkv_path = os.path.join(FINAL_MKVS_DIR_PATH, f"S00E00__UNKNOWN__{clip_dir_data.clip_name}.mkv")
+    no_subs_mkv_path = join(FINAL_MKVS_DIR_PATH, f"S00E00__UNKNOWN__{clip_dir_data.clip_name}.mkv")
     veu.convert_vid_to_diff_format__no_subs(clip_dir_data.mp4_path, no_subs_mkv_path)
 
 def get_clip_process_time(clip_process_start_time):
