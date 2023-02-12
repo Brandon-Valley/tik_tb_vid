@@ -56,7 +56,6 @@ class Episode_Sub_Data:
         self._set_series_name_match_l()
 
         if load_method_str == "many_of_one_lang":
-            # self.sub_file_path_l = fsu.get_dir_content_l(self.episode_subs_dir_path, "file")
             self.sub_file_path_l = self._get_sorted_sub_file_path_l()
 
             if self.sub_file_path_l != None:
@@ -85,13 +84,14 @@ class Episode_Sub_Data:
         print(f"{self.get_season_episode_str()} - Got total_fuzz_str, writing to json: {self.total_fuzz_str_json_path}...")
         json_logger.write(total_fuzz_str, self.total_fuzz_str_json_path)
 
+
     def _get_and_init_ssm_data_ep_dir_path(self):
         dir_path = join(SSM_DATA_DIR_PATH, f"S{str(self.season_num).zfill(2)}/{self.get_season_episode_str()}")
         fsu.delete_if_exists(dir_path)
         Path(dir_path).mkdir(parents=True, exist_ok=True)
         return dir_path
 
-    # LATER Can mem hold total fuzz str an partial at same time?
+
     def _create_and_write__partial_fuzz_str_l__to_json(self, min_total_fuzz_str_len, max_clip_fuzz_str_len):
         total_fuzz_str = json_logger.read(self.total_fuzz_str_json_path)
         partial_fuzz_str_l = fuzz_common.get_partial_fuzz_str_l_from_total_fuzz_str(total_fuzz_str, min_total_fuzz_str_len,
@@ -100,13 +100,9 @@ class Episode_Sub_Data:
         json_logger.write(partial_fuzz_str_l, self.partial_fuzz_str_l_json_path)
 
 
-
-    # LATER save indices if takes too much mem
     def _set_partial_fuzz_str_l(self, main_sub_fuzz_str, min_partial_fuzz_str_len):
-        # self.partial_fuzz_str_l = fuzz_common.get_default_partial_fuzz_str_l_from_total_fuzz_str(self.main_sub_fuzz_str, min_partial_fuzz_str_len)
-        # self.partial_fuzz_str_l = fuzz_common.get_default_partial_fuzz_str_l_from_total_fuzz_str(self.main_sub_fuzz_str, min_partial_fuzz_str_len)
 
-        #TMP paging file (mem) too small to hold all these big strings, so just save indices to cut
+        # paging file (mem) too small to hold all these big strings, so just save indices to cut
         self.partial_fuzz_str_l = fuzz_common.get_partial_fuzz_str_cut_tup_l_from_total_fuzz_str(self.main_sub_fuzz_str, min_partial_fuzz_str_len)
         print(f"{self.partial_fuzz_str_l=}")
         pass
@@ -188,10 +184,10 @@ class Episode_Sub_Data:
         print(f"Cleaning - Removing advertising from all remaining sub files for {self.get_season_episode_str()}...")
         su.remove_advertising_from_sub_file_path_l(remaining_sub_file_path_l)
 
+        # TODO put in own func
         # Remove lower-in-order subs that would be duplicates if filtered all subs, but leave all final remaining subs un-filtered
         filtered_sub_path_og_sub_path_d = {} # TODO change to d
         filtered_sub_path_l = []
-        # tmp_ep_filtered_subs_dir_path = join(tmp_filtered_subs_dir_path, self.get_season_episode_str())
         tmp_filtered_subs_dir_path = join(self.ssm_data_ep_dir_path, "tmp_filtered_subs_for_clean")
         Path(tmp_filtered_subs_dir_path).mkdir(parents=True, exist_ok=True)
         for sub_path in remaining_sub_file_path_l:
@@ -223,9 +219,6 @@ class Episode_Sub_Data:
         if len(fsu.get_dir_content_l(self.episode_subs_dir_path, "all")) == 0:
             print(f"Cleaning - Deleting episode_subs_dir_path b/c empty after deleting bad subs: {self.episode_subs_dir_path}...")
             fsu.delete_if_exists(self.episode_subs_dir_path)
-
-        # # TODO REMOVE, vv just temp for  fist big en clean test to see if ^^ breaks anything
-        # su.sub_file_readable_srt(sub_file_path)
 
 
     def _get_sorted_sub_file_path_l(self):
@@ -285,55 +278,6 @@ class Episode_Sub_Data:
         return sorted_sub_file_path_l
 
 
-    # def _get_main_sub_file_path(self):
-    #     print(f"{self.get_season_episode_str()} - Getting main_sub_file_path...")
-
-    #     def _file_name_contains_series_name(file_path):
-    #         for series_name_match_str in self.series_name_match_str_set:
-    #             if Path(file_path).name.__contains__(series_name_match_str):
-    #                 return True
-    #         return False
-
-    #     def _file_name_contains_any_bad_str(file_path):
-    #         for bad_str in BAD_SUB_FILENAME_STR_L:
-    #             if str(file_path).lower().__contains__(bad_str.lower()):
-    #                 return True
-    #         return False
-
-    #     # Default to picking sub with largest file size
-    #     #  - # lines might be better but file size is WAY faster
-    #     # sub_file_path_l_most_lines_first = sorted(self.sub_file_path_l,key=os.path.getsize, reverse=True)
-    #     sub_file_path_l_most_lines_first = sorted(self.sub_file_path_l,key=os.path.getsize, reverse=False) # FIXME seems like keeping this, now picks smallest file, change doc !!!!!!!!!!!!!!!!
-        
-    #     # Pick largest file that has the series name and no bad strings in its filename
-    #     # - Don't want to be fooled by subs for wrong show getting mixed-in
-    #     # - Also dont want hearing impaired or directors comment
-    #     for sub_file_path in sub_file_path_l_most_lines_first:
-    #         if _file_name_contains_series_name(sub_file_path) and not _file_name_contains_any_bad_str(sub_file_path):
-    #             return sub_file_path
-
-    #     # If none of above exist, pick the largest sub_file with the series name in its filename
-    #     # - Don't want to be fooled by subs for wrong show getting mixed-in
-    #     # - Choose having series name over not having any bad strings b/c while bad strings are bad,
-    #     #   they are very uncommon and might produce a match but anything without series name in 
-    #     #   file name might be a sub for wrong series that got mixed-in.
-    #     for sub_file_path in sub_file_path_l_most_lines_first:
-    #         if _file_name_contains_series_name(sub_file_path):
-    #             return sub_file_path
-
-    #     # If none of above exist, pick the largest sub_file without any bad strings in filename
-    #     for sub_file_path in sub_file_path_l_most_lines_first:
-    #         if not _file_name_contains_any_bad_str(sub_file_path):
-    #             return sub_file_path
-
-    #     # If none of above exist, just just pick largest file (if any exist)
-    #     if len(sub_file_path_l_most_lines_first) > 0:
-    #         return sub_file_path_l_most_lines_first[0]
-
-    #     # if self.sub_file_path_l is empty, return None
-    #     return None
-
-
     def _set_series_name_match_l(self):
         self.series_name_match_str_set = set()
         self.series_name_match_str_set.add(self.series_name_lower)
@@ -342,14 +286,6 @@ class Episode_Sub_Data:
             for char_2 in SERIES_NAME_SEP_CHAR_L:
                 if char_1 != char_2:
                     self.series_name_match_str_set.add(self.series_name_lower.replace(char_1, char_2))
-
-
-    # def _load_dir__many_of_one_lang(self):
-        
-    #     self.sub_file_path_l = fsu.get_dir_content_l(self.episode_subs_dir_path, "file")
-    #     # extra_metadata_d = []
-    #     self.main_sub_file_path = self._get_main_sub_file_path()
-    #     # print(f"Picked main sub file for episode {self.get_season_episode_str()}: {self.main_sub_file_path=}")
 
 
     def get_num_sub_files(self):
@@ -400,10 +336,6 @@ class Series_Sub_map():
                 "min_fuzz_str_len": self.get_min_fuzz_str_len_for_lang(lang),
                 "min_fuzz_str_len_ep_sub_data": str(self.get_min_fuzz_str_len_ep_sub_data_lang(lang)),
             }
-            # for ep_sub_data in ep_sub_data_l:
-            #     out_json_d[lang].append(ep_sub_data.get_as_json_d())
-        # print(f"{out_json_d=}")
-        # print(f"{out_json_path=}")
         json_logger.write(out_json_d, out_json_path)
 
 
@@ -414,34 +346,11 @@ class Series_Sub_map():
                 - Make new SSM after this
         """
         def _clean_lang_ep_sub_data_l(lang):
-            # print(f"  Cleaning Lang: {lang}...")
-            # # start the thread pool
-            # with ThreadPoolExecutor(cfg.NUM_CORES) as executor:
-            #     futures = []
-            #     for ep_sub_data in self.ep_sub_data_ld[lang]:
-
-            #         if ENABLE_THREADING:
-            #             # submit tasks and collect futures
-            #             futures = [executor.submit(ep_sub_data.clean_episode_subs_after_fresh_download)]
-            #         else:
-            #             ep_sub_data.clean_episode_subs_after_fresh_download()
-
-            #     if ENABLE_THREADING:
-            #         print('Waiting for tasks to complete...')
-            #         wait(futures)
-            #         print('All tasks are done, checking for any raised exceptions...')
-            #         for fut in futures:
-            #             _ = fut.result()
-            #         print("Confirmed no exceptions were raised by any thread.")
             print(f"  Cleaning Lang: {lang}...")
-            # start the thread pool
 
             with Simple_Thread_Manager(ENABLE_THREADING, cfg.NUM_CORES) as stm:
                 for ep_sub_data in self.ep_sub_data_ld[lang]:
                     stm.thread_func_if_enabled(ep_sub_data.clean_episode_subs_after_fresh_download)
-
-
-
 
         if lang == "ALL_LANGS":
             print("Cleaning all Langs...")
