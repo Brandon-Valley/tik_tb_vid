@@ -3,11 +3,6 @@ import os
 from os.path import join
 from tempfile import mkdtemp
 
-from time import sleep
-from random import random
-from concurrent.futures import ThreadPoolExecutor
-from concurrent.futures import wait
-
 # from sms.logger import txt
 from pathlib import Path
 import pysubs2
