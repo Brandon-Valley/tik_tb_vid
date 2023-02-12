@@ -116,32 +116,54 @@ def _trim_first_sub_text_if_needed(in_sub_path, in_vid_path, out_sub_path):
     cleaned_transcript_str = fc.get_cleaned_line_text_str__from__sub_line_text_str(transcript_str)
     transcript_fuzz_str = fc.get_subs_fuzz_str__from__all_sub_lines_cleaned_text_str(cleaned_transcript_str)
 
-    new_sub_line_text_l = []
-
     fist_sub_line_text_str = subs[0].text
-    for newline_char in ["\\n", "\\N", "\\r"]:
-        fist_sub_line_text_str = fist_sub_line_text_str.replace(newline_char, " \\n")
+    fist_sub_line_text_str = fist_sub_line_text_str.replace('\r\n', '\n').replace('\r', ' \n')
+    fist_sub_line_text_str = fist_sub_line_text_str.replace('\\N', '\n')
+    print(f"{fist_sub_line_text_str=}")
 
     s_space_first_sub_line_text_l = fist_sub_line_text_str.split(" ")
+
+    s_space_and_newline_first_sub_line_text_l = []
+    for s_str in s_space_first_sub_line_text_l:
+        s_space_and_newline_first_sub_line_text_l.append(s_str)
+
+    init_new_sub_line_text_l = []
+
+    # s_space_first_sub_line_text_l = re.split(' |.\n', fist_sub_line_text_str)
     for i in range(len(s_space_first_sub_line_text_l)):
         new_line_text = " ".join(s_space_first_sub_line_text_l[i:])
 
         # remove leading newlines
-        new_line_text = new_line_text.lstrip(" \\n")
+        new_line_text = new_line_text.lstrip(" \n")
 
         print(f"{new_line_text=}")
-        new_sub_line_text_l.append(new_line_text)
+        init_new_sub_line_text_l.append(new_line_text)
 
         if "worried" in new_line_text:
             print("here")
 
-    print(f"{new_sub_line_text_l=}")
+
+
+    final_new_sub_line_text_l = []
+
+    for init_str in init_new_sub_line_text_l:
+        final_new_sub_line_text_l.append(init_str)
+
+        newline_split_str_l = init_str.split(" ")
+        if len(newline_split_str_l) > 1 and "\n" in newline_split_str_l[0]: # HACK assumes will never have multiple newlines between 2 spaces
+            final_new_sub_line_text_l.append(init_str.split("\n")[1])
+
+    print("final_new_sub_line_text_l:")
+    pprint(final_new_sub_line_text_l)
+
+
+    # print(f"{final_new_sub_line_text_l=}")
 
     fuzz_ratio_new_sub_line_text_l_d = {}
 
     # fill line_text_l_fuzz_ratio_d
     new_sub_line_text_fuzz_str_l = []
-    for new_sub_line_text in new_sub_line_text_l:
+    for new_sub_line_text in final_new_sub_line_text_l:
 
         if "worried" in new_sub_line_text:
             print("here")
@@ -171,13 +193,9 @@ def _trim_first_sub_text_if_needed(in_sub_path, in_vid_path, out_sub_path):
     best_fuzz_ratio = max(fuzz_ratio_new_sub_line_text_l_d.keys())
     raw_best_new_sub_line_text_str = fuzz_ratio_new_sub_line_text_l_d[best_fuzz_ratio][0]
 
-    # if "worried" in raw_best_new_sub_line_text_str:
-    #     print("here")
-
-    # TODO
-
-    # capped_best_new_sub_line_text_str = raw_best_new_sub_line_text_str.capitalize()
     capped_best_new_sub_line_text_str = _cap_only_1st_letter_of_str(raw_best_new_sub_line_text_str)
+    # capped_best_new_sub_line_text_str = capped_best_new_sub_line_text_str.replace(" \\n", "\\n")
+    capped_best_new_sub_line_text_str = capped_best_new_sub_line_text_str.replace(" \n", "\n")
 
     # If go through whole process and turns out best fuzz came from OG, say so and do nothing if in_sub_path == in_sub_path
     if subs[0].text == capped_best_new_sub_line_text_str:
@@ -187,6 +205,10 @@ def _trim_first_sub_text_if_needed(in_sub_path, in_vid_path, out_sub_path):
             return
 
     print(f"Trimming first sub line, \n    OG:  {subs[0].text}\n    New: {capped_best_new_sub_line_text_str}\n    Writing too: {out_sub_path}...")
+
+    if "construct" in capped_best_new_sub_line_text_str:
+        print("here")
+
     subs[0].text = capped_best_new_sub_line_text_str
     # subs.save(out_sub_path) # TODO PUT BACK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     _log_run("SUCCESS", fuzz_ratio_new_sub_line_text_l_d)
@@ -205,7 +227,7 @@ def _log_total(start_time, worth_checking_mvsd_l, not_worth_checking_mvsd_l):
         run_outcome_str_occ_d = {}
 
         for run_od in run_od_l:
-            print(f"{run_od=}")
+            # print(f"{run_od=}")
             outcome_str = run_od["outcome_str"]
             if outcome_str in run_outcome_str_occ_d.keys():
                 run_outcome_str_occ_d[outcome_str] += 1
