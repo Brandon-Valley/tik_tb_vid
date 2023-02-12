@@ -3,7 +3,6 @@ import os
 from os.path import join
 from tempfile import mkdtemp
 
-# from sms.logger import txt
 from pathlib import Path
 import pysubs2
 
