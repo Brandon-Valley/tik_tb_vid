@@ -23,12 +23,13 @@ import cfg
 from sms.file_system_utils import file_system_utils as fsu
 from sms.audio_edit_utils import audio_edit_utils as aeu
 from sms.logger import txt_logger
-from sms.thread_tools import Simple_Thread_Manager
+from sms.thread_tools.Simple_Thread_Manager import Simple_Thread_Manager
 import vid_edit_utils as veu
 import subtitle_utils as su
 import fuzz_common as fc
 
-THREADING_ENABLED = True
+THREADING_ENABLED = False
+
 MAX_NUM_MS__FIRST_SUB_END__WORTH_CHECKING = 5000
 
 
@@ -52,7 +53,7 @@ def _get_worth_and_not_worth_checking__matched_vid_sub_dir_lists(matched_vid_sub
     return worth_checking_mvsd_l, not_worth_checking_mvsd_l
 
 
-def trim_first_sub_text_if_needed(in_sub_path, in_vid_path, out_sub_path):
+def _trim_first_sub_text_if_needed(in_sub_path, in_vid_path, out_sub_path):
     subs = pysubs2.load(in_sub_path, encoding="latin1")
 
     # TODO How to tell if this needs to be done?
@@ -68,6 +69,12 @@ def trim_first_sub_text_if_needed(in_sub_path, in_vid_path, out_sub_path):
     print(f"{transcript_str=}")
     print(f"{transcript_str_confidence=}")
     # LATER do something with transcript_str_confidence?
+
+    # if could not find any dialog from 0 to first sub end, just return
+    if transcript_str == False:
+        print(f"    No dialog was found from start of vid to {first_sub_line_end_time_sec}, returning...")
+        # LATER log?
+        return
 
     cleaned_transcript_str = fc.get_cleaned_line_text_str__from__sub_line_text_str(transcript_str)
     transcript_fuzz_str = fc.get_subs_fuzz_str__from__all_sub_lines_cleaned_text_str(cleaned_transcript_str)
@@ -128,20 +135,21 @@ def trim_first_sub_text_if_needed(in_sub_path, in_vid_path, out_sub_path):
             return
 
     subs[0].text = capped_best_new_sub_line_text_str
-    subs.save(out_sub_path)
+    print(f"Trimming first sub line, writing too: {out_sub_path}...")
+    # subs.save(out_sub_path) # TODO PUT BACK
 
 
 
 def trim_first_sub_text_if_needed__for_matched_vid_sub_dir_l(matched_vid_sub_dir_l):
     print("Trimming 1st sub text if needed for matched_vid_sub_dir_l...")
     worth_checking_mvsd_l, not_worth_checking_mvsd_l = _get_worth_and_not_worth_checking__matched_vid_sub_dir_lists(matched_vid_sub_dir_l)
-    print(f"{len(worth_checking_mvsd_l)=}")
-    print(f"{len(not_worth_checking_mvsd_l)=}")
+    # print(f"{len(worth_checking_mvsd_l)=}")
+    # print(f"{len(not_worth_checking_mvsd_l)=}")
 
-    # with Simple_Thread_Manager(THREADING_ENABLED, cfg.NUM_CORES) as stm:
-    #     for mvsd in matched_vid_sub_dir_l:
-    #         stm.thread_func_if_enabled(trim_first_sub_text_if_needed, str1, str2)
-
+    with Simple_Thread_Manager(THREADING_ENABLED, cfg.NUM_CORES) as stm:
+        for mvsd in worth_checking_mvsd_l:
+            # fix in-place
+            stm.thread_func_if_enabled(_trim_first_sub_text_if_needed, mvsd.sub_path, mvsd.vid_path, mvsd.sub_path)
 
 
 if __name__ == '__main__':
