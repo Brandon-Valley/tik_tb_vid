@@ -14,6 +14,8 @@ FINAL_MP4_SRT_DIRS_DIR_PATH = join(INIT_MKVS_WORKING_DIR_PATH, "o_mp4_srt_dirs")
 FINAL_MP4_SRT_DIRS__W_SUBS__DIR_PATH  = join(FINAL_MP4_SRT_DIRS_DIR_PATH, "w_subs")
 FINAL_MP4_SRT_DIRS__NO_SUBS__DIR_PATH = join(FINAL_MP4_SRT_DIRS_DIR_PATH, "no_subs")
 
+PROCESS_MATCHED_VID_SUB_DIRS_LOGS_DIR_PATH = join(INIT_MKVS_WORKING_DIR_PATH, "process_matched_vid_sub_dirs_logs")
+
 NUM_CORES = 4 # personal laptop
 # NUM_CORES = 1 # personal laptop
 

@@ -1,3 +1,4 @@
+import collections
 from concurrent.futures import ThreadPoolExecutor
 from concurrent.futures import wait
 
@@ -9,6 +10,7 @@ from pysubs2.common import IntOrFloat
 
 import time
 import os
+from os.path import join
 import pysubs2
 from pathlib import Path
 from fuzzywuzzy import fuzz
@@ -23,6 +25,7 @@ import cfg
 from sms.file_system_utils import file_system_utils as fsu
 from sms.audio_edit_utils import audio_edit_utils as aeu
 from sms.logger import txt_logger
+from sms.logger import json_logger
 from sms.thread_tools.Simple_Thread_Manager import Simple_Thread_Manager
 import vid_edit_utils as veu
 import subtitle_utils as su
@@ -32,6 +35,8 @@ THREADING_ENABLED = False
 
 MAX_NUM_MS__FIRST_SUB_END__WORTH_CHECKING = 5000
 
+RUNS_LOG_JSON_PATH = join(cfg.PROCESS_MATCHED_VID_SUB_DIRS_LOGS_DIR_PATH, "trim_first_sub_text_runs_log.json")
+INDIV_RUN_LOGS_DIR_PATH = join(cfg.PROCESS_MATCHED_VID_SUB_DIRS_LOGS_DIR_PATH, "trim_first_sub_text_indiv_runs")
 
 
 def _get_worth_and_not_worth_checking__matched_vid_sub_dir_lists(matched_vid_sub_dir_l):
@@ -54,6 +59,25 @@ def _get_worth_and_not_worth_checking__matched_vid_sub_dir_lists(matched_vid_sub
 
 
 def _trim_first_sub_text_if_needed(in_sub_path, in_vid_path, out_sub_path):
+    start_time = time.time()
+
+    def _log_run(outcome_str, fuzz_ratio_new_sub_line_text_l_d = None):
+        out_sub_path_log_str = out_sub_path # cant re-assign out_sub_path or else it becomes a local var and won't be able to access from higher scope
+        if in_sub_path == out_sub_path:
+            out_sub_path_log_str = "^^"
+
+        run_od = collections.OrderedDict()
+        run_od["outcome_str"]  = outcome_str
+        run_od["in_sub_path"]  = in_sub_path
+        run_od["out_sub_path"] = out_sub_path_log_str
+        run_od["threaded_run_time"] = time.time() - start_time
+        run_od["fuzz_ratio_new_sub_line_text_l_d"] = fuzz_ratio_new_sub_line_text_l_d
+
+        out_json_path = join(INDIV_RUN_LOGS_DIR_PATH, f"run_od_{Path(in_sub_path).stem}.json")
+        json_logger.write(run_od, out_json_path)
+
+
+
     subs = pysubs2.load(in_sub_path, encoding="latin1")
 
     # TODO How to tell if this needs to be done?
@@ -70,10 +94,11 @@ def _trim_first_sub_text_if_needed(in_sub_path, in_vid_path, out_sub_path):
     print(f"{transcript_str_confidence=}")
     # LATER do something with transcript_str_confidence?
 
-    # if could not find any dialog from 0 to first sub end, just return
+    # if could not recognize any speech from 0 to first sub end, just return
     if transcript_str == False:
-        print(f"    No dialog was found from start of vid to {first_sub_line_end_time_sec}, returning...")
+        print(f"    No speech recognized from start of vid to {first_sub_line_end_time_sec}, returning...")
         # LATER log?
+        _log_run("NO_SPEECH_RECOGNIZED_FROM_START_OF_VID_TO_END_OF_FIRST_SUB")
         return
 
     cleaned_transcript_str = fc.get_cleaned_line_text_str__from__sub_line_text_str(transcript_str)
@@ -132,16 +157,18 @@ def _trim_first_sub_text_if_needed(in_sub_path, in_vid_path, out_sub_path):
     if subs[0].text == capped_best_new_sub_line_text_str:
         print(f"OG first sub text was already best match")
         if in_sub_path == in_sub_path:
+            _log_run("OG_WAS_BEST_MATCH", fuzz_ratio_new_sub_line_text_l_d)
             return
 
     subs[0].text = capped_best_new_sub_line_text_str
     print(f"Trimming first sub line, writing too: {out_sub_path}...")
     # subs.save(out_sub_path) # TODO PUT BACK
-
+    _log_run("SUCCESS", fuzz_ratio_new_sub_line_text_l_d)
 
 
 def trim_first_sub_text_if_needed__for_matched_vid_sub_dir_l(matched_vid_sub_dir_l):
     print("Trimming 1st sub text if needed for matched_vid_sub_dir_l...")
+    start_time = time.time()
     worth_checking_mvsd_l, not_worth_checking_mvsd_l = _get_worth_and_not_worth_checking__matched_vid_sub_dir_lists(matched_vid_sub_dir_l)
     # print(f"{len(worth_checking_mvsd_l)=}")
     # print(f"{len(not_worth_checking_mvsd_l)=}")

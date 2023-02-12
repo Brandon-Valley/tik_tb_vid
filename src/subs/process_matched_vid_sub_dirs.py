@@ -41,6 +41,9 @@ def _get_matched_vid_sub_dir_l():
 
 
 def process_matched_vid_sub_dirs():
+    fsu.delete_if_exists(cfg.PROCESS_MATCHED_VID_SUB_DIRS_LOGS_DIR_PATH)
+    Path(cfg.PROCESS_MATCHED_VID_SUB_DIRS_LOGS_DIR_PATH).parent.mkdir(parents=True, exist_ok=True)
+
     matched_vid_sub_dir_l = _get_matched_vid_sub_dir_l()
     print(f"{len(matched_vid_sub_dir_l)=}")
 
