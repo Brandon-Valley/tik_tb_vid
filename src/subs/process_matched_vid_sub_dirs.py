@@ -28,6 +28,7 @@ import cfg
 import sub_diff_ratio_tools
 import real_sub_dialog_match_tools
 from Matched_Vid_Sub_Dir import Matched_Vid_Sub_Dir
+from trim_first_sub_text import trim_first_sub_text_if_needed__for_matched_vid_sub_dir_l
 
 
 def _get_matched_vid_sub_dir_l():
@@ -40,8 +41,10 @@ def _get_matched_vid_sub_dir_l():
 
 
 def process_matched_vid_sub_dirs():
-    get_matched_vid_sub_dir_l = _get_matched_vid_sub_dir_l()
-    print(f"{len(get_matched_vid_sub_dir_l)=}")
+    matched_vid_sub_dir_l = _get_matched_vid_sub_dir_l()
+    print(f"{len(matched_vid_sub_dir_l)=}")
+
+    trim_first_sub_text_if_needed__for_matched_vid_sub_dir_l(matched_vid_sub_dir_l)
 
 
 
