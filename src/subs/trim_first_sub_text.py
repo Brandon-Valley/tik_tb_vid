@@ -31,7 +31,7 @@ import vid_edit_utils as veu
 import subtitle_utils as su
 import fuzz_common as fc
 
-THREADING_ENABLED = False
+THREADING_ENABLED = True
 
 MAX_NUM_MS__FIRST_SUB_END__WORTH_CHECKING = 5000
 
@@ -88,12 +88,19 @@ def _trim_first_sub_text_if_needed(in_sub_path, in_vid_path, out_sub_path):
         out_json_path = join(INDIV_RUN_LOGS_DIR_PATH, f"run_od_{Path(in_sub_path).stem}.json")
         json_logger.write(run_od, out_json_path)
 
+    def _get_normed_newlines_str(in_str):
+        in_str = in_str.replace('\r\n', '\n').replace('\r', ' \n')
+        in_str = in_str.replace('\\N', '\n')
+        return in_str
 
     def _get_new_sub_line_text_l():
 
-        fist_sub_line_text_str = subs[0].text
-        fist_sub_line_text_str = fist_sub_line_text_str.replace('\r\n', '\n').replace('\r', ' \n')
-        fist_sub_line_text_str = fist_sub_line_text_str.replace('\\N', '\n')
+        # fist_sub_line_text_str = subs[0].text
+        # fist_sub_line_text_str = fist_sub_line_text_str.replace('\r\n', '\n').replace('\r', ' \n')
+        # fist_sub_line_text_str = fist_sub_line_text_str.replace('\\N', '\n')
+        fist_sub_line_text_str = _get_normed_newlines_str(subs[0].text)
+
+        # fist_sub_line_text_str = fist_sub_line_text_str.replace('\\\\N', '\n')
         print(f"{fist_sub_line_text_str=}")
 
         s_space_first_sub_line_text_l = fist_sub_line_text_str.split(" ")
@@ -199,7 +206,9 @@ def _trim_first_sub_text_if_needed(in_sub_path, in_vid_path, out_sub_path):
     capped_best_new_sub_line_text_str = capped_best_new_sub_line_text_str.replace(" \n", "\n")
 
     # If go through whole process and turns out best fuzz came from OG, say so and do nothing if in_sub_path == in_sub_path
-    if subs[0].text == capped_best_new_sub_line_text_str:
+    # if subs[0].text == capped_best_new_sub_line_text_str:
+    normed_newlines_og_first_sub_text_str = _get_normed_newlines_str(subs[0].text)
+    if normed_newlines_og_first_sub_text_str == capped_best_new_sub_line_text_str:
         print(f"OG first sub text was already best match")
         if in_sub_path == in_sub_path:
             _log_run("OG_WAS_BEST_MATCH", fuzz_ratio_new_sub_line_text_l_d)
@@ -215,11 +224,10 @@ def _trim_first_sub_text_if_needed(in_sub_path, in_vid_path, out_sub_path):
             if len(new_sub_line_text) > len(longest_raw_new_sub_line_text_str):
                 longest_raw_new_sub_line_text_str = new_sub_line_text
 
-    # longest_raw_new_sub_line_text_str = sorted(list(fuzz_ratio_new_sub_line_text_l_d.values()), reverse=True)[0]
     print(f"{longest_raw_new_sub_line_text_str=}")
 
     if longest_raw_new_sub_line_text_str == raw_best_new_sub_line_text_str:
-        raise ValueError(f"{raw_best_new_sub_line_text_str=} is the longest value in fuzz_ratio_new_sub_line_text_l_d, but did not return above with 'OG_WAS_BEST_MATCH', that means something is wrong with your match.")
+        raise ValueError(f"{raw_best_new_sub_line_text_str=} is the longest value in fuzz_ratio_new_sub_line_text_l_d, but did not return above with 'OG_WAS_BEST_MATCH', that means something is wrong with your match, why does {subs[0].text=} != {capped_best_new_sub_line_text_str=}")
 
     print(f"Trimming first sub line, \n    OG:  {subs[0].text}\n    New: {capped_best_new_sub_line_text_str}\n    Writing too: {out_sub_path}...")
 
