@@ -35,6 +35,12 @@ THREADING_ENABLED = True
 
 MAX_NUM_MS__FIRST_SUB_END__WORTH_CHECKING = 5000
 
+# Most real matches are 100%
+# Has to be high, otherwise will miss things like:
+#   - "Carter, as your boss, I command you\nto have a viewing party"
+#   - "Huh?\nDid I tell ya, Lois?"
+MIN_FUZZ_RATION_TO_CHANGE_FIRST_SUB = 95
+
 LOG_JSON_PATH = join(cfg.PROCESS_MATCHED_VID_SUB_DIRS_LOGS_DIR_PATH, "trim_first_sub_text_log.json")
 INDIV_RUN_LOGS_DIR_PATH = join(cfg.PROCESS_MATCHED_VID_SUB_DIRS_LOGS_DIR_PATH, "trim_first_sub_text_indiv_runs")
 
@@ -199,14 +205,11 @@ def _trim_first_sub_text_if_needed(in_sub_path, in_vid_path, out_sub_path):
     best_fuzz_ratio = max(fuzz_ratio_new_sub_line_text_l_d.keys())
     raw_best_new_sub_line_text_str = fuzz_ratio_new_sub_line_text_l_d[best_fuzz_ratio][0]
 
-    # TODO throw some warning or exception if chosen is longest/first
-
     capped_best_new_sub_line_text_str = _cap_only_1st_letter_of_str(raw_best_new_sub_line_text_str)
     # capped_best_new_sub_line_text_str = capped_best_new_sub_line_text_str.replace(" \\n", "\\n")
     capped_best_new_sub_line_text_str = capped_best_new_sub_line_text_str.replace(" \n", "\n")
 
     # If go through whole process and turns out best fuzz came from OG, say so and do nothing if in_sub_path == in_sub_path
-    # if subs[0].text == capped_best_new_sub_line_text_str:
     normed_newlines_og_first_sub_text_str = _get_normed_newlines_str(subs[0].text)
     if normed_newlines_og_first_sub_text_str == capped_best_new_sub_line_text_str:
         print(f"OG first sub text was already best match")
@@ -214,20 +217,22 @@ def _trim_first_sub_text_if_needed(in_sub_path, in_vid_path, out_sub_path):
             _log_run("OG_WAS_BEST_MATCH", fuzz_ratio_new_sub_line_text_l_d)
             return
 
-    # Throw exception if match is longest value in fuzz_ratio_new_sub_line_text_l_d, b/c that means it
-    # should have been caught above and something about your matching is wrong
-
+    # - Throw exception if match is longest value in fuzz_ratio_new_sub_line_text_l_d, b/c that means it
+    #   should have been caught above and something about your matching is wrong
     # Find longest_raw_new_sub_line_text_str
     longest_raw_new_sub_line_text_str = ""
     for _, new_sub_line_text_l in fuzz_ratio_new_sub_line_text_l_d.items():
         for new_sub_line_text in new_sub_line_text_l:
             if len(new_sub_line_text) > len(longest_raw_new_sub_line_text_str):
                 longest_raw_new_sub_line_text_str = new_sub_line_text
-
-    print(f"{longest_raw_new_sub_line_text_str=}")
-
     if longest_raw_new_sub_line_text_str == raw_best_new_sub_line_text_str:
         raise ValueError(f"{raw_best_new_sub_line_text_str=} is the longest value in fuzz_ratio_new_sub_line_text_l_d, but did not return above with 'OG_WAS_BEST_MATCH', that means something is wrong with your match, why does {subs[0].text=} != {capped_best_new_sub_line_text_str=}")
+
+    # Need to meet or exceed MIN_FUZZ_RATION_TO_CHANGE_FIRST_SUB
+    if best_fuzz_ratio < MIN_FUZZ_RATION_TO_CHANGE_FIRST_SUB:
+        print(f"{best_fuzz_ratio=} < {MIN_FUZZ_RATION_TO_CHANGE_FIRST_SUB=}, so not changing first sub text to {capped_best_new_sub_line_text_str=}, returning...")
+        _log_run("BEST_FUZZ_RATIO_TOO_LOW", fuzz_ratio_new_sub_line_text_l_d)
+        return
 
     print(f"Trimming first sub line, \n    OG:  {subs[0].text}\n    New: {capped_best_new_sub_line_text_str}\n    Writing too: {out_sub_path}...")
 
