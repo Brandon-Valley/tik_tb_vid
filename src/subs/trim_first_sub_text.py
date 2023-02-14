@@ -192,6 +192,8 @@ def _trim_first_sub_text_if_needed(in_sub_path, in_vid_path, out_sub_path):
     best_fuzz_ratio = max(fuzz_ratio_new_sub_line_text_l_d.keys())
     raw_best_new_sub_line_text_str = fuzz_ratio_new_sub_line_text_l_d[best_fuzz_ratio][0]
 
+    # TODO throw some warning or exception if chosen is longest/first
+
     capped_best_new_sub_line_text_str = _cap_only_1st_letter_of_str(raw_best_new_sub_line_text_str)
     # capped_best_new_sub_line_text_str = capped_best_new_sub_line_text_str.replace(" \\n", "\\n")
     capped_best_new_sub_line_text_str = capped_best_new_sub_line_text_str.replace(" \n", "\n")
