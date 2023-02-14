@@ -134,11 +134,6 @@ def _trim_first_sub_text_if_needed(in_sub_path, in_vid_path, out_sub_path):
 
     subs = pysubs2.load(in_sub_path, encoding="latin1")
 
-    # TODO How to tell if this needs to be done?
-    # TODO How long does this take? just do this to every clip?
-    # if subs[0].start != 0:
-    #     return in_sub_path
-
     # get fuzz str of transcript_str of spoken dialog in vid between start and end time of first sub
     first_sub_line_start_time_sec = subs[0].start / 1000
     first_sub_line_end_time_sec   = subs[0].end   / 1000
@@ -154,47 +149,6 @@ def _trim_first_sub_text_if_needed(in_sub_path, in_vid_path, out_sub_path):
         # LATER log?
         _log_run("NO_SPEECH_RECOGNIZED_FROM_START_OF_VID_TO_END_OF_FIRST_SUB")
         return
-
-    # cleaned_transcript_str = fc.get_cleaned_line_text_str__from__sub_line_text_str(transcript_str)
-    # transcript_fuzz_str = fc.get_subs_fuzz_str__from__all_sub_lines_cleaned_text_str(cleaned_transcript_str)
-
-    # fist_sub_line_text_str = subs[0].text
-    # fist_sub_line_text_str = fist_sub_line_text_str.replace('\r\n', '\n').replace('\r', ' \n')
-    # fist_sub_line_text_str = fist_sub_line_text_str.replace('\\N', '\n')
-    # print(f"{fist_sub_line_text_str=}")
-
-    # s_space_first_sub_line_text_l = fist_sub_line_text_str.split(" ")
-
-    # s_space_and_newline_first_sub_line_text_l = []
-    # for s_str in s_space_first_sub_line_text_l:
-    #     s_space_and_newline_first_sub_line_text_l.append(s_str)
-
-    # init_new_sub_line_text_l = []
-
-    # # s_space_first_sub_line_text_l = re.split(' |.\n', fist_sub_line_text_str)
-    # for i in range(len(s_space_first_sub_line_text_l)):
-    #     new_line_text = " ".join(s_space_first_sub_line_text_l[i:])
-
-    #     # remove leading newlines
-    #     new_line_text = new_line_text.lstrip(" \n")
-
-    #     print(f"{new_line_text=}")
-    #     init_new_sub_line_text_l.append(new_line_text)
-
-    #     if "worried" in new_line_text:
-    #         print("here")
-
-    # final_new_sub_line_text_l = []
-
-    # for init_str in init_new_sub_line_text_l:
-    #     final_new_sub_line_text_l.append(init_str)
-
-    #     newline_split_str_l = init_str.split(" ")
-    #     if len(newline_split_str_l) > 1 and "\n" in newline_split_str_l[0]: # HACK assumes will never have multiple newlines between 2 spaces
-    #         final_new_sub_line_text_l.append(init_str.split("\n")[1])
-
-    # print("final_new_sub_line_text_l:")
-    # pprint(final_new_sub_line_text_l)
 
     final_new_sub_line_text_l = _get_new_sub_line_text_l()
 
