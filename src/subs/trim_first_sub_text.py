@@ -31,7 +31,7 @@ import vid_edit_utils as veu
 import subtitle_utils as su
 import fuzz_common as fc
 
-THREADING_ENABLED = True
+THREADING_ENABLED = False
 
 MAX_NUM_MS__FIRST_SUB_END__WORTH_CHECKING = 5000
 
@@ -204,6 +204,22 @@ def _trim_first_sub_text_if_needed(in_sub_path, in_vid_path, out_sub_path):
         if in_sub_path == in_sub_path:
             _log_run("OG_WAS_BEST_MATCH", fuzz_ratio_new_sub_line_text_l_d)
             return
+
+    # Throw exception if match is longest value in fuzz_ratio_new_sub_line_text_l_d, b/c that means it
+    # should have been caught above and something about your matching is wrong
+
+    # Find longest_raw_new_sub_line_text_str
+    longest_raw_new_sub_line_text_str = ""
+    for _, new_sub_line_text_l in fuzz_ratio_new_sub_line_text_l_d.items():
+        for new_sub_line_text in new_sub_line_text_l:
+            if len(new_sub_line_text) > len(longest_raw_new_sub_line_text_str):
+                longest_raw_new_sub_line_text_str = new_sub_line_text
+
+    # longest_raw_new_sub_line_text_str = sorted(list(fuzz_ratio_new_sub_line_text_l_d.values()), reverse=True)[0]
+    print(f"{longest_raw_new_sub_line_text_str=}")
+
+    if longest_raw_new_sub_line_text_str == raw_best_new_sub_line_text_str:
+        raise ValueError(f"{raw_best_new_sub_line_text_str=} is the longest value in fuzz_ratio_new_sub_line_text_l_d, but did not return above with 'OG_WAS_BEST_MATCH', that means something is wrong with your match.")
 
     print(f"Trimming first sub line, \n    OG:  {subs[0].text}\n    New: {capped_best_new_sub_line_text_str}\n    Writing too: {out_sub_path}...")
 
