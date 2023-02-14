@@ -89,9 +89,7 @@ def _trim_first_sub_text_if_needed(in_sub_path, in_vid_path, out_sub_path):
         json_logger.write(run_od, out_json_path)
 
 
-    def _get_new_sub_line_text_l_from_transcript_str(transcript_str):
-        # cleaned_transcript_str = fc.get_cleaned_line_text_str__from__sub_line_text_str(transcript_str)
-        # transcript_fuzz_str = fc.get_subs_fuzz_str__from__all_sub_lines_cleaned_text_str(cleaned_transcript_str)
+    def _get_new_sub_line_text_l():
 
         fist_sub_line_text_str = subs[0].text
         fist_sub_line_text_str = fist_sub_line_text_str.replace('\r\n', '\n').replace('\r', ' \n')
@@ -198,7 +196,7 @@ def _trim_first_sub_text_if_needed(in_sub_path, in_vid_path, out_sub_path):
     # print("final_new_sub_line_text_l:")
     # pprint(final_new_sub_line_text_l)
 
-    final_new_sub_line_text_l = _get_new_sub_line_text_l_from_transcript_str(transcript_str)
+    final_new_sub_line_text_l = _get_new_sub_line_text_l()
 
     cleaned_transcript_str = fc.get_cleaned_line_text_str__from__sub_line_text_str(transcript_str)
     transcript_fuzz_str = fc.get_subs_fuzz_str__from__all_sub_lines_cleaned_text_str(cleaned_transcript_str)
