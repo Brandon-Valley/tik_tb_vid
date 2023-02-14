@@ -79,6 +79,7 @@ def _trim_first_sub_text_if_needed(in_sub_path, in_vid_path, out_sub_path):
         
     start_time = time.time()
 
+
     def _log_run(outcome_str, fuzz_ratio_new_sub_line_text_l_d = None):
         out_sub_path_log_str = out_sub_path # cant re-assign out_sub_path or else it becomes a local var and won't be able to access from higher scope
         if in_sub_path == out_sub_path:
@@ -100,13 +101,8 @@ def _trim_first_sub_text_if_needed(in_sub_path, in_vid_path, out_sub_path):
         return in_str
 
     def _get_new_sub_line_text_l():
-
-        # fist_sub_line_text_str = subs[0].text
-        # fist_sub_line_text_str = fist_sub_line_text_str.replace('\r\n', '\n').replace('\r', ' \n')
-        # fist_sub_line_text_str = fist_sub_line_text_str.replace('\\N', '\n')
         fist_sub_line_text_str = _get_normed_newlines_str(subs[0].text)
 
-        # fist_sub_line_text_str = fist_sub_line_text_str.replace('\\\\N', '\n')
         print(f"{fist_sub_line_text_str=}")
 
         s_space_first_sub_line_text_l = fist_sub_line_text_str.split(" ")
@@ -117,7 +113,6 @@ def _trim_first_sub_text_if_needed(in_sub_path, in_vid_path, out_sub_path):
 
         init_new_sub_line_text_l = []
 
-        # s_space_first_sub_line_text_l = re.split(' |.\n', fist_sub_line_text_str)
         for i in range(len(s_space_first_sub_line_text_l)):
             new_line_text = " ".join(s_space_first_sub_line_text_l[i:])
 
@@ -143,11 +138,10 @@ def _trim_first_sub_text_if_needed(in_sub_path, in_vid_path, out_sub_path):
         pprint(final_new_sub_line_text_l)
         return final_new_sub_line_text_l
 
-        
 
     subs = pysubs2.load(in_sub_path, encoding="latin1")
 
-    # get fuzz str of transcript_str of spoken dialog in vid between start and end time of first sub
+    # Get fuzz str of transcript_str of spoken dialog in vid between start and end time of first sub
     first_sub_line_start_time_sec = subs[0].start / 1000
     first_sub_line_end_time_sec   = subs[0].end   / 1000
 
@@ -156,10 +150,9 @@ def _trim_first_sub_text_if_needed(in_sub_path, in_vid_path, out_sub_path):
     print(f"{transcript_str_confidence=}")
     # LATER do something with transcript_str_confidence?
 
-    # if could not recognize any speech from 0 to first sub end, just return
+    # If could not recognize any speech from 0 to first sub end, just return
     if transcript_str == False:
         print(f"    No speech recognized from start of vid to {first_sub_line_end_time_sec}, returning...")
-        # LATER log?
         _log_run("NO_SPEECH_RECOGNIZED_FROM_START_OF_VID_TO_END_OF_FIRST_SUB")
         return
 
@@ -167,9 +160,6 @@ def _trim_first_sub_text_if_needed(in_sub_path, in_vid_path, out_sub_path):
 
     cleaned_transcript_str = fc.get_cleaned_line_text_str__from__sub_line_text_str(transcript_str)
     transcript_fuzz_str = fc.get_subs_fuzz_str__from__all_sub_lines_cleaned_text_str(cleaned_transcript_str)
-
-
-    # print(f"{final_new_sub_line_text_l=}")
 
     fuzz_ratio_new_sub_line_text_l_d = {}
 
@@ -184,13 +174,13 @@ def _trim_first_sub_text_if_needed(in_sub_path, in_vid_path, out_sub_path):
         cleaned_new_sub_line_text_str = fc.get_cleaned_line_text_str__from__sub_line_text_str(new_sub_line_text)
         new_sub_line_text_fuzz_str = fc.get_subs_fuzz_str__from__all_sub_lines_cleaned_text_str(cleaned_new_sub_line_text_str)
 
-        # dont duplicate effort by checking if a prev. str gave the same fuzz_str
+        # Don't duplicate effort by checking if a prev. str gave the same fuzz_str
         if new_sub_line_text_fuzz_str in new_sub_line_text_fuzz_str_l:
             continue
         print(f"adding {new_sub_line_text_fuzz_str=}")
         new_sub_line_text_fuzz_str_l.append(new_sub_line_text_fuzz_str)
 
-        # fill fuzz_ratio_new_sub_line_text_l_d
+        # Fill fuzz_ratio_new_sub_line_text_l_d
         # LATER add early return if first check of full text is like 99% match?
         fuzz_ratio = fuzz.ratio(new_sub_line_text_fuzz_str, transcript_fuzz_str)
 
@@ -206,7 +196,6 @@ def _trim_first_sub_text_if_needed(in_sub_path, in_vid_path, out_sub_path):
     raw_best_new_sub_line_text_str = fuzz_ratio_new_sub_line_text_l_d[best_fuzz_ratio][0]
 
     capped_best_new_sub_line_text_str = _cap_only_1st_letter_of_str(raw_best_new_sub_line_text_str)
-    # capped_best_new_sub_line_text_str = capped_best_new_sub_line_text_str.replace(" \\n", "\\n")
     capped_best_new_sub_line_text_str = capped_best_new_sub_line_text_str.replace(" \n", "\n")
 
     # If go through whole process and turns out best fuzz came from OG, say so and do nothing if in_sub_path == in_sub_path
@@ -236,9 +225,6 @@ def _trim_first_sub_text_if_needed(in_sub_path, in_vid_path, out_sub_path):
 
     print(f"Trimming first sub line, \n    OG:  {subs[0].text}\n    New: {capped_best_new_sub_line_text_str}\n    Writing too: {out_sub_path}...")
 
-    if "construct" in capped_best_new_sub_line_text_str: # TMP
-        print("here")
-
     subs[0].text = capped_best_new_sub_line_text_str
     # subs.save(out_sub_path) # TODO PUT BACK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     _log_run("SUCCESS", fuzz_ratio_new_sub_line_text_l_d)
@@ -257,7 +243,6 @@ def _log_total(start_time, worth_checking_mvsd_l, not_worth_checking_mvsd_l):
         run_outcome_str_occ_d = {}
 
         for run_od in run_od_l:
-            # print(f"{run_od=}")
             outcome_str = run_od["outcome_str"]
             if outcome_str in run_outcome_str_occ_d.keys():
                 run_outcome_str_occ_d[outcome_str] += 1
@@ -296,7 +281,7 @@ def trim_first_sub_text_if_needed__for_matched_vid_sub_dir_l(matched_vid_sub_dir
 
     with Simple_Thread_Manager(THREADING_ENABLED, cfg.NUM_CORES) as stm:
         for mvsd in worth_checking_mvsd_l:
-            # fix in-place
+            # Fix in-place
             stm.thread_func_if_enabled(_trim_first_sub_text_if_needed, mvsd.sub_path, mvsd.vid_path, mvsd.sub_path)
 
     _log_total(start_time, worth_checking_mvsd_l, not_worth_checking_mvsd_l)
@@ -307,14 +292,6 @@ if __name__ == '__main__':
     print("Running ",  path.abspath(__file__),  '...')
     from process_matched_vid_sub_dirs import process_matched_vid_sub_dirs
     process_matched_vid_sub_dirs()
-
-
-
-    # new_sub_path = _trim_first_sub_text_if_needed("C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/YT_PL_DATA/Family_Guy__National_Dog_Day__Clip____TBS/f3_Family Guy.S08E07.Jerome Is the New Black.FQM.srt",
-    # "C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/Family_Guy___TBS/Family_Guy__National_Dog_Day__Clip____TBS/Family_Guy__National_Dog_Day__Clip____TBS.mp4",
-    # "C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/YT_PL_DATA/Family_Guy__National_Dog_Day__Clip____TBS/first_sub_trimmed_test.srt")
-
-    # print(f"{new_sub_path=}")
     print("End of Main")
 
 
