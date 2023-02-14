@@ -51,7 +51,7 @@ def _get_worth_and_not_worth_checking__matched_vid_sub_dir_lists(matched_vid_sub
         if subs[0].end <= MAX_NUM_MS__FIRST_SUB_END__WORTH_CHECKING:
             return True
         return False
-    
+
     worth_checking_mvsd_l = []
     not_worth_checking_mvsd_l = []
 
@@ -68,15 +68,15 @@ def _trim_first_sub_text_if_needed(in_sub_path, in_vid_path, out_sub_path):
     def _cap_only_1st_letter_of_str(in_str):
         if len(in_str) == 0:
             raise ValueError(f"{len(in_str)=}, should not be possible")
-        
+
         if not in_str[0].isalpha():
             return in_str
-        
+
         if len(in_str) == 1:
             return in_str.capitalize()
         else:
             return in_str[0].capitalize() + in_str[1:]
-        
+
     start_time = time.time()
 
 
@@ -238,7 +238,7 @@ def _log_total(start_time, worth_checking_mvsd_l, not_worth_checking_mvsd_l):
             run_od = json_logger.read(json_path)
             run_od_l.append(run_od)
         return run_od_l
-    
+
     def _get_run_outcome_str_occ_d(run_od_l):
         run_outcome_str_occ_d = {}
 
