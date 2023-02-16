@@ -457,14 +457,12 @@ def stack_vids(top_vid_path, bottom_vid_path, out_vid_path):
     print(f"Running: {cmd}...")
     sp.call(cmd, shell = True)
 
-    # if not Path(out_vid_path).is_file():
-    #     raise FileNotFoundError(f"Output vid not created: {out_vid_path=}")
-
     if file_not_exist_msg(out_vid_path): raise FileNotFoundError(file_not_exist_msg(out_vid_path)) # Raise Error if output not created
     return out_vid_path
 
-# TMP might not work at all
+
 def embed_sub_file_into_vid_file(sub_file_path, in_vid_path, out_vid_path):
+    ''' // TMP might not work at all '''
     video = ffmpeg.input(in_vid_path)
     audio = video.audio
     ffmpeg.concat(video.filter("subtitles", os.path.abspath(sub_file_path)), audio, v=1, a=1).output(out_vid_path).run()
@@ -497,9 +495,7 @@ def convert_vid_to_diff_format__no_subs(in_vid_path, out_vid_path):
     fsu.delete_if_exists(out_vid_path)
     Path(out_vid_path).parent.mkdir(parents=True, exist_ok=True)
 
-    # cmd = f'ffmpeg -i {in_mp4_path} -i {in_sub_path} -c copy -c:s mov_text {out_mkv_path}'
     cmd = f'ffmpeg -i "{in_vid_path}" -c copy -c:s copy "{out_vid_path}"'
-    # cmd = f'ffmpeg -i "{in_vid_path}" -c copy "{out_vid_path}"'
     print(f"Running {cmd}...")
     sp.call(cmd, shell=True)
     if file_not_exist_msg(out_vid_path): raise FileNotFoundError(file_not_exist_msg(out_vid_path)) # Raise Error if output not created
@@ -510,6 +506,7 @@ def convert_to_mp4(mkv_file): # TODO remove?
     out_name = name + ".mp4"
     ffmpeg.input(mkv_file).output(out_name).run()
     print("Finished converting {}".format(mkv_file))
+
 
 # def convert_vid_to_diff_format__w_subs(in_vid_path, out_vid_path):
 #     """ Can use to convert .mp4 to .mkv """
@@ -523,7 +520,6 @@ def convert_to_mp4(mkv_file): # TODO remove?
 
 def combine_mp4_and_sub_into_mkv(in_mp4_path, in_sub_path, out_mkv_path):
     """ sub may need to be .srt """
-    # cmd = f'ffmpeg -i {in_mp4_path} -i {in_sub_path} -c copy -c:s mov_text {out_mkv_path}'
     cmd = f'ffmpeg -i {in_mp4_path} -i {in_sub_path} -c copy -c:s copy {out_mkv_path}'
     print(f"Running {cmd}...")
     sp.call(cmd, shell=True)
@@ -550,7 +546,6 @@ def _ffprobe(file_path) -> FFProbeResult:
                          error=result.stderr)
 
 def ffprobe_to_d(in_vid_path):
-# def ffprobe_to_json(in_vid_path, out_json_path):
     # fsu.delete_if_exists(out_json_path)
     # Path(out_json_path).parent.mkdir(parents=True, exist_ok=True)
 
@@ -611,14 +606,8 @@ if __name__ == "__main__":
     # #                              in_vid_path = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/test/sub_embed_test/og_clip.mp4",
     # #                              out_vid_path = "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/test/sub_embed_test/embed_clip.mp4")
 
-    # # convert_subs("C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/test/sub_embed_test/og_clip.ttml",
-    # # "C:/Users/Brandon/Documents/Personal_Projects/tik_tb_vid_big_data/ignore/test/sub_embed_test/og_clip__PY_CONVERTED.srt")
-
     # # extract_embedded_subs_from_vid_to_separate_file("C:/Users/Brandon/Documents/Personal_Projects/youtube_utils/ignore/embed_subs_pl_test/Inventions_that_Backfire/Invention_that_backfires_2/Invention_that_backfires_2.mp4",
     # # "C:/Users/Brandon/Documents/Personal_Projects/youtube_utils/ignore/embed_subs_pl_test/Inventions_that_Backfire/Invention_that_backfires_2/Invention_that_backfires_2.srt")
-
-    # # convert_subs("C:/Users/Brandon/Documents/Personal_Projects/youtube_utils/ignore/Family_Guy__Blue_Harvest_(Clip)___TBS/Family_Guy__Blue_Harvest_(Clip)___TBS.en.ttml",
-    # # "C:/Users/Brandon/Documents/Personal_Projects/youtube_utils/ignore/Family_Guy__Blue_Harvest_(Clip)___TBS/Family_Guy__Blue_Harvest_(Clip)___TBS.en.srt")
 
     # # combine_mp4_and_sub_into_mkv(in_mp4_path="C:/Users/Brandon/Documents/Personal_Projects/youtube_utils/ignore/Family_Guy__Blue_Harvest_(Clip)___TBS/Family_Guy__Blue_Harvest_(Clip)___TBS.mp4",
     # #  in_sub_path = "C:/Users/Brandon/Documents/Personal_Projects/youtube_utils/ignore/Family_Guy__Blue_Harvest_(Clip)___TBS/Family_Guy__Blue_Harvest_(Clip)___TBS.en.srt",
