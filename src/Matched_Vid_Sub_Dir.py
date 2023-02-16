@@ -1,5 +1,3 @@
-# TODO REMOVE?
-
 from pprint import pprint
 import os
 from os.path import join

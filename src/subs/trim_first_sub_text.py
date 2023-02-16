@@ -226,7 +226,7 @@ def _trim_first_sub_text_if_needed(in_sub_path, in_vid_path, out_sub_path):
     print(f"Trimming first sub line, \n    OG:  {subs[0].text}\n    New: {capped_best_new_sub_line_text_str}\n    Writing too: {out_sub_path}...")
 
     subs[0].text = capped_best_new_sub_line_text_str
-    # subs.save(out_sub_path) # TODO PUT BACK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    subs.save(out_sub_path) # TODO PUT BACK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     _log_run("SUCCESS", fuzz_ratio_new_sub_line_text_l_d)
 
 

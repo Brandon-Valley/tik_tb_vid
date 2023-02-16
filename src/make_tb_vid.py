@@ -294,9 +294,8 @@ def make_tb_vid(final_vid_dim_tup, out_dir_path, top_vid_path, bottom_vid_path, 
 
     cur_out_vid_path = veu.stack_vids(cur_top_vid_path, cur_bottom_vid_path, cur_out_vid_path) # PUT BACK!!!!!!!!!
 
-
-
     print(f"Finished Making Top-Bottom Video: {cur_out_vid_path}")
+    return cur_out_vid_path
 
 
 if __name__ == "__main__":

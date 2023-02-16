@@ -33,6 +33,9 @@ from sms.file_system_utils import file_system_utils as fsu
 # from sms.pil_utils import pil_utils as pu # TODO remove pil utils sm!!!!!!
 import cfg
 
+
+# TODO add something like this to check input and MOST IMPORTANTLY output vids:      if file_not_exist_msg(in_vid_path): raise Exception(file_not_exist_msg(in_vid_path)) # Confirm input vid exists
+
 class Impossible_Dims_Exception(Exception): pass
 
 
@@ -42,6 +45,27 @@ START_FRAME_IMG_PATH = os.path.join(TEMP_FRAME_IMGS_DIR_PATH, "start_grey_frame_
 END_FRAME_IMG_PATH = os.path.join(TEMP_FRAME_IMGS_DIR_PATH, "end_grey_frame_img.jpg")
 
 BLACK_COLOR_RGB = 0
+
+
+def file_not_exist_msg(file_path):
+    if Path(file_path).exists():
+        return False
+    return f"ERROR: File doesn't exist: {file_path}"
+
+# TODO use? decorator?
+def prep_out_path(out_path, out_path_type = "file", prep_mode = "overwrite"):
+    if prep_mode == "overwrite":
+        fsu.delete_if_exists(out_path)
+    else:
+        raise NotImplementedError(f"{prep_mode=}")
+
+    if out_path_type == "file":
+        Path(out_path).parent.mkdir(parents=True, exist_ok=True)
+    elif out_path_type == "dir":
+        Path(out_path).mkdir(parents=True, exist_ok=True)
+    else:
+        raise ValueError(f"Unrecognized {out_path_type=}")
+    
 
 
 
@@ -80,9 +104,6 @@ def get_vid_length(filename, error_if_vid_not_exist = True, return_type = "sec_f
     raise ValueError(f"Invalid {return_type=}")
 
 
-
-    
-
 ####################################################################################################
 # Vid Time Related
 ####################################################################################################
@@ -106,6 +127,8 @@ def trim_vid(in_vid_path, out_vid_path, time_tup):
         subprocess_call(cmd)
 
     ffmpeg_extract_subclip(in_vid_path, time_tup[0], time_tup[1], target_name=out_vid_path)
+
+    if file_not_exist_msg(out_vid_path): raise FileNotFoundError(file_not_exist_msg(out_vid_path)) # Raise Error if output not created
     return out_vid_path
 
 ####################################################################################################
@@ -137,6 +160,7 @@ def scale_vid(new_vid_dim_tup, in_vid_path, out_vid_path):
     print(f"Running: {cmd}...")
     sp.call(cmd, shell = True)
 
+    if file_not_exist_msg(out_vid_path): raise FileNotFoundError(file_not_exist_msg(out_vid_path)) # Raise Error if output not created
     return out_vid_path
 
 ####################################################################################################
@@ -158,6 +182,8 @@ def crop_vid(w, h, x, y, in_vid_path, out_vid_path):
     cmd = f'ffmpeg -i {in_vid_path} -vf "crop={w}:{h}:{x}:{y}" {out_vid_path}'
     print(f"Running: {cmd}...")
     sp.call(cmd, shell = True)
+    
+    if file_not_exist_msg(out_vid_path): raise FileNotFoundError(file_not_exist_msg(out_vid_path)) # Raise Error if output not created
 
 
 def crop_black_border_from_vid_if_needed(in_vid_path, out_vid_path):
@@ -199,7 +225,7 @@ def crop_black_border_from_vid_if_needed(in_vid_path, out_vid_path):
         return out_vid_path
 
 
-
+    # TODO remove?
     def _get_crop_coords_if_needed(color_rgb):
         ''' If no border of color_rgb, return False'''
         # Open the video file
@@ -396,6 +422,8 @@ def stack_vids(top_vid_path, bottom_vid_path, out_vid_path):
         raise Exception(f"Widths of vids not the same, behavior for this not implemented - {top_vid_dim_tup=} , {bottom_vid_dim_tup=}")
 
     fsu.delete_if_exists(out_vid_path)
+    Path(out_vid_path).parent.mkdir(parents=True, exist_ok=True)
+
 
     # This command does the following:
     #     ffmpeg is the command to run ffmpeg.
@@ -428,6 +456,11 @@ def stack_vids(top_vid_path, bottom_vid_path, out_vid_path):
 
     print(f"Running: {cmd}...")
     sp.call(cmd, shell = True)
+
+    # if not Path(out_vid_path).is_file():
+    #     raise FileNotFoundError(f"Output vid not created: {out_vid_path=}")
+
+    if file_not_exist_msg(out_vid_path): raise FileNotFoundError(file_not_exist_msg(out_vid_path)) # Raise Error if output not created
     return out_vid_path
 
 # TMP might not work at all
@@ -435,21 +468,29 @@ def embed_sub_file_into_vid_file(sub_file_path, in_vid_path, out_vid_path):
     video = ffmpeg.input(in_vid_path)
     audio = video.audio
     ffmpeg.concat(video.filter("subtitles", os.path.abspath(sub_file_path)), audio, v=1, a=1).output(out_vid_path).run()
+    if file_not_exist_msg(out_vid_path): raise FileNotFoundError(file_not_exist_msg(out_vid_path)) # Raise Error if output not created
 
 def burn_subs_into_vid(sub_file_path, in_vid_path, out_vid_path):
     cmd = f"ffmpeg -i {in_vid_path} -vf subtitles={sub_file_path} {out_vid_path}"
     print(f"Running {cmd}...")
     sp.call(cmd, shell=True)
+    if file_not_exist_msg(out_vid_path): raise FileNotFoundError(file_not_exist_msg(out_vid_path)) # Raise Error if output not created
 
+
+# TODO move to subtitle utils?
 def convert_subs(in_sub_path, out_sub_path):
     cmd = f'tt convert -i "{in_sub_path}" -o "{out_sub_path}"'
     print(f"Running {cmd}...")
     sp.call(cmd, shell=True)
+    if file_not_exist_msg(out_sub_path): raise FileNotFoundError(file_not_exist_msg(out_sub_path)) # Raise Error if output not created
+
 
 def extract_embedded_subs_from_vid_to_separate_file(vid_path, new_sub_file_path):
     cmd = f'ffmpeg -i {vid_path} -map 0:s:0 {new_sub_file_path}'
     print(f"Running {cmd}...")
     sp.call(cmd, shell=True)
+    if file_not_exist_msg(new_sub_file_path): raise FileNotFoundError(file_not_exist_msg(new_sub_file_path)) # Raise Error if output not created
+
 
 def convert_vid_to_diff_format__no_subs(in_vid_path, out_vid_path):
     """ Can use to convert .mp4 to .mkv """
@@ -461,6 +502,8 @@ def convert_vid_to_diff_format__no_subs(in_vid_path, out_vid_path):
     # cmd = f'ffmpeg -i "{in_vid_path}" -c copy "{out_vid_path}"'
     print(f"Running {cmd}...")
     sp.call(cmd, shell=True)
+    if file_not_exist_msg(out_vid_path): raise FileNotFoundError(file_not_exist_msg(out_vid_path)) # Raise Error if output not created
+
 
 def convert_to_mp4(mkv_file): # TODO remove?
     name, ext = os.path.splitext(mkv_file)
@@ -484,6 +527,7 @@ def combine_mp4_and_sub_into_mkv(in_mp4_path, in_sub_path, out_mkv_path):
     cmd = f'ffmpeg -i {in_mp4_path} -i {in_sub_path} -c copy -c:s copy {out_mkv_path}'
     print(f"Running {cmd}...")
     sp.call(cmd, shell=True)
+    if file_not_exist_msg(out_mkv_path): raise FileNotFoundError(file_not_exist_msg(out_mkv_path)) # Raise Error if output not created
 
 
 
