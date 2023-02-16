@@ -1,9 +1,6 @@
 import json
 from sms.logger import json_logger as ju
-# import argparse
-# import subprocess
-# import sys
-# from pathlib import Path
+
 from typing import NamedTuple
 
 
@@ -20,7 +17,6 @@ import cv2
 import subprocess
 from pathlib import Path
 import ffmpeg
-# import pvleopard
 
 from moviepy.editor import VideoFileClip
 from PIL import Image
@@ -30,8 +26,6 @@ import PIL.ImageFont
 import PIL.ImageOps
 
 from sms.file_system_utils import file_system_utils as fsu
-# from sms.pil_utils import pil_utils as pu # TODO remove pil utils sm!!!!!!
-import cfg
 
 
 # TODO add something like this to check input and MOST IMPORTANTLY output vids:      if file_not_exist_msg(in_vid_path): raise Exception(file_not_exist_msg(in_vid_path)) # Confirm input vid exists
@@ -65,7 +59,7 @@ def prep_out_path(out_path, out_path_type = "file", prep_mode = "overwrite"):
         Path(out_path).mkdir(parents=True, exist_ok=True)
     else:
         raise ValueError(f"Unrecognized {out_path_type=}")
-    
+
 
 
 
@@ -182,7 +176,7 @@ def crop_vid(w, h, x, y, in_vid_path, out_vid_path):
     cmd = f'ffmpeg -i {in_vid_path} -vf "crop={w}:{h}:{x}:{y}" {out_vid_path}'
     print(f"Running: {cmd}...")
     sp.call(cmd, shell = True)
-    
+
     if file_not_exist_msg(out_vid_path): raise FileNotFoundError(file_not_exist_msg(out_vid_path)) # Raise Error if output not created
 
 
@@ -191,7 +185,7 @@ def crop_black_border_from_vid_if_needed(in_vid_path, out_vid_path):
     Path(out_vid_path).parent.mkdir(parents=True, exist_ok=True)
 
     cropdetect_output = sp.run(['ffmpeg', '-hide_banner', '-i', str(Path(in_vid_path)), '-vf', 'cropdetect', '-t', '1', '-f', 'null', 'pipe:'], stdout=sp.PIPE, stderr=sp.STDOUT, universal_newlines=True).stdout
-    
+
     # print(f"{cropdetect_output=}")
     # # print(f"{cropdetect_output.=}")
     # line_l = []
@@ -225,79 +219,6 @@ def crop_black_border_from_vid_if_needed(in_vid_path, out_vid_path):
         return out_vid_path
 
 
-    # TODO remove?
-    def _get_crop_coords_if_needed(color_rgb):
-        ''' If no border of color_rgb, return False'''
-        # Open the video file
-        clip = VideoFileClip(in_vid_path)
-
-        # Extract a series of frames from the video
-        # frames = [frame for frame in clip.iter_frames()]
-        # frame = clip.iter_frames()[0]
-
-        # Dont check very first or very last frame b/c more likely to be all black
-        start_frame = None
-        for frame_num, frame in enumerate(clip.iter_frames()):
-            if frame_num == 10:
-                start_frame = frame
-                break
-        # cv2.imshow("video", start_frame)
-        # cv2.waitKey(0)
-
-        grey_start_frame = cv2.cvtColor(start_frame, cv2.COLOR_BGR2GRAY)
-
-
-        # if (len(frames) < 22):
-        #     raise Exception("ERROR: No hard reason this cant work, but being lazy and if you hit this then why is vid so short?")
-
-        # # Dont check very first or very last frame b/c more likely to be all black
-        # grey_start_frame = cv2.cvtColor(frames[10], cv2.COLOR_BGR2GRAY)
-        # grey_end_frame = cv2.cvtColor(frames[-10], cv2.COLOR_BGR2GRAY) # TODO Check more frames?
-
-        # Create dirs if not exist
-        fsu.delete_if_exists(START_FRAME_IMG_PATH)
-        Path(START_FRAME_IMG_PATH).parent.mkdir(parents=True, exist_ok=True)
-
-        # Check start frame
-        print(f"Writing grey_start_frame to {START_FRAME_IMG_PATH}...")
-        cv2.imwrite(START_FRAME_IMG_PATH, grey_start_frame)
-        img = Image.open(START_FRAME_IMG_PATH)
-        img_w, img_h = img.size
-
-        border_size_d = pu.get_color_border_size_d_fast__if_exists(img, color_rgb, ret_false_if_no_border = True)
-        pprint("border_size_d:")
-        pprint(border_size_d)
-
-        if not border_size_d:
-            return False
-
-        return tuple(pu.get_crop_coords_from_border_size_d(img, border_size_d))
-
-
-    fsu.delete_if_exists(out_vid_path)
-
-    crop_coords = _get_crop_coords_if_needed(BLACK_COLOR_RGB)
-
-    # If no black border, just return in_vid_path since no other file will be generated
-    if crop_coords == False:
-        print(f'Video does not have a black border: {in_vid_path}')
-        return in_vid_path
-
-    print("Video has a black border of some kind, cropping...")
-    print(f"{crop_coords=}")
-
-    w,h,x,y = crop_coords
-    print(w,h,x,y)
-    print(f"{get_vid_dims(in_vid_path)=}")
-    print(f"Cropping vid at {in_vid_path=} to {out_vid_path=}...")
-    crop_vid(w, h, x, y, in_vid_path, out_vid_path)
-    print(f"{in_vid_path=}")
-    print(w,h,x,y)
-    print(f"{get_vid_dims(in_vid_path)=}")
-
-    return out_vid_path
-
-
 def crop_sides_of_vid_to_match_aspect_ratio(vid_dim_tup_to_match_aspect_ratio, in_vid_path, out_vid_path):
     """
         Makes in_vid match given aspect ratio by only cropping the sides of video
@@ -311,7 +232,6 @@ def crop_sides_of_vid_to_match_aspect_ratio(vid_dim_tup_to_match_aspect_ratio, i
 
     aspect_ratio = vid_dim_tup_to_match_aspect_ratio[0] / vid_dim_tup_to_match_aspect_ratio[1]
 
-    # new_vid_w = in_vid_h * aspect_ratio
     new_vid_w = int(in_vid_h * aspect_ratio) # TMP NOT SURE IF ADDING INT BREAKS SOMETHING
     print(f"    new vid dims {new_vid_w} x {in_vid_h}")
 
@@ -381,7 +301,6 @@ def crop_sides_of_vid_by_percent(trim_percent, in_vid_path, out_vid_path):
     in_vid_w = in_vid_dim_tup[0]
     in_vid_h = in_vid_dim_tup[1]
 
-    # num_pixels_wide_to_remove_total = int(in_vid_w / trim_percent)
     num_pixels_wide_to_remove_total = int(in_vid_w * (trim_percent / 100))
     num_pixels_wide_to_keep_total = in_vid_w - num_pixels_wide_to_remove_total
     num_pixels_to_trim_from_both_sides = int(num_pixels_wide_to_remove_total / 2)
@@ -597,7 +516,7 @@ if __name__ == "__main__":
     # convert_vid_to_diff_format__w_subs("C:/tmp/S05E11__Family_Guy__Muppets__Clip____TBS.mkv",
     # "C:/tmp/S05E11__Family_Guy__Muppets__Clip____TBS__SCALED.ts")
 
-    # combine_mp4_and_sub_into_mkv("C:/tmp/S05E11__Family_Guy__Muppets__Clip____TBS.mkv", 
+    # combine_mp4_and_sub_into_mkv("C:/tmp/S05E11__Family_Guy__Muppets__Clip____TBS.mkv",
     # "C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/YT_PL_DATA/Family_Guy__Muppets__Clip____TBS/f2_Family.Guy.S05E11.The.Tan.Aquatic.with.Steve.Zissou.REALLY.REAL.DVDRIp.XviD-FAMiLYGuY.eng.srt",
     # "C:/tmp/S05E11__Family_Guy__Muppets__Clip____TBS.ts")
 
