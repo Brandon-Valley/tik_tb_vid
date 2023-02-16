@@ -1,10 +1,3 @@
-
-from time import sleep
-from random import random
-from concurrent.futures import ThreadPoolExecutor
-from concurrent.futures import wait
-
-
 from pprint import pprint
 import random
 import vid_edit_utils as veu
@@ -43,9 +36,9 @@ PLAYLIST_OG_VIDS_DIR_PATH    = "C:/p/tik_tb_vid_big_data/ignore/BIG_BOY_fg_TBS/o
 # PLAYLIST_OG_VIDS_DIR_PATH    = os.path.join(IGNORE_DIR_PATH, "playlist_og_clips", "test_chicken")
 # PLAYLIST_OG_VIDS_DIR_PATH    = os.path.join(IGNORE_DIR_PATH, "playlist_og_clips", "test_harvest")
 # PLAYLIST_OG_VIDS_DIR_PATH    = os.path.join(IGNORE_DIR_PATH, "playlist_og_clips", "fg_pl_tbs__manual_edit_mkvs__test")
-FINAL_OUT_VID_DIR_PATH       = os.path.join(IGNORE_DIR_PATH, "final_output")
-# FINAL_OUT_NO_SUBS_DIR_PATH = os.path.join(FINAL_OUT_VID_DIR_PATH, "no_subs")
-# FINAL_OUT_W_SUBS_DIR_PATH  = os.path.join(FINAL_OUT_VID_DIR_PATH, "w_subs")
+# cfg.BATCH_TB_VIDS_OUT_DIR_PATH       = os.path.join(IGNORE_DIR_PATH, "final_output")
+# FINAL_OUT_NO_SUBS_DIR_PATH = os.path.join(cfg.BATCH_TB_VIDS_OUT_DIR_PATH, "no_subs")
+# FINAL_OUT_W_SUBS_DIR_PATH  = os.path.join(cfg.BATCH_TB_VIDS_OUT_DIR_PATH, "w_subs")
 OG_LONG_BOTTOM_VIDS_DIR_PATH = os.path.join(IGNORE_DIR_PATH, "og_long_bottom_vids")
 
 
@@ -231,7 +224,7 @@ def batch_make_tb_vids(og_vids_dir_path, out_w_subs_no_subs_parent_dir_path):
 
 
 def main():
-    batch_make_tb_vids(PLAYLIST_OG_VIDS_DIR_PATH, FINAL_OUT_VID_DIR_PATH)
+    batch_make_tb_vids(PLAYLIST_OG_VIDS_DIR_PATH, cfg.BATCH_TB_VIDS_OUT_DIR_PATH)
 
 if __name__ == "__main__":
     main()

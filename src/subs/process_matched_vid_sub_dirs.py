@@ -27,16 +27,17 @@ import subtitle_utils
 import cfg
 import sub_diff_ratio_tools
 import real_sub_dialog_match_tools
+from Matched_Vid_Sub_Dir import get_matched_vid_sub_dir_l
 from Matched_Vid_Sub_Dir import Matched_Vid_Sub_Dir
 from trim_first_sub_text import trim_first_sub_text_if_needed__for_matched_vid_sub_dir_l
 
 
-def _get_matched_vid_sub_dir_l():
-    vid_sub_dir_path_l = fsu.get_dir_content_l(cfg.FINAL_MP4_SRT_DIRS__W_SUBS__DIR_PATH, "dir")
-    mvsd_l = []
-    for dir_path in vid_sub_dir_path_l:
-        mvsd_l.append(Matched_Vid_Sub_Dir(dir_path))
-    return mvsd_l
+# def _get_matched_vid_sub_dir_l():
+#     vid_sub_dir_path_l = fsu.get_dir_content_l(cfg.FINAL_MP4_SRT_DIRS__W_SUBS__DIR_PATH, "dir")
+#     mvsd_l = []
+#     for dir_path in vid_sub_dir_path_l:
+#         mvsd_l.append(Matched_Vid_Sub_Dir(dir_path))
+#     return mvsd_l
 
 
 
@@ -44,7 +45,8 @@ def process_matched_vid_sub_dirs():
     # fsu.delete_if_exists(cfg.PROCESS_MATCHED_VID_SUB_DIRS_LOGS_DIR_PATH) # TMP dont put back?
     Path(cfg.PROCESS_MATCHED_VID_SUB_DIRS_LOGS_DIR_PATH).parent.mkdir(parents=True, exist_ok=True)
 
-    matched_vid_sub_dir_l = _get_matched_vid_sub_dir_l()
+    # matched_vid_sub_dir_l = _get_matched_vid_sub_dir_l()
+    matched_vid_sub_dir_l = get_matched_vid_sub_dir_l(cfg.FINAL_MP4_SRT_DIRS__W_SUBS__DIR_PATH)
     print(f"{len(matched_vid_sub_dir_l)=}")
 
     trim_first_sub_text_if_needed__for_matched_vid_sub_dir_l(matched_vid_sub_dir_l)

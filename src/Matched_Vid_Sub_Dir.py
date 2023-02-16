@@ -17,6 +17,13 @@ from sms.file_system_utils import file_system_utils as fsu
 from sms.logger import json_logger
 from sms.logger import txt_logger
 
+def get_matched_vid_sub_dir_l(in_dir_path):
+    vid_sub_dir_path_l = fsu.get_dir_content_l(in_dir_path, "dir")
+    mvsd_l = []
+    for dir_path in vid_sub_dir_path_l:
+        mvsd_l.append(Matched_Vid_Sub_Dir(dir_path))
+    return mvsd_l
+
 class Matched_Vid_Sub_Dir:
     vid_path = None
     sub_path = None
