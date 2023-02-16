@@ -56,4 +56,5 @@ if __name__ == "__main__":
     print(f"{mvsd.dir_path=}")
     print(f"{mvsd.vid_path=}")
     print(f"{mvsd.sub_path=}")
+    # fsu.delete_if_exists("C:\\p\\tik_tb_vid_big_data\\ignore\\final_output\\w_subs\\Family_Guy__Game_Night__Clip____TBS")
     print("End of Main") 

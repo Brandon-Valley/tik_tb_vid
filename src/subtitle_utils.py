@@ -17,40 +17,14 @@ from sms.file_system_utils import file_system_utils as fsu
 from sms.logger import txt_logger
 import subprocess
 
-# def shift_and_trim_subs(in_sub_file_path, out_sub_file_path, shift_num_ms):
-#     fsu.delete_if_exists(out_sub_file_path)
-#     Path(out_sub_file_path).parent.mkdir(parents=True, exist_ok=True)
-
-#     in_subs = pysubs2.load(in_sub_file_path, encoding="utf-8")
-
-#     in_subs.shift(ms = shift_num_ms)
-
-#     print(f"Saving shifted/trimmed subs to {out_sub_file_path=}...")
-#     in_subs.save(out_sub_file_path)
-
-# def shift_trim_and_sync_subs(in_sub_file_path, out_sub_file_path, shift_num_ms):
-#     fsu.delete_if_exists(out_sub_file_path)
-#     Path(out_sub_file_path).parent.mkdir(parents=True, exist_ok=True)
-
-#     in_subs = pysubs2.load(in_sub_file_path, encoding="utf-8")
-
-#     in_subs.shift(ms = shift_num_ms)
-
-#     print(f"Saving shifted/trimmed subs to {out_sub_file_path=}...")
-#     in_subs.save(out_sub_file_path)
-
-    # sync_subs_with_vid()
-
 def sync_subs_with_vid(vid_path, in_sub_path, out_sub_path):
     """ Best to use sub files without "(cheering)", "(gasps)", etc. (.HI.srt and more) """
     print("in sync_subs_with_vid() --------------------------")
     fsu.delete_if_exists(out_sub_path)
     Path(out_sub_path).parent.mkdir(parents=True, exist_ok=True)
 
-    # cmd = f'ffs "{vid_path}" -i "{in_sub_path}" -o "{out_sub_path}"'
     cmd = f'autosubsync "{vid_path}" "{in_sub_path}" "{out_sub_path}"'
     print(f"Running cmd: {cmd}...")
-    # subprocess.call(cmd, shell=True)
     subprocess.call(cmd, shell=False)
     print("end of sync_subs_with_vid() --------------------------")
 
@@ -117,7 +91,6 @@ def combine__mp4__and__sub_path_l__into_mkv__set_file_name_as_lang(in_mp4_path, 
             "lang" : sub_file_name.replace(".", "_") # if this is too long might show up as [Fam] in player
         })
 
-    # pprint(sub_path_lang_dl)
     combine__mp4__and__sub_path_lang_dl__into_mkv(in_mp4_path, sub_path_lang_dl, out_mkv_path)
 
 
@@ -127,10 +100,8 @@ def make_embedded_mkv_sub_track_show_by_default(mkv_path, sub_track_num = 0):
     # TODO finish
     # https://stackoverflow.com/questions/26956762/ffmpeg-set-subtitles-track-as-default
     mp_path = "C:/Program Files (x86)/MKVToolNix/mkvpropedit.exe" # TODO
-    # cmd = f'"{mp_path}" "{mkv_path}" --edit track:s1 --set flag-default={sub_track_num}'
     cmd = f'ffmpeg -i "{mkv_path}" -c copy -disposition:s:{sub_track_num} default {o}'
     print(f"Running {cmd}...")
-    # subprocess.call(cmd, shell=True)
     raise Exception("NOT FINISHED BUT SHOULD WORK BUT READ WARNING")
 
 
@@ -165,15 +136,13 @@ def write_manual_sub_line_l(manual_sub_line_l, out_sub_path):
 
     new_sub_line_l = []
     for clean_sub_line_num, clean_sub_line in enumerate(manual_sub_line_l):
-        # new_sub_line_num = clean_sub_line_num + 1 # starts at 1 for .srt
-        # print(f"{clean_sub_line_num=}")
-        # exit()
         new_sub_line_l.append(str(clean_sub_line_num + 1)) # starts at 1 for .srt
         new_sub_line_l.append(f"{ms_to_srt_time_str(clean_sub_line.start)} --> {ms_to_srt_time_str(clean_sub_line.end)}")
         new_sub_line_l.append(clean_sub_line.text.replace("\\N", "\n"))
         new_sub_line_l.append("")
 
     txt_logger.write(new_sub_line_l, out_sub_path, encoding="latin1")
+
 
 def sub_file_readable_srt(sub_file_path):
     try:
@@ -185,17 +154,9 @@ def sub_file_readable_srt(sub_file_path):
 
 def sub_file_is_correct_lang(sub_file_path, lang):
     file_str = ""
-    # # subs = pysubs2.load(sub_file_path, encoding="latin1")
-    # lines = txt_logger.read(sub_file_path)
-    # # for line in subs:
-    # for line in lines:
-    #     if len(line) > 1 and line[0].isalpha():
-    #         file_str += line
     subs = pysubs2.load(sub_file_path, encoding="latin1")
-    # lines = txt_logger.read(sub_file_path)
+
     for line in subs:
-    # for line in lines:
-        # if len(line) > 1 and line[0].isalpha():
         file_str += line.text
 
     detected_lang = detect(file_str)
@@ -214,24 +175,21 @@ def remove_advertising_from_sub_file(sub_file_path):
     print(f"Running {cmd=}...")
     subprocess.call(cmd, shell=True)
 
+
 def remove_advertising_from_sub_file_path_l(sub_file_path_l):
     cmd = f"subnuker --yes --aeidon"
     for sub_file_path in sub_file_path_l:
         cmd += f' "{sub_file_path}"'
-    # print(f"Running {cmd=}...")
     subprocess.call(cmd, shell=True)
 
     cmd = f"subnuker --yes --regex"
     for sub_file_path in sub_file_path_l:
         cmd += f' "{sub_file_path}"'
-    # print(f"Running {cmd=}...")
     subprocess.call(cmd, shell=True)
 
 
 def write_filtered_subs(in_sub_path, out_sub_path):
     ''' Removes effects like [Music] and other things '''
-    # if in_sub_path != out_sub_path:
-    #     fsu.delete_if_exists(out_sub_path)
     
     Path(out_sub_path).parent.mkdir(parents=True, exist_ok=True)
 

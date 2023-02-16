@@ -19,6 +19,8 @@ PROCESS_MATCHED_VID_SUB_DIRS_LOGS_DIR_PATH = join(INIT_MKVS_WORKING_DIR_PATH, "p
 BATCH_TB_VIDS_OUT_DIR_PATH              = join(INIT_MKVS_WORKING_DIR_PATH, "ignore", "batch_tb_vids_out")
 BATCH_TB_VIDS_POST_PROCESS_OUT_DIR_PATH = join(INIT_MKVS_WORKING_DIR_PATH, "ignore", "post_batch_out")
 
+
+TOP_VID_HEIGHT_SEP_STR = "__tvh_"
 NUM_CORES = 4 # personal laptop
 # NUM_CORES = 1 # personal laptop
 

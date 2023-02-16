@@ -1,5 +1,6 @@
 from pprint import pprint
 import random
+import time
 import vid_edit_utils as veu
 from pathlib import Path
 import os
@@ -154,6 +155,7 @@ def _get_vid_sub_paths_data_dl__from__w_subs_no_subs_parent_dir_path(in_dir_path
 # Main
 ####################################################################################################
 def batch_make_tb_vids(og_vids_dir_path, out_w_subs_no_subs_parent_dir_path):
+    start_time = time.time()
     fsu.delete_if_exists(cfg.BIG_DATA_WORKING_DIR_PATH)
     Path(cfg.BIG_DATA_WORKING_DIR_PATH).mkdir(parents=True, exist_ok=True)
 
@@ -200,8 +202,6 @@ def batch_make_tb_vids(og_vids_dir_path, out_w_subs_no_subs_parent_dir_path):
         for vid_sub_paths_data_d in vid_sub_paths_data_dl:
             stm.thread_func_if_enabled(_st__make_vid_edits_for_single_vid, vid_sub_paths_data_d["vid_path"], vid_sub_paths_data_d["sub_path"])
     
-    # exit() #FIXME
-
     # og_vid_path_l = fsu.get_dir_content_l(og_vids_dir_path, object_type = 'file', content_type = 'abs_path')
     # print(og_vid_path_l)
 
@@ -219,6 +219,7 @@ def batch_make_tb_vids(og_vids_dir_path, out_w_subs_no_subs_parent_dir_path):
     # Print any fails
     print("failed_top_vid_path_l:")
     pprint(failed_top_vid_path_l)
+    print("Final batch_make_tb_vids() run time: ", time.time() - start_time)
 
 
 
