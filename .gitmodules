@@ -13,3 +13,6 @@
 [submodule "src/sms/thread_tools"]
 	path = src/sms/thread_tools
 	url = https://github.com/Brandon-Valley/thread_tools.git
+[submodule "src/sms/vid_edit_utils"]
+	path = src/sms/vid_edit_utils
+	url = https://github.com/Brandon-Valley/vid_edit_utils.git
